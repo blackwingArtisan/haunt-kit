@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Haunt Kit · One skeleton, two costumes</title>
+    <meta name="description" content="Haunt Kit is an open-source skeleton for GPS story walks. A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link." />
+    <meta name="theme-color" content="#0c0e13" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Haunt Kit · One skeleton, two costumes" />
+    <meta property="og:description" content="A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link." />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="lp-skip" href="#apps">Skip to the apps</a>
+    <header class="lp-head">
+      <p class="lp-kicker">Kiroween 2026 · Skeleton Crew</p>
+      <h1 class="lp-title">Haunt Kit</h1>
+      <p class="lp-lede">A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link.</p>
+      <p class="lp-sub">One open-source skeleton for GPS story walks. Write the stops as data and they unlock as people arrive. Here it is in two costumes.</p>
+    </header>
+
+    <main id="apps" class="lp-apps">
+      <article class="lp-card lp-card--ghost" aria-labelledby="ghost-h">
+        <p class="lp-card__kicker">A ghost walk</p>
+        <h2 id="ghost-h" class="lp-card__title">Des Moines <span>After Dark</span></h2>
+        <p>Six stops from the river to Terrace Hill, about 4 km. Every legend says "legend says" and links its source; invented stories are labeled fiction.</p>
+        <div class="lp-card__row">
+          <a class="lp-btn" href="./ghost-walk/?watch" data-testid="watch-ghost">Watch the 60-second walk</a>
+          <a class="lp-link" href="./ghost-walk/" data-testid="open-ghost">Open the walk</a>
+        </div>
+        <figure class="lp-qr">
+          <div class="lp-qr__code" data-qr="./ghost-walk/" data-label="QR code for Des Moines After Dark"></div>
+          <figcaption>Scan to open it on your phone.</figcaption>
+        </figure>
+      </article>
+
+      <article class="lp-card lp-card--hunt" aria-labelledby="hunt-h">
+        <p class="lp-card__kicker">A party scavenger hunt</p>
+        <h2 id="hunt-h" class="lp-card__title">Spook <span>Hunt</span></h2>
+        <p>Drop hiding spots in your own yard or street, write the clues, and share one link. The whole hunt lives in the link; answers travel as salted hashes.</p>
+        <div class="lp-card__row">
+          <a class="lp-btn" href="./spook-hunt/#/demo" data-testid="play-hunt">Play the demo hunt</a>
+          <a class="lp-link" href="./spook-hunt/" data-testid="open-hunt">Open the hunt</a>
+        </div>
+        <figure class="lp-qr">
+          <div class="lp-qr__code" data-qr="./spook-hunt/" data-label="QR code for Spook Hunt"></div>
+          <figcaption>Scan to open it on your phone.</figcaption>
+        </figure>
+      </article>
+    </main>
+
+    <section class="lp-bones" aria-labelledby="bones-h">
+      <h2 id="bones-h">The skeleton under both</h2>
+      <p class="lp-code"><code>stepFix(tour, state, fix) → { state, events }</code></p>
+      <ul>
+        <li>A pure geofence engine: smoothing, dwell, hysteresis and ordering rules, unit-tested in Node.</li>
+        <li>Every stop can be opened from a list, without walking.</li>
+        <li>Works offline. Your location never leaves your phone.</li>
+        <li>A simulated walk replays the route from a chair, through the same engine as real GPS.</li>
+      </ul>
+    </section>
+
+    <footer class="lp-foot">
+      <p>Built with <a href="https://kiro.dev/">Kiro</a> by Stubborn Otter Software. MIT licensed.</p>
+    </footer>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { KeyValueStore } from '@haunt-kit/template/adapters';
 import { demoDraft, shareableHunt } from './hunt';
 import { encodeHunt, huntId } from './hunt-codec';
 import { rememberSharedHunt } from './result-board';
 
-export function Home({ store }: { store: KeyValueStore }) {
+/** The home screen. With `autoplay` (the #/demo link) it opens the demo hunt at once. */
+export function Home({ store, autoplay = false }: { store: KeyValueStore; autoplay?: boolean }) {
   const [opening, setOpening] = useState(false);
   // Builds the three-stop demo hunt exactly as a host would share it, then opens it as a player.
   const playDemo = async () => {
@@ -18,6 +19,12 @@ export function Home({ store }: { store: KeyValueStore }) {
       setOpening(false);
     }
   };
+  const autoplayed = useRef(false);
+  useEffect(() => {
+    if (!autoplay || autoplayed.current) return;
+    autoplayed.current = true;
+    void playDemo();
+  });
   return (
     <div className="sh-home">
       <section className="sh-hero">

@@ -19,6 +19,8 @@
     "dev:hunt": "npm run dev -w apps/scavenger-hunt",
     "create-app": "node template/scripts/create-tour-app.mjs",
     "build": "npm run build -w apps/ghost-walk && npm run build -w apps/scavenger-hunt",
+    "build:site": "vite build --config site/vite.config.ts && npm run build -w apps/ghost-walk -- --outDir ../../dist/ghost-walk --emptyOutDir && npm run build -w apps/scavenger-hunt -- --outDir ../../dist/spook-hunt --emptyOutDir",
+    "preview:site": "vite preview --config site/vite.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",

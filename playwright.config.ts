@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Override with PW_GHOST_PORT / PW_HUNT_PORT when the default preview ports are taken.
+// Override with PW_GHOST_PORT / PW_HUNT_PORT / PW_SITE_PORT when the default preview ports are taken.
 const GHOST_PORT = Number(process.env.PW_GHOST_PORT ?? 3171);
 const HUNT_PORT = Number(process.env.PW_HUNT_PORT ?? 3173);
+const SITE_PORT = Number(process.env.PW_SITE_PORT ?? 3175);
 
 export default defineConfig({
   testDir: 'e2e',
@@ -31,6 +32,12 @@ export default defineConfig({
       testMatch: /scavenger-hunt(\.a11y)?\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${HUNT_PORT}` },
     },
+    {
+      // The hosted layout: the landing page at the root, each app in its own folder.
+      name: 'site',
+      testMatch: /site\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${SITE_PORT}` },
+    },
   ],
   webServer: [
     {
@@ -45,6 +52,12 @@ export default defineConfig({
       url: `http://localhost:${HUNT_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,
+    },
+    {
+      command: `npm run build:site && npx vite preview --config site/vite.config.ts --port ${SITE_PORT} --strictPort`,
+      url: `http://localhost:${SITE_PORT}`,
+      reuseExistingServer: false,
+      timeout: 180_000,
     },
   ],
 });

@@ -136,6 +136,19 @@ export function App() {
     setSpeaking(false);
   };
 
+  // A shared "?watch" link (the landing page uses one) starts the 60-second walk straight away.
+  const autoWatched = useRef(false);
+  useEffect(() => {
+    if (autoWatched.current) return;
+    autoWatched.current = true;
+    const params = new URLSearchParams(location.search);
+    if (!params.has('watch')) return;
+    params.delete('watch');
+    const query = params.toString();
+    history.replaceState(null, '', `${location.pathname}${query ? `?${query}` : ''}${location.hash}`);
+    watch();
+  });
+
   const statusText = (() => {
     if (session.mode === 'simulated' && watchingRef.current) return 'Watching the walk: the lantern follows the route and each story opens as it arrives.';
     if (session.mode === 'simulated') return `Simulated walk at ${speed === 1 ? 'real pace' : `${speed}x`}. Your lantern follows the route.`;
