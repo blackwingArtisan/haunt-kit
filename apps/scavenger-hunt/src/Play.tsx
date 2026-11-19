@@ -345,17 +345,20 @@ function ActiveGame({
           </button>
         </div>
         <div className="sh-gamecol">
-          <TourMap
-            tour={tour}
-            state={state}
-            position={position}
-            fog
-            fogStyle="paper"
-            revealMeters={55}
-            revealOnlyUnlocked
-            showRoute={false}
-            label={`Hunt map. ${found} of ${tour.stops.length} spots found. Hidden spots are not shown.`}
-          />
+          <div className={`sh-mapframe${found === 0 ? ' sh-mapframe--empty' : ''}`} data-testid="hunt-map">
+            <TourMap
+              tour={tour}
+              state={state}
+              position={position}
+              fog
+              fogStyle="paper"
+              revealMeters={55}
+              revealOnlyUnlocked
+              showRoute={false}
+              label={`Hunt map. ${found} of ${tour.stops.length} spots found. Hidden spots are not shown.`}
+            />
+            {found === 0 && <p className="sh-mapframe__hint">Hidden spots appear here as you find them</p>}
+          </div>
           <Scoreboard runs={runs} />
         </div>
       </div>

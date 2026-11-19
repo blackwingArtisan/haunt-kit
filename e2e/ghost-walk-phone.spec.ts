@@ -27,3 +27,15 @@ test('on a narrow phone each stop keeps its name on one line and puts the button
   // "Woodland Cemetery" fits on one line once the button is out of the way.
   expect(name.height).toBeLessThan(40);
 });
+
+test('map place names and stop names stay at 12 px or larger on a phone', async ({ page }) => {
+  await page.goto('/');
+  const map = page.getByTestId('tour-map');
+  await expect(map).toBeVisible();
+  const sizes = await map.evaluate((svg: SVGSVGElement) => {
+    const k = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+    return [...svg.querySelectorAll('.hk-map__feature-label, .hk-marker__name')].map((t) => parseFloat(getComputedStyle(t).fontSize) * k);
+  });
+  expect(sizes.length).toBeGreaterThanOrEqual(3);
+  for (const px of sizes) expect(px).toBeGreaterThanOrEqual(11.99);
+});

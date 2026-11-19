@@ -37,10 +37,11 @@ function Sky() {
     <div className="sh-sky" aria-hidden="true">
       <svg className="sh-bats" viewBox="0 0 400 120">
         {[
-          [40, 40, 1],
-          [150, 20, 0.7],
-          [300, 55, 0.9],
-          [360, 15, 0.55],
+          // Kept to a thin band above the kicker line and to the right of it, so no bat sits on the text.
+          [8, 2, 0.8],
+          [150, 0, 0.6],
+          [262, 6, 0.85],
+          [350, 1, 0.5],
         ].map(([x, y, s], i) => (
           <path key={i} className="sh-bat" style={{ animationDelay: `${i * -1.7}s` }} transform={`translate(${x} ${y}) scale(${s})`} d={BAT_PATH} />
         ))}

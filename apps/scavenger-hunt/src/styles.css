@@ -50,7 +50,7 @@ body {
 
 .sh { position: relative; }
 .sh-sky { position: absolute; inset: 0 0 auto; height: 240px; overflow: hidden; pointer-events: none; z-index: 0; }
-.sh-bats { position: absolute; top: 10px; left: 0; width: min(520px, 70vw); height: auto; }
+.sh-bats { position: absolute; top: 4px; left: 0; width: min(520px, 70vw); height: auto; }
 /* A pale rim keeps the paper-cut bats visible against the purple night. */
 .sh-bat { fill: var(--sh-ink); stroke: rgba(203, 191, 224, 0.75); stroke-width: 1.2px; paint-order: stroke; animation: sh-flap 3.4s ease-in-out infinite; transform-box: fill-box; }
 @keyframes sh-flap { 0%, 100% { translate: 0 0; } 50% { translate: 6px -8px; } }
@@ -173,8 +173,29 @@ body {
 }
 .sh-message { min-height: 1.6em; font-weight: 700; color: var(--sh-slime); margin: 6px 0 14px; }
 .sh-gamegrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
-@media (max-width: 900px) { .sh-gamegrid { grid-template-columns: 1fr; } }
-.sh-gamecol > .hk-map { border: 3px solid var(--sh-ink); box-shadow: 7px 7px 0 var(--sh-ink); margin-bottom: 20px; }
+@media (max-width: 900px) {
+  /* One column on a phone: the clue first, then the map, then the list of spots and the scores. */
+  .sh-gamegrid { grid-template-columns: 1fr; gap: 0; }
+  .sh-gamecol { display: contents; }
+  .sh-gamecol > * { order: 0; }
+  .sh-gamecol > .sh-mapframe { order: 1; }
+  .sh-gamecol > .hk-list, .sh-gamecol > .sh-linkbtn, .sh-gamecol > .sh-board { order: 2; }
+}
+.sh-mapframe { position: relative; border: 3px solid var(--sh-ink); border-radius: 13px; box-shadow: 7px 7px 0 var(--sh-ink); margin-bottom: 20px; overflow: hidden; }
+.sh-mapframe > .hk-map { border-radius: 10px; }
+/* Before the first find, a soft glow marks the search area so the map reads as "somewhere in here", not as noise. */
+.sh-mapframe--empty::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 46% 40% at 50% 50%, rgba(166, 241, 91, 0.2), rgba(166, 241, 91, 0.06) 55%, transparent 75%);
+  animation: sh-search 3.6s ease-in-out infinite;
+}
+@keyframes sh-search { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+.sh-mapframe__hint {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 1; margin: 0;
+  width: max-content; max-width: 80%; text-align: center;
+  padding: 8px 14px; border: 3px solid var(--sh-ink); border-radius: 12px; box-shadow: 3px 3px 0 var(--sh-ink);
+  background: var(--sh-paper); color: var(--sh-ink); font-weight: 700; rotate: -2deg;
+}
 .sh-clue { background: var(--sh-paper); color: var(--sh-ink); }
 .sh-clue .sh-note { color: #5a4a72; }
 .sh-cluetext { font-size: 1.35rem; font-weight: 700; margin: 0 0 16px; }
@@ -222,7 +243,7 @@ body {
   .sh-moonbat { animation: none; }
   .sh-burst { display: none; }
   .sh-clock { transform: none; }
-  .sh-bat, .sh-thermo--here .sh-thermo__fill, .sh-thermo--burning .sh-thermo__fill { animation: none; }
+  .sh-mapframe--empty::after, .sh-bat, .sh-thermo--here .sh-thermo__fill, .sh-thermo--burning .sh-thermo__fill { animation: none; }
   .sh-thermo__fill { transition: none; }
   .sh-steps li, .sh-steps li:nth-child(even) { transform: none; }
 }

@@ -1,4 +1,4 @@
-import { useId, useMemo, type MouseEvent, type ReactNode } from 'react';
+import { useId, useLayoutEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import type { LatLng } from '../core/geo';
 import { fitProjection, pathData, type Projection } from '../core/projection';
 import type { SessionState } from '../core/session';
@@ -42,6 +42,22 @@ export interface TourMapProps {
   children?: (proj: Projection) => ReactNode;
 }
 
+/** At this label scale or above (a phone-width map), only the selected stop's name is drawn. */
+export const COMPACT_SCALE = 1.5;
+
+/** The smallest on-screen size, in CSS pixels, for place names and stop names on the map. */
+export const MIN_LABEL_PX = 12;
+
+/**
+ * How much to enlarge map text so a label drawn at `basePx` user units shows at
+ * least `MIN_LABEL_PX` on screen when the map is `renderedWidth` pixels wide.
+ * Never shrinks text below its base size.
+ */
+export function labelScale(viewBoxWidth: number, renderedWidth: number, basePx = 15): number {
+  if (!(renderedWidth > 0) || !(viewBoxWidth > 0)) return 1;
+  return Math.max(1, (MIN_LABEL_PX * viewBoxWidth) / (renderedWidth * basePx));
+}
+
 /**
  * A stylized SVG map drawn only from the tour's own coordinates: no tiles, no
  * keys, works offline. All colors come from --hk-* CSS custom properties so
@@ -68,6 +84,19 @@ export function TourMap({
   children,
 }: TourMapProps) {
   const uid = useId().replace(/:/g, '');
+  // On a phone the 1000-unit map is drawn about 350 px wide, which would print
+  // 15-unit labels at 5 px. Watch the drawn width and grow the text to stay legible.
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [ls, setLs] = useState(1);
+  useLayoutEffect(() => {
+    const el = svgRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const update = () => setLs(labelScale(width, el.getBoundingClientRect().width));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [width]);
   const route = tourRoute(tour);
   // Fit to every stop even when markers are hidden: the view gives away the play area, not the spots.
   const fitPoints = [...tour.stops.map((s) => s.position), ...route];
@@ -97,6 +126,7 @@ export function TourMap({
   return (
     <svg
       className={`hk-map${onMapClick ? ' hk-map--editable' : ''}${state.completedAt !== undefined ? ' hk-map--complete' : ''}`}
+      ref={svgRef}
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={label}
@@ -178,9 +208,10 @@ export function TourMap({
             <text
               key={i}
               x={x}
-              y={anchor.y - 10}
+              y={anchor.y - 10 * ls}
               textAnchor={textAnchor}
               className={`hk-map__feature-label hk-map__feature-label--${f.kind}`}
+              style={ls > 1 ? { fontSize: `${15 * ls}px`, strokeWidth: `${4 * ls}px` } : undefined}
             >
               {f.name}
             </text>
@@ -200,6 +231,8 @@ export function TourMap({
           selected={selectedId === s.id}
           showRadius={showRadius}
           hideName={hideLockedNames}
+          scale={ls}
+          frameWidth={width}
         />
         ),
       )}
@@ -212,7 +245,7 @@ export function TourMap({
         </g>
       )}
 
-      <ScaleBar proj={proj} width={width} height={height} />
+      <ScaleBar proj={proj} width={width} height={height} scale={ls} />
     </svg>
   );
 }
@@ -234,6 +267,8 @@ function StopMarker({
   selected,
   showRadius,
   hideName,
+  scale,
+  frameWidth,
 }: {
   stop: Stop;
   index: number;
@@ -243,8 +278,17 @@ function StopMarker({
   selected: boolean;
   showRadius: boolean;
   hideName: boolean;
+  /** Enlarges the dot and its text on small screens (see labelScale). */
+  scale: number;
+  frameWidth: number;
 }) {
   const name = hideName && (status === 'locked' || status === 'available') ? '???' : stop.name;
+  // On a small screen the enlarged names would pile on top of each other, so only the
+  // selected stop is named; the numbers match the stop list.
+  const showName = scale < COMPACT_SCALE || selected;
+  // Names near the frame's edges grow inward so they are never cut off.
+  const anchor = center.x > frameWidth * 0.8 ? 'end' : center.x < frameWidth * 0.2 ? 'start' : 'middle';
+  const nameX = anchor === 'end' ? center.x + 18 * scale : anchor === 'start' ? center.x - 18 * scale : center.x;
   return (
     <g
       className={`hk-marker hk-marker--${status}${selected ? ' hk-marker--selected' : ''}`}
@@ -252,30 +296,39 @@ function StopMarker({
       data-status={status}
     >
       {showRadius && <circle cx={center.x} cy={center.y} r={radius} className="hk-marker__radius" />}
-      <circle cx={center.x} cy={center.y} r={15} className="hk-marker__dot" />
-      <text x={center.x} y={center.y + 5} className="hk-marker__num">
+      <circle cx={center.x} cy={center.y} r={15 * scale} className="hk-marker__dot" />
+      <text x={center.x} y={center.y + 5 * scale} className="hk-marker__num" style={scale > 1 ? { fontSize: `${14 * scale}px` } : undefined}>
         {index + 1}
       </text>
-      <text x={center.x} y={center.y - 24} className="hk-marker__name">
-        {name}
-      </text>
+      {showName && (
+        <text
+          x={nameX}
+          y={center.y - 24 * scale}
+          className="hk-marker__name"
+          textAnchor={anchor}
+          style={scale > 1 ? { fontSize: `${16 * scale}px`, strokeWidth: `${5 * scale}px` } : undefined}
+        >
+          {name}
+        </text>
+      )}
     </g>
   );
 }
 
-function ScaleBar({ proj, width, height }: { proj: Projection; width: number; height: number }) {
+function ScaleBar({ proj, width, height, scale }: { proj: Projection; width: number; height: number; scale: number }) {
   const candidates = [25, 50, 100, 200, 250, 500, 1000];
   const meters = candidates.find((c) => c / proj.metersPerUnit > width * 0.12) ?? 1000;
   const len = meters / proj.metersPerUnit;
   const x = 24;
   const y = height - 24;
+  const textStyle = scale > 1 ? { fontSize: `${13 * scale}px` } : undefined;
   return (
     <g className="hk-map__scale" aria-hidden="true">
       <path d={`M${x} ${y - 6} V${y} H${x + len} V${y - 6}`} />
-      <text x={x + len / 2} y={y - 10}>
+      <text x={x + len / 2} y={y - 10} style={textStyle}>
         {meters >= 1000 ? `${meters / 1000} km` : `${meters} m`}
       </text>
-      <text x={width - 28} y={48} className="hk-map__north">
+      <text x={width - 28} y={48} className="hk-map__north" style={textStyle}>
         N
       </text>
       <path d={`M${width - 28} 56 l-8 20 l8 -6 l8 6 z`} className="hk-map__north-arrow" />
