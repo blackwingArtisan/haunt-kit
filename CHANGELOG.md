@@ -16,6 +16,9 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 - A **Beyond October** section lists three year-round uses and links a playable three-spot **Friday Word Hunt**, made with the same share function the editor uses. A unit test decodes the link and checks that its answers travel only as hashes.
 - A **Print a poster** page (`poster.html`) prints one poster per app: the title, a QR code, the start point and tonight's sunset time in Des Moines. A host can paste their own hunt link to put it on the poster. Print styles give one letter-size page per poster.
 
+### Terrace Hill finale
+- The finale draws Terrace Hill in detail: the Second Empire mansion with its mansard roof, dormers, porch, iron cresting and central tower under the moon. The tower light goes out, a thread of smoke rises from it, and the fog rolls off the lawn to either side. Under reduced motion the scene shows its final, dark state.
+
 ### Ghost Walk start panel
 - One filled primary action, **Watch the 60-second walk**. **Walk with my location** is an outline button beside it, and **Simulate the walk** with its speed picker sits behind a **More ways to walk** disclosure. A `?speed=` link opens the disclosure.
 

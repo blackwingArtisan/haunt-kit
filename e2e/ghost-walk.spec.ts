@@ -186,8 +186,21 @@ test('with reduced motion the finale appears in its final state, with nothing an
   await expect(finale).toBeVisible();
   const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length);
   expect(running).toBe(0);
-  // The tower light is already out.
+  // The tower light is already out, and the smoke and fog are already gone.
   await expect(finale.locator('.gw-tower__light')).toHaveCSS('fill', 'rgb(35, 35, 42)');
+  await expect(finale.locator('.gw-tower__smoke')).toHaveCSS('opacity', '0');
+  await expect(finale.locator('.gw-tower__fog-l')).toHaveCSS('opacity', '0');
+});
+
+test('the finale draws Terrace Hill: the tower light goes out, smoke rises and the fog rolls off', async ({ page }) => {
+  await page.goto('/');
+  for (const id of STOPS) await stopRow(page, id).getByRole('button', { name: /Read from here/ }).click().then(() => page.keyboard.press('Escape'));
+  const finale = page.getByTestId('finale-overlay');
+  await expect(finale.getByTestId('terrace-hill')).toBeVisible();
+  // The animation runs once and ends in the dark: light out, smoke gone, fog off the lawn.
+  await expect(finale.locator('.gw-tower__light')).toHaveCSS('fill', 'rgb(35, 35, 42)', { timeout: 8_000 });
+  await expect(finale.locator('.gw-tower__fog-r')).toHaveCSS('opacity', '0', { timeout: 8_000 });
+  await expect(finale.locator('.gw-tower__smoke')).toHaveCSS('opacity', '0', { timeout: 10_000 });
 });
 
 test('the start panel has one primary action, and the simulation sits behind "More ways to walk"', async ({ page }) => {

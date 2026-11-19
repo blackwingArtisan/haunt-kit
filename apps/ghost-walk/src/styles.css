@@ -200,11 +200,30 @@ body {
 .gw-finale-overlay[open] { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; animation: gw-apparition 1s ease-out; }
 .gw-finale-overlay::backdrop { background: #07090d; }
 .gw-finale-overlay__scene { display: grid; justify-items: center; gap: 10px; margin-bottom: 8px; }
-.gw-tower { width: min(320px, 70vw); height: auto; }
-.gw-tower__house { fill: #161a24; stroke: rgba(236, 227, 207, 0.35); stroke-width: 1.2; }
+.gw-tower {
+  width: min(460px, 88vw); height: auto;
+  /* Soften the scene's left and right edges into the night. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.gw-tower__moon { fill: #e9e2cf; opacity: 0.85; filter: drop-shadow(0 0 14px rgba(236, 227, 207, 0.35)); }
+.gw-tower__trees { fill: #0b0e14; }
+.gw-tower__house { fill: #161a24; stroke: rgba(236, 227, 207, 0.35); stroke-width: 1; stroke-linejoin: round; }
+.gw-tower__crest { fill: none; stroke: rgba(236, 227, 207, 0.55); stroke-width: 1; }
+.gw-tower__porch { fill: none; stroke: rgba(236, 227, 207, 0.3); stroke-width: 1.4; }
 .gw-tower__window { fill: #2a2a2e; }
+.gw-tower__ground { fill: #0b0e14; }
 .gw-tower__light { fill: var(--gw-ember); filter: drop-shadow(0 0 6px var(--gw-ember)); animation: gw-light-out 1.4s ease-in 1.6s forwards; }
 @keyframes gw-light-out { 60% { fill: #ffd27a; } to { fill: #23232a; filter: none; } }
+/* A thread of smoke rises once the light is out, then thins away. */
+.gw-tower__smoke { fill: none; stroke: rgba(236, 227, 207, 0.6); stroke-width: 1.6; stroke-linecap: round; opacity: 0; animation: gw-smoke 3.2s ease-out 2.9s forwards; }
+@keyframes gw-smoke { 0% { opacity: 0; transform: translateY(4px); } 30% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(-10px); } }
+/* Fog lies across the lawn, then rolls off to either side. */
+.gw-tower__fog ellipse { fill: #9fb3d1; opacity: 0.45; }
+.gw-tower__fog-l { animation: gw-fog-left 4s ease-in-out 1.2s forwards; }
+.gw-tower__fog-r { animation: gw-fog-right 4s ease-in-out 1.2s forwards; }
+@keyframes gw-fog-left { to { transform: translateX(-140px); opacity: 0; } }
+@keyframes gw-fog-right { to { transform: translateX(150px); opacity: 0; } }
 .gw-finale-overlay__candles { display: flex; gap: 14px; align-items: flex-end; }
 .gw-finale-overlay__candles .gw-candle { width: 26px; height: 52px; }
 .gw-candle--flare .gw-candle__flame { animation: gw-flare 1.2s ease-out both, gw-flame 1.8s ease-in-out 1.2s infinite; }
@@ -217,6 +236,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .gw-finale-overlay[open], .gw-candle--flare .gw-candle__flame { animation: none; }
   .gw-tower__light { animation: none; fill: #23232a; filter: none; }
+  .gw-tower__smoke, .gw-tower__fog ellipse { animation: none; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
