@@ -12,6 +12,10 @@
   --hk-done: #7bd389;
   --hk-line: rgba(233, 228, 216, 0.18);
   --hk-fog: #0b0c10;
+  /* Fog: a base wash, drifting clouds in a tint, and an optional grid printed on the fog. */
+  --hk-fog-opacity: 0.8;
+  --hk-fog-tint: #9aa3b0;
+  --hk-fog-grid: transparent;
   --hk-river: #2f4a5c;
   --hk-street: rgba(233, 228, 216, 0.22);
   --hk-park: rgba(90, 120, 80, 0.28);
@@ -47,8 +51,12 @@
 }
 .hk-map__route { fill: none; stroke: var(--hk-accent); stroke-opacity: 0.45; stroke-width: 3; stroke-dasharray: 2 10; stroke-linecap: round; }
 .hk-map__trail { fill: none; stroke: var(--hk-ink); stroke-opacity: 0.55; stroke-width: 2.5; stroke-linejoin: round; }
-.hk-map__fog-base { fill: var(--hk-fog); opacity: 0.8; }
-.hk-map__fog-drift { opacity: 0.5; animation: hk-drift 38s ease-in-out infinite alternate; transform-origin: center; }
+.hk-map__fog { transition: opacity 2.6s ease-in; }
+.hk-map__fog-base { fill: var(--hk-fog); opacity: var(--hk-fog-opacity); }
+.hk-map__fog-drift { fill: var(--hk-fog-tint); opacity: 0.55; animation: hk-drift 38s ease-in-out infinite alternate; transform-origin: center; }
+.hk-map__fog-grid { fill: none; stroke: var(--hk-fog-grid); stroke-width: 1; }
+/* Once every stop is found the fog burns away. */
+.hk-map--complete .hk-map__fog { opacity: 0; }
 @keyframes hk-drift { from { transform: translate(-2%, -1%) scale(1.06); } to { transform: translate(2%, 1%) scale(1.1); } }
 .hk-map__glow-core { stop-color: var(--hk-accent); stop-opacity: 0.85; }
 .hk-map__glow-edge { stop-color: var(--hk-accent); stop-opacity: 0; }
@@ -157,5 +165,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hk-map__fog-drift, .hk-map__lantern { animation: none; }
+  .hk-map__fog { transition: none; }
   .hk-compass__arrow { transition: none; }
 }

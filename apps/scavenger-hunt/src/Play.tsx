@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import { readJson, writeJson, type KeyValueStore } from '@haunt-kit/template/adapters';
 import { awaitingAnswer, haversine, type EngineEvent, type SessionState, type Stop, type Tour } from '@haunt-kit/template/core';
 import { StopList, TourMap, useTourSession } from '@haunt-kit/template/react';
 import { huntToTour, type SharedHunt } from './hunt';
 import { decodeHunt, huntId } from './hunt-codec';
 import { HEAT_LABEL, heat, heatLevel, trend } from './hotcold';
-import { formatDuration, Leaderboard, penaltySummary, runDetails, score, type Run } from './leaderboard';
+import { formatDuration, Leaderboard, penaltySummary, runDetails, sentence, score, type Run } from './leaderboard';
 import { encodeResult, resultUrl } from './result-codec';
 import { Scoreboard } from './Scoreboard';
 
@@ -140,9 +140,10 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
         </header>
         {lastRun && (
           <section className="sh-card sh-finish" data-testid="finished">
+            <FinishBurst key={lastRun.finishedAt} />
             <h2 className="sh-h2">{lastRun.player} escaped!</h2>
             <p className="sh-bigtime" data-testid="finish-time">{formatDuration(score(lastRun))}</p>
-            <p className="sh-note sh-finish__penalty">Time with penalties: {penaltySummary(lastRun)}.</p>
+            <p className="sh-note sh-finish__penalty">{sentence(penaltySummary(lastRun))}</p>
             <p className="sh-note">{runDetails(lastRun)}</p>
           </section>
         )}
@@ -349,7 +350,8 @@ function ActiveGame({
             state={state}
             position={position}
             fog
-            revealMeters={40}
+            fogStyle="paper"
+            revealMeters={55}
             revealOnlyUnlocked
             showRoute={false}
             label={`Hunt map. ${found} of ${tour.stops.length} spots found. Hidden spots are not shown.`}
@@ -451,4 +453,36 @@ function Thermometer({ target, position }: { target: Stop; position: { lat: numb
 function nearest(stops: Stop[], position: { lat: number; lng: number } | null): Stop | undefined {
   if (!position || stops.length === 0) return stops[0];
   return [...stops].sort((a, b) => haversine(position, a.position) - haversine(position, b.position))[0];
+}
+
+const BURST_BAT = 'M0 8 C6 0 12 0 16 6 C18 2 20 2 22 6 C26 0 32 0 38 8 C32 6 28 8 26 14 C24 10 22 12 19 16 C16 12 14 10 12 14 C10 8 6 6 0 8 Z';
+
+/** Bats and pumpkins burst out of the finish card once. Hidden with reduced motion. */
+function FinishBurst() {
+  const pieces = Array.from({ length: 12 }, (_, i) => {
+    const angle = (i / 12) * Math.PI * 2 + 0.3;
+    const reach = 150 + (i % 3) * 60;
+    return { i, dx: Math.cos(angle) * reach * 1.6, dy: Math.sin(angle) * reach * 0.7, spin: (i % 2 ? 1 : -1) * (90 + i * 20), bat: i % 2 === 0 };
+  });
+  return (
+    <div className="sh-burst" aria-hidden="true">
+      {pieces.map((p) => (
+        <svg
+          key={p.i}
+          className="sh-burst__piece"
+          viewBox={p.bat ? '-2 -2 42 20' : '0 0 24 24'}
+          style={{ '--dx': `${p.dx}px`, '--dy': `${p.dy}px`, '--spin': `${p.spin}deg`, animationDelay: `${(p.i % 4) * 0.05}s` } as CSSProperties}
+        >
+          {p.bat ? (
+            <path className="sh-burst__bat" d={BURST_BAT} />
+          ) : (
+            <>
+              <ellipse className="sh-burst__pumpkin" cx="12" cy="14" rx="10" ry="8" />
+              <path className="sh-burst__stem" d="M11 6 q1 -4 4 -4" />
+            </>
+          )}
+        </svg>
+      ))}
+    </div>
+  );
 }

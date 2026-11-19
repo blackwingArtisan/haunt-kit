@@ -36,6 +36,11 @@ export function penaltySummary(run: Pick<Run, 'hints' | 'wrongAnswers'>): string
   return parts.length ? `includes ${parts.join(' and ')}` : 'no penalties';
 }
 
+/** Capitalizes a phrase and ends it with a period: "includes +10 s" becomes "Includes +10 s." */
+export function sentence(phrase: string): string {
+  return `${phrase.charAt(0).toUpperCase()}${phrase.slice(1)}.`;
+}
+
 /** "1 hint · 1 wrong answer · 3 unlocked from the list". */
 export function runDetails(run: Pick<Run, 'hints' | 'wrongAnswers' | 'assisted'>): string {
   const parts = [plural(run.hints, 'hint'), plural(run.wrongAnswers, 'wrong answer')];

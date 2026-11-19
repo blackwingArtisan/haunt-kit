@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MemoryStore } from '@haunt-kit/template/adapters';
-import { formatDuration, Leaderboard, penaltySummary, plural, rank, runDetails, score, type Run } from '../src/leaderboard';
+import { formatDuration, Leaderboard, penaltySummary, plural, sentence, rank, runDetails, score, type Run } from '../src/leaderboard';
 
 const run = (player: string, seconds: number, extra: Partial<Run> = {}): Run => ({
   player,
@@ -55,6 +55,7 @@ describe('finish time wording', () => {
     expect(penaltySummary(run('C', 30, { hints: 2, wrongAnswers: 3 }))).toBe('includes +60 s for 2 hints and +30 s for 3 wrong answers');
     expect(runDetails(run('D', 30, { hints: 1, wrongAnswers: 1, assisted: 3 }))).toBe('1 hint · 1 wrong answer · 3 unlocked from the list');
     expect(runDetails(run('E', 30))).toBe('0 hints · 0 wrong answers');
+    expect(sentence(penaltySummary(run('F', 30)))).toBe('No penalties.');
   });
 
   it('shows the same total on the finish card and the leaderboard', () => {

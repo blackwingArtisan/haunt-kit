@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createNarrator, createStore, SilentNarrator, type Narrator } from '@haunt-kit/template/adapters';
 import type { EngineEvent } from '@haunt-kit/template/core';
 import { Compass, StopList, StopSources, TourMap, useStopDialog, useTourSession } from '@haunt-kit/template/react';
+import { FinaleOverlay } from './Finale';
 import { tour } from './tour';
 
 const SPEEDS = [
@@ -38,6 +39,8 @@ export function App() {
   const urlSpeed = useMemo(speedFromUrl, []);
   const [speed, setSpeed] = useState<number>(urlSpeed ?? 30);
   const [notice, setNotice] = useState<Notice | null>(null);
+  // Set by the engine's "complete" event, so the finale plays once, not on every reload of a finished walk.
+  const [finaleArmed, setFinaleArmed] = useState(false);
   const noticeKey = useRef(0);
   const dialog = useStopDialog();
   const modeRef = useRef<'idle' | 'gps' | 'simulated'>('idle');
@@ -80,9 +83,14 @@ export function App() {
         case 'locked-nearby':
           say(`${name(event.stopId)} stays dark. ${event.waitingFor.length} more ${event.waitingFor.length === 1 ? 'spirit waits' : 'spirits wait'} elsewhere.`);
           break;
-        case 'complete':
+        case 'complete': {
           say('Every spirit is found. The tower light goes out.');
+          setFinaleArmed(true);
+          // While watching, the last story stays up for a few seconds and then gives way to the finale.
+          const last = tour.stops[tour.stops.length - 1]!.id;
+          if (watchingRef.current) setTimeout(() => openIdRef.current === last && dialog.close(), 4000);
           break;
+        }
         default:
           break;
       }
@@ -93,6 +101,12 @@ export function App() {
   const session = useTourSession(tour, { store, onEvent });
   modeRef.current = session.mode;
   if (session.mode === 'idle') watchingRef.current = false;
+
+  const closeFinale = useCallback(() => setFinaleArmed(false), []);
+  const walkAgain = () => {
+    setFinaleArmed(false);
+    session.reset();
+  };
 
   const watch = () => {
     // A finished walk replays from the start; partial progress is kept.
@@ -269,6 +283,8 @@ export function App() {
         </p>
         <p>Built with Haunt Kit by Stubborn Otter Software.</p>
       </footer>
+
+      <FinaleOverlay open={finaleArmed && progress.complete && !dialog.openId} onClose={closeFinale} onWalkAgain={walkAgain} />
 
       <dialog ref={dialog.ref} className="gw-dialog" aria-labelledby="gw-dialog-title">
         {openStop && (

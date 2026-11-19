@@ -97,7 +97,7 @@ test('a fast keyboard user moving straight to the next stop keeps focus and open
   // Close the dialog and open the next stop in the same task, before the
   // dialog's own close event has been delivered.
   await page.evaluate(() => {
-    document.querySelector('dialog')!.close();
+    document.querySelector<HTMLDialogElement>('dialog.gw-dialog')!.close();
     const next = document.querySelector<HTMLButtonElement>('.hk-list__item[data-stop="one-too-many"] button')!;
     next.focus();
     next.click();
@@ -157,6 +157,35 @@ test('"Watch the 60-second walk" opens each story on arrival, closes it as the w
   await expect(dialog).toBeHidden({ timeout: 20_000 });
   await expect(dialog.getByRole('heading', { name: 'Terrace Hill' })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId('progress')).toHaveAttribute('aria-label', '6 of 6 spirits found');
-  await dialog.getByRole('button', { name: 'Close' }).click();
+  // The last story gives way to the full-screen finale by itself, and the fog burns off the map.
+  const finale = page.getByTestId('finale-overlay');
+  await expect(finale).toBeVisible({ timeout: 10_000 });
+  await expect(finale.getByRole('heading', { name: 'Every spirit is found' })).toBeVisible();
+  await expect(page.getByTestId('tour-map')).toHaveClass(/hk-map--complete/);
+  await finale.getByRole('button', { name: 'Walk it again' }).click();
+  await expect(finale).toBeHidden();
+  await expect(page.getByTestId('progress')).toHaveAttribute('aria-label', '0 of 6 spirits found');
+});
+
+test('the finale plays once: a reload of a finished walk does not open it again', async ({ page }) => {
+  await page.goto('/');
+  for (const id of STOPS) await stopRow(page, id).getByRole('button', { name: /Read from here/ }).click().then(() => page.keyboard.press('Escape'));
+  await expect(page.getByTestId('finale-overlay')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('finale-overlay')).toBeHidden();
+  await page.reload();
   await expect(page.getByTestId('finale')).toBeVisible();
+  await expect(page.getByTestId('finale-overlay')).toBeHidden();
+});
+
+test('with reduced motion the finale appears in its final state, with nothing animating', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  for (const id of STOPS) await stopRow(page, id).getByRole('button', { name: /Read from here/ }).click().then(() => page.keyboard.press('Escape'));
+  const finale = page.getByTestId('finale-overlay');
+  await expect(finale).toBeVisible();
+  const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length);
+  expect(running).toBe(0);
+  // The tower light is already out.
+  await expect(finale.locator('.gw-tower__light')).toHaveCSS('fill', 'rgb(35, 35, 42)');
 });

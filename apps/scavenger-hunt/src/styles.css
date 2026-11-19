@@ -19,7 +19,10 @@
   --hk-locked: #7a6a96;
   --hk-done: var(--sh-slime);
   --hk-line: rgba(255, 247, 238, 0.08);
-  --hk-fog: #140a22;
+  /* Cut-paper clouds in grape over a deep purple night. */
+  --hk-fog: #150927;
+  --hk-fog-opacity: 0.86;
+  --hk-fog-tint: #6d4bb0;
   --hk-focus: var(--sh-slime);
   --hk-radius: 16px;
   --hk-font-display: 'Creepster', 'Atkinson Hyperlegible', system-ui, sans-serif;
@@ -187,7 +190,21 @@ body {
 @keyframes sh-pulse { 50% { filter: brightness(1.25); } }
 
 .sh-lobby { max-width: 560px; }
-.sh-finish { text-align: center; background: var(--sh-slime); color: var(--sh-ink); }
+.sh-finish { position: relative; text-align: center; background: var(--sh-slime); color: var(--sh-ink); }
+.sh-burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 2; }
+.sh-burst__piece {
+  position: absolute; left: -16px; top: -10px; width: 34px; height: 22px; overflow: visible;
+  animation: sh-burst 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.sh-burst__bat { fill: var(--sh-ink); }
+.sh-burst__pumpkin { fill: var(--sh-pumpkin); stroke: var(--sh-ink); stroke-width: 2; }
+.sh-burst__stem { fill: none; stroke: #2f6b1f; stroke-width: 2.5; stroke-linecap: round; }
+@keyframes sh-burst {
+  from { transform: translate(0, 0) scale(0.3) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--spin)); opacity: 0; }
+}
 .sh-finish .sh-note { color: var(--sh-ink); }
 .sh-bigtime { font: 400 4rem/1 var(--hk-font-display); margin: 6px 0; }
 .sh-board__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
@@ -203,6 +220,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .sh-moonbat { animation: none; }
+  .sh-burst { display: none; }
   .sh-clock { transform: none; }
   .sh-bat, .sh-thermo--here .sh-thermo__fill, .sh-thermo--burning .sh-thermo__fill { animation: none; }
   .sh-thermo__fill { transition: none; }

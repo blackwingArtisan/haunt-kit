@@ -60,7 +60,7 @@ test('a host builds a hunt, shares it, and a player races it with a simulated wa
 
   await expect(player.getByTestId('finished')).toContainText('Team Cauldron escaped!', { timeout: 30_000 });
   await expect(player.getByTestId('finished')).toContainText('1 wrong answer');
-  await expect(player.getByTestId('finished')).toContainText('includes +10 s for 1 wrong answer');
+  await expect(player.getByTestId('finished')).toContainText('Includes +10 s for 1 wrong answer.');
   await expect(player.getByTestId('leaderboard')).toContainText('Team Cauldron');
   await expect(player.getByLabel('Next player or team')).toBeVisible();
 });

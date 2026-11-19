@@ -15,8 +15,14 @@ export interface TourMapProps {
   position?: (LatLng & { accuracy?: number }) | null;
   /** Fog of war over ground the walker has not explored. */
   fog?: boolean;
-  /** How far around the walker's trail the fog lifts, in meters. Default 110. */
+  /** How far around the walker's trail the fog lifts, in meters. Default 150. */
   revealMeters?: number;
+  /**
+   * How the drifting fog is drawn. "mist" is soft, "paper" cuts it into
+   * hard-edged layers like cut paper. Colors come from --hk-fog, --hk-fog-tint,
+   * --hk-fog-opacity and --hk-fog-grid. Default "mist".
+   */
+  fogStyle?: 'mist' | 'paper';
   selectedId?: string;
   /** Extra points to keep in view (for example a host's current position). */
   extraPoints?: LatLng[];
@@ -49,7 +55,8 @@ export function TourMap({
   height = 700,
   position,
   fog = false,
-  revealMeters = 110,
+  revealMeters = 150,
+  fogStyle = 'mist',
   selectedId,
   extraPoints = [],
   projection,
@@ -89,7 +96,7 @@ export function TourMap({
 
   return (
     <svg
-      className={`hk-map${onMapClick ? ' hk-map--editable' : ''}`}
+      className={`hk-map${onMapClick ? ' hk-map--editable' : ''}${state.completedAt !== undefined ? ' hk-map--complete' : ''}`}
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={label}
@@ -100,6 +107,9 @@ export function TourMap({
         <pattern id={`${uid}-grid`} width={m(100)} height={m(100)} patternUnits="userSpaceOnUse">
           <path d={`M ${m(100)} 0 L 0 0 0 ${m(100)}`} className="hk-map__grid" />
         </pattern>
+        <pattern id={`${uid}-fog-grid`} width={m(250)} height={m(250)} patternUnits="userSpaceOnUse">
+          <path d={`M ${m(250)} 0 L 0 0 0 ${m(250)}`} className="hk-map__fog-grid" />
+        </pattern>
         <radialGradient id={`${uid}-glow`}>
           <stop offset="0%" className="hk-map__glow-core" />
           <stop offset="100%" className="hk-map__glow-edge" />
@@ -108,9 +118,16 @@ export function TourMap({
           <stop offset="55%" stopColor="black" stopOpacity="1" />
           <stop offset="100%" stopColor="black" stopOpacity="0" />
         </radialGradient>
+        {/* Turbulence becomes the clouds' shape (alpha only); the color is a themed flood. */}
         <filter id={`${uid}-noise`} x="0" y="0" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="3" seed="7" />
-          <feColorMatrix type="matrix" values="0 0 0 0 0.6  0 0 0 0 0.65  0 0 0 0 0.7  0 0 0 1.4 -0.35" />
+          <feTurbulence type="fractalNoise" baseFrequency={fogStyle === 'paper' ? 0.006 : 0.008} numOctaves="3" seed="7" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.4 -0.35" />
+          {fogStyle === 'paper' && (
+            <feComponentTransfer>
+              <feFuncA type="discrete" tableValues="0 0.35 0.6 0.85" />
+            </feComponentTransfer>
+          )}
+          <feComposite in="SourceGraphic" operator="in" />
         </filter>
         {fog && (
           <mask id={`${uid}-fog`} maskUnits="userSpaceOnUse" x="0" y="0" width={width} height={height}>
@@ -141,9 +158,10 @@ export function TourMap({
       {children?.(proj)}
 
       {fog && (
-        <g mask={`url(#${uid}-fog)`} className="hk-map__fog" aria-hidden="true">
+        <g mask={`url(#${uid}-fog)`} className="hk-map__fog" aria-hidden="true" data-testid="map-fog">
           <rect width={width} height={height} className="hk-map__fog-base" />
           <rect width={width} height={height} filter={`url(#${uid}-noise)`} className="hk-map__fog-drift" />
+          <rect width={width} height={height} fill={`url(#${uid}-fog-grid)`} />
         </g>
       )}
 
