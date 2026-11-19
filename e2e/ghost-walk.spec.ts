@@ -189,3 +189,18 @@ test('with reduced motion the finale appears in its final state, with nothing an
   // The tower light is already out.
   await expect(finale.locator('.gw-tower__light')).toHaveCSS('fill', 'rgb(35, 35, 42)');
 });
+
+test('the start panel has one primary action, and the simulation sits behind "More ways to walk"', async ({ page }) => {
+  await page.goto('/');
+  const controls = page.getByRole('group', { name: 'How to walk' });
+  await expect(controls.getByRole('button', { name: 'Watch the 60-second walk' })).toBeVisible();
+  await expect(controls.getByRole('button', { name: 'Walk with my location' })).toBeVisible();
+  // Only the watch button is filled; the location button is an outline.
+  expect(await controls.locator('.hk-btn:not(.hk-btn--ghost):visible').count()).toBe(1);
+  await expect(controls.getByRole('button', { name: 'Simulate the walk' })).toBeHidden();
+
+  await controls.getByText('More ways to walk').click();
+  await controls.getByLabel('Speed').selectOption('60');
+  await controls.getByRole('button', { name: 'Simulate the walk' }).click();
+  await expect(page.getByTestId('walk-status')).toContainText('Simulated walk at 60x');
+});

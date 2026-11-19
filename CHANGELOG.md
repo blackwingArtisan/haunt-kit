@@ -4,6 +4,9 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 
 ## Unreleased
 
+### Ghost Walk start panel
+- One filled primary action, **Watch the 60-second walk**. **Walk with my location** is an outline button beside it, and **Simulate the walk** with its speed picker sits behind a **More ways to walk** disclosure. A `?speed=` link opens the disclosure.
+
 ### Fixes
 - The hosted-site preview moved from port 3175 to 3169. The first app made by `npm run create-app` takes 3174 and 3175, so the two used to collide. The generator now reserves 3169, and a unit test keeps the site config, the Playwright config and the generator in step.
 

@@ -213,34 +213,37 @@ export function App() {
             {session.mode === 'idle' ? (
               <>
                 <div className="gw-start">
-                  <button type="button" className="hk-btn" onClick={watch} data-testid="watch">
+                  <button type="button" className="hk-btn gw-primary" onClick={watch} data-testid="watch">
                     Watch the 60-second walk
                   </button>
-                  <button type="button" className="hk-btn" onClick={session.startGps}>
+                  <button type="button" className="hk-btn hk-btn--ghost" onClick={session.startGps}>
                     Walk with my location
                   </button>
                 </div>
-                <div className="gw-sim">
-                  <button
-                    type="button"
-                    className="hk-btn hk-btn--ghost"
-                    onClick={() => session.startSimulation({ speedMultiplier: speed })}
-                  >
-                    Simulate the walk
-                  </button>
-                  <label className="gw-speed">
-                    <span>Speed</span>
-                    <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>
-                      {[...SPEEDS, ...(urlSpeed && !SPEEDS.some((s) => s.value === urlSpeed) ? [{ value: urlSpeed, label: `${urlSpeed}x` }] : [])].map(
-                        (s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ),
-                      )}
-                    </select>
-                  </label>
-                </div>
+                <details className="gw-more" open={urlSpeed !== null || undefined}>
+                  <summary>More ways to walk</summary>
+                  <div className="gw-sim">
+                    <button
+                      type="button"
+                      className="hk-btn hk-btn--ghost"
+                      onClick={() => session.startSimulation({ speedMultiplier: speed })}
+                    >
+                      Simulate the walk
+                    </button>
+                    <label className="gw-speed">
+                      <span>Speed</span>
+                      <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>
+                        {[...SPEEDS, ...(urlSpeed && !SPEEDS.some((s) => s.value === urlSpeed) ? [{ value: urlSpeed, label: `${urlSpeed}x` }] : [])].map(
+                          (s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.label}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                    </label>
+                  </div>
+                </details>
               </>
             ) : (
               <button type="button" className="hk-btn hk-btn--ghost" onClick={session.stop}>
