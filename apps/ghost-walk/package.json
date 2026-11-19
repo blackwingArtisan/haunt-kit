@@ -1,0 +1,21 @@
+{
+  "name": "@haunt-kit/ghost-walk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ghost Walk: a self-guided haunted history walk through downtown Des Moines, built on Haunt Kit.",
+  "license": "MIT",
+  "author": "Stubborn Otter Software",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3170 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 3171 --strictPort"
+  },
+  "dependencies": {
+    "@fontsource/im-fell-english": "5.3.0",
+    "@fontsource/spectral": "5.3.0",
+    "@haunt-kit/template": "0.1.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}

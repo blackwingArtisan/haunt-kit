@@ -1,0 +1,22 @@
+# Tasks: Haunt Kit skeleton
+
+- [x] 1. Geo math: haversine, bearing, destination, compass words, distance formatting (Req 2.1)
+- [x] 2. Fix smoother: accuracy filter, outlier rejection with reset, Kalman blend (Req 4)
+- [x] 3. Tour schema with zod, defaults, readable issues, source rule for legend and history, cycle check (Req 1)
+- [x] 4. Session state, reconcile on load (Req 7.2, 7.3)
+- [x] 5. Ordering rules: sequential, requires, finale, finished definition (Req 3)
+- [x] 6. Geofence engine: dwell, hysteresis, unlock, locked-nearby, overlap order, completion, immutability (Req 2)
+- [x] 7. settleInside after list unlock and solved challenge (Req 2.6)
+- [x] 8. Simulated track, seeded jitter, SimulatedWalkSource with injectable scheduler (Req 5)
+- [x] 9. BrowserGeolocationSource with denied vs searching; one-shot getCurrentFix (Req 6)
+- [x] 10. KeyValueStore (localStorage with memory fallback), ProgressStore (Req 7)
+- [x] 11. Narrator adapters: speechSynthesis, silent, recording, Polly (not executed); env selection with build-time gate (Req 11)
+- [x] 12. Answer normalization and salted SHA-256 digests
+- [x] 13. Web Mercator projection, fit to bounds, unproject for pin drops (Req 9.4)
+- [x] 14. TourMap with fog of war, trail, accuracy ring, scale bar, revealOnlyUnlocked (Req 9)
+- [x] 15. StopList with visit-from-here and waiting-for text; Compass; StopSources; native dialog hook (Req 8)
+- [x] 16. Reduced-motion handling in base CSS (Req 8.4)
+- [x] 17. Vite PWA plugin and service worker registration; offline e2e (Req 10)
+- [x] 18. Unit tests for every core module and adapter
+- [ ] 19. Optional OpenStreetMap tile underlay for editors, off by default, with attribution and tile usage policy limits
+- [ ] 20. Starter generator: `npm create`-style script that copies `template/starter` into a new app folder

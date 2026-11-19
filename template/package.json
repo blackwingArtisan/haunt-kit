@@ -1,0 +1,28 @@
+{
+  "name": "@haunt-kit/template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Haunt Kit skeleton: tour format, geofence engine, simulated walks, adapters, React map and list, PWA plugin.",
+  "license": "MIT",
+  "author": "Stubborn Otter Software",
+  "type": "module",
+  "exports": {
+    "./core": "./src/core/index.ts",
+    "./adapters": "./src/adapters/index.ts",
+    "./adapters/polly": "./src/adapters/narrator-polly.ts",
+    "./react": "./src/react/index.ts",
+    "./pwa": "./src/pwa/register.ts",
+    "./vite": "./src/pwa/vite-plugin.ts",
+    "./styles.css": "./src/react/haunt-kit.css"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "optionalDependencies": {
+    "@aws-sdk/client-polly": "3.1172.0",
+    "@aws-sdk/credential-providers": "3.1172.0"
+  }
+}

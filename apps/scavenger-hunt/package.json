@@ -1,0 +1,22 @@
+{
+  "name": "@haunt-kit/scavenger-hunt",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scavenger Hunt: a Halloween party hunt anyone can set up in their own neighborhood, built on Haunt Kit.",
+  "license": "MIT",
+  "author": "Stubborn Otter Software",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3172 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 3173 --strictPort"
+  },
+  "dependencies": {
+    "@fontsource/atkinson-hyperlegible": "5.3.0",
+    "@fontsource/creepster": "5.3.0",
+    "@haunt-kit/template": "0.1.0",
+    "qrcode": "1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}

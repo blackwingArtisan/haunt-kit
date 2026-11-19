@@ -1,0 +1,39 @@
+{
+  "name": "haunt-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A skeleton for GPS-triggered story walks, with two apps built on it: a Des Moines ghost walk and a party scavenger hunt.",
+  "license": "MIT",
+  "author": "Stubborn Otter Software",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "template",
+    "apps/ghost-walk",
+    "apps/scavenger-hunt"
+  ],
+  "scripts": {
+    "dev:ghost": "npm run dev -w apps/ghost-walk",
+    "dev:hunt": "npm run dev -w apps/scavenger-hunt",
+    "build": "npm run build -w apps/ghost-walk && npm run build -w apps/scavenger-hunt",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "check": "npm run typecheck && npm test",
+    "verify": "npm run check && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.6",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  }
+}

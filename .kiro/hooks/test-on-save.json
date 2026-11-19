@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run unit tests on source save",
+      "description": "Runs the Vitest suite whenever the agent saves a TypeScript file under template/ or an app's src/ or test/ folder, so a broken geofence, smoothing or hunt-link rule is caught at once. A PostFileSave command hook cannot block the save; a failing suite is reported back to the agent.",
+      "trigger": "PostFileSave",
+      "matcher": "^(template/(src|test)|apps/[^/]+/(src|test))/.*\\.(ts|tsx)$",
+      "action": { "type": "command", "command": "npm test" },
+      "timeout": 120
+    }
+  ]
+}

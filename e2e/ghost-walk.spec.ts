@@ -1,0 +1,113 @@
+import { expect, test, type BrowserContext, type Page } from '@playwright/test';
+
+const STOPS = ['ferrymans-bell', 'one-too-many', 'hoyt-sherman-place', 'lamplighters-round', 'woodland-cemetery', 'terrace-hill'];
+const stopRow = (page: Page, id: string) => page.locator(`.hk-list__item[data-stop="${id}"]`);
+
+/** Sends a fix every 400 ms, wobbling by under a meter like a phone at rest, until `done` is true. */
+async function feedFixes(context: BrowserContext, at: { latitude: number; longitude: number }, done: () => Promise<boolean>) {
+  for (let i = 0; i < 25; i++) {
+    await context.setGeolocation({ latitude: at.latitude + (i % 2) * 0.000005, longitude: at.longitude, accuracy: 8 });
+    await new Promise((r) => setTimeout(r, 400));
+    if (await done()) return;
+  }
+  throw new Error('The stop did not unlock after 25 fixes');
+}
+
+test('a simulated walk unlocks every stop along the route, then the finale', async ({ page }) => {
+  await page.goto('/?speed=250');
+  await expect(page.getByRole('heading', { name: /Des Moines After Dark/ })).toBeVisible();
+  await expect(stopRow(page, 'terrace-hill')).toHaveAttribute('data-status', 'locked');
+
+  await page.getByRole('button', { name: 'Simulate the walk' }).click();
+  await expect(page.getByTestId('walk-status')).toContainText('Simulated walk');
+
+  // Stops unlock in route order as the lantern reaches them.
+  for (const id of STOPS) {
+    await expect(stopRow(page, id)).toHaveAttribute('data-status', 'finished', { timeout: 30_000 });
+  }
+  await expect(page.getByTestId('finale')).toContainText('The walk is complete');
+  await expect(page.getByTestId('progress')).toHaveAttribute('aria-label', '6 of 6 spirits found');
+  await expect(page.locator('.hk-marker[data-stop="terrace-hill"]')).toHaveAttribute('data-status', 'finished');
+
+  // Progress survives a reload.
+  await page.reload();
+  await expect(page.getByTestId('progress')).toHaveAttribute('aria-label', '6 of 6 spirits found');
+
+  // Read a story that unlocked during the walk, with its sources.
+  await stopRow(page, 'hoyt-sherman-place').getByRole('button', { name: /Read: Hoyt Sherman Place/ }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('heading', { name: 'Hoyt Sherman Place' })).toBeVisible();
+  await expect(dialog).toContainText('Legend says');
+  await expect(dialog.getByRole('link', { name: 'The ghosts of Des Moines' })).toHaveAttribute('href', /timesdelphic\.com/);
+});
+
+test('real browser geolocation: standing at Hoyt Sherman Place unlocks it and opens the story', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await context.setGeolocation({ latitude: 41.58861, longitude: -93.63833, accuracy: 8 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Walk with my location' }).click();
+  await expect(page.getByTestId('walk-status')).toContainText('Following your lantern');
+  // A phone reports a fresh fix every second or so; the engine needs two inside the circle.
+  await feedFixes(context, { latitude: 41.58861, longitude: -93.63833 }, () =>
+    stopRow(page, 'hoyt-sherman-place').getAttribute('data-status').then((s) => s === 'finished'),
+  );
+
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('heading', { name: 'Hoyt Sherman Place' })).toBeVisible({ timeout: 15_000 });
+  await expect(dialog).toContainText('Local legend');
+  await expect(stopRow(page, 'hoyt-sherman-place')).toHaveAttribute('data-status', 'finished');
+  await expect(stopRow(page, 'ferrymans-bell')).toHaveAttribute('data-status', 'available');
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  // The compass now points at the next stop: the Ferryman's Bell, down by the river to the east.
+  await expect(page.getByTestId('compass')).toContainText("The Ferryman's Bell: 1.8 km east");
+});
+
+test('every stop can be read from the list with the keyboard alone', async ({ page }) => {
+  await page.goto('/');
+  const finale = stopRow(page, 'terrace-hill').getByRole('button');
+  await expect(finale).toBeDisabled();
+  await expect(stopRow(page, 'terrace-hill')).toContainText('after every other stop');
+
+  for (const id of STOPS.slice(0, 5)) {
+    const button = stopRow(page, id).getByRole('button', { name: /Read from here/ });
+    await button.focus();
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    // Focus returns to the list so a keyboard user does not lose their place.
+    await expect(stopRow(page, id).getByRole('button')).toBeFocused();
+  }
+
+  await expect(finale).toBeEnabled();
+  await finale.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog')).toContainText('legend says a little girl haunts this house'.replace('legend', 'Legend'));
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('finale')).toBeVisible();
+});
+
+test('fiction is labeled as fiction', async ({ page }) => {
+  await page.goto('/');
+  await stopRow(page, 'one-too-many').getByRole('button').click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('Fiction');
+  await expect(dialog).toContainText('invented for this walk');
+  await expect(dialog.getByRole('list', { name: 'Sources' })).toHaveCount(0);
+});
+
+test('works offline once visited (service worker)', async ({ page, context }) => {
+  await page.goto('/');
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  // Load once more so the worker controls the page and has cached the shell.
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /Des Moines After Dark/ })).toBeVisible();
+  await expect(page.locator('.hk-list__item')).toHaveCount(6);
+  await context.setOffline(false);
+});

@@ -1,0 +1,146 @@
+/*
+ * Haunt Kit structural styles. Apps theme them by setting the --hk-* custom
+ * properties; nothing here hard-codes a palette beyond neutral fallbacks.
+ */
+:root {
+  --hk-ground: #14161c;
+  --hk-ink: #e9e4d8;
+  --hk-muted: #a9a394;
+  --hk-accent: #ff9f43;
+  --hk-accent-ink: #1a1206;
+  --hk-locked: #6f6a60;
+  --hk-done: #7bd389;
+  --hk-line: rgba(233, 228, 216, 0.18);
+  --hk-fog: #0b0c10;
+  --hk-river: #2f4a5c;
+  --hk-street: rgba(233, 228, 216, 0.22);
+  --hk-park: rgba(90, 120, 80, 0.28);
+  --hk-radius: 10px;
+  --hk-font-display: Georgia, serif;
+  --hk-font-body: system-ui, sans-serif;
+  --hk-focus: #ffd166;
+}
+
+.hk-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--hk-radius);
+  background: var(--hk-ground);
+  user-select: none;
+}
+.hk-map--editable { cursor: crosshair; }
+.hk-map__ground { fill: var(--hk-ground); }
+.hk-map__grid { fill: none; stroke: var(--hk-line); stroke-width: 0.6; }
+.hk-map__feature path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.hk-map__feature--river path { stroke: var(--hk-river); stroke-width: 22; }
+.hk-map__feature--street path { stroke: var(--hk-street); stroke-width: 6; }
+.hk-map__feature--park path { stroke: var(--hk-park); stroke-width: 40; }
+.hk-map__feature--landmark path { stroke: var(--hk-street); stroke-width: 2; stroke-dasharray: 2 4; }
+.hk-map__feature-label {
+  fill: var(--hk-muted);
+  font: italic 15px var(--hk-font-display);
+  text-anchor: middle;
+  letter-spacing: 0.08em;
+  paint-order: stroke;
+  stroke: var(--hk-ground);
+  stroke-width: 4px;
+}
+.hk-map__route { fill: none; stroke: var(--hk-accent); stroke-opacity: 0.45; stroke-width: 3; stroke-dasharray: 2 10; stroke-linecap: round; }
+.hk-map__trail { fill: none; stroke: var(--hk-ink); stroke-opacity: 0.55; stroke-width: 2.5; stroke-linejoin: round; }
+.hk-map__fog-base { fill: var(--hk-fog); opacity: 0.8; }
+.hk-map__fog-drift { opacity: 0.5; animation: hk-drift 38s ease-in-out infinite alternate; transform-origin: center; }
+@keyframes hk-drift { from { transform: translate(-2%, -1%) scale(1.06); } to { transform: translate(2%, 1%) scale(1.1); } }
+.hk-map__glow-core { stop-color: var(--hk-accent); stop-opacity: 0.85; }
+.hk-map__glow-edge { stop-color: var(--hk-accent); stop-opacity: 0; }
+.hk-map__lantern { animation: hk-flicker 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hk-flicker { 0%, 100% { opacity: 0.9; } 40% { opacity: 0.65; } 55% { opacity: 1; } 70% { opacity: 0.75; } }
+.hk-map__accuracy { fill: var(--hk-accent); fill-opacity: 0.08; stroke: var(--hk-accent); stroke-opacity: 0.35; stroke-dasharray: 3 4; }
+.hk-map__me-dot { fill: var(--hk-ink); stroke: var(--hk-accent); stroke-width: 3; }
+.hk-map__scale path { fill: none; stroke: var(--hk-ink); stroke-width: 2; }
+.hk-map__scale text { fill: var(--hk-ink); font: 13px var(--hk-font-body); text-anchor: middle; }
+.hk-map__north { font-weight: 700; }
+.hk-map__north-arrow { fill: var(--hk-ink) !important; stroke: none !important; }
+
+.hk-marker__radius { fill: var(--hk-accent); fill-opacity: 0.07; stroke: var(--hk-accent); stroke-opacity: 0.4; stroke-dasharray: 4 6; }
+.hk-marker__dot { fill: var(--hk-ground); stroke: var(--hk-accent); stroke-width: 3; }
+.hk-marker__num { fill: var(--hk-ink); font: 700 14px var(--hk-font-body); text-anchor: middle; }
+.hk-marker__name {
+  fill: var(--hk-ink);
+  font: 16px var(--hk-font-display);
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--hk-ground);
+  stroke-width: 5px;
+}
+.hk-marker--locked .hk-marker__dot { stroke: var(--hk-locked); }
+.hk-marker--locked .hk-marker__radius { stroke: var(--hk-locked); fill-opacity: 0.03; }
+.hk-marker--locked .hk-marker__name, .hk-marker--locked .hk-marker__num { fill: var(--hk-muted); }
+.hk-marker--unlocked .hk-marker__dot, .hk-marker--finished .hk-marker__dot { fill: var(--hk-accent); }
+.hk-marker--unlocked .hk-marker__num, .hk-marker--finished .hk-marker__num { fill: var(--hk-accent-ink); }
+.hk-marker--finished .hk-marker__dot { fill: var(--hk-done); stroke: var(--hk-done); }
+.hk-marker--selected .hk-marker__dot { stroke: var(--hk-focus); stroke-width: 5; }
+
+.hk-list__heading { font-family: var(--hk-font-display); }
+.hk-list__items { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.hk-list__item {
+  display: grid;
+  grid-template-columns: 2.2em 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--hk-line);
+  border-radius: var(--hk-radius);
+}
+.hk-list__num {
+  width: 2em; height: 2em; display: grid; place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--hk-accent);
+  font-weight: 700;
+}
+.hk-list__item--locked .hk-list__num { border-color: var(--hk-locked); color: var(--hk-muted); }
+.hk-list__item--unlocked .hk-list__num { background: var(--hk-accent); color: var(--hk-accent-ink); }
+.hk-list__item--finished .hk-list__num { background: var(--hk-done); border-color: var(--hk-done); color: var(--hk-accent-ink); }
+.hk-list__body { display: grid; gap: 2px; min-width: 0; }
+.hk-list__name { font-weight: 700; }
+.hk-list__meta { color: var(--hk-muted); font-size: 0.9em; }
+.hk-list__lock { color: var(--hk-muted); font-size: 0.85em; }
+
+.hk-btn {
+  font: inherit;
+  font-weight: 700;
+  border: 2px solid var(--hk-accent);
+  background: var(--hk-accent);
+  color: var(--hk-accent-ink);
+  border-radius: 999px;
+  padding: 0.6em 1.2em;
+  cursor: pointer;
+  min-height: 44px;
+}
+.hk-btn:hover { filter: brightness(1.08); }
+.hk-btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+.hk-btn--ghost { background: transparent; color: var(--hk-ink); }
+.hk-btn--small { padding: 0.35em 0.9em; font-size: 0.9em; min-height: 36px; }
+.hk-btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--hk-focus);
+  outline-offset: 3px;
+}
+
+.hk-compass { display: flex; align-items: center; gap: 10px; }
+.hk-compass__arrow { width: 36px; height: 36px; fill: var(--hk-accent); transition: transform 0.4s ease; flex: none; }
+
+.hk-kind { margin: 0; font-size: 0.78em; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hk-muted); }
+.hk-kind--fiction { color: var(--hk-focus); }
+.hk-sources__list { margin: 0.5em 0 0; padding-left: 1.2em; font-size: 0.9em; }
+.hk-sources__list a { color: var(--hk-accent); }
+.hk-sources__publisher { color: var(--hk-muted); }
+
+.hk-visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-map__fog-drift, .hk-map__lantern { animation: none; }
+  .hk-compass__arrow { transition: none; }
+}
