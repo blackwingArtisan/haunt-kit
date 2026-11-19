@@ -59,7 +59,8 @@ test('a host builds a hunt, shares it, and a player races it with a simulated wa
   await challenge.getByRole('button', { name: 'Check answer' }).click();
 
   await expect(player.getByTestId('finished')).toContainText('Team Cauldron escaped!', { timeout: 30_000 });
-  await expect(player.getByTestId('finished')).toContainText('1 wrong answers');
+  await expect(player.getByTestId('finished')).toContainText('1 wrong answer');
+  await expect(player.getByTestId('finished')).toContainText('includes +10 s for 1 wrong answer');
   await expect(player.getByTestId('leaderboard')).toContainText('Team Cauldron');
   await expect(player.getByLabel('Next player or team')).toBeVisible();
 });
@@ -171,7 +172,7 @@ test('a player on their own phone sends a result link, and the host adds it to t
 
     const finished = player.getByTestId('finished');
     await expect(finished).toContainText('Team Lantern escaped!');
-    await expect(finished).toContainText('1 hints · 1 wrong answers · 3 unlocked from the list');
+    await expect(finished).toContainText('1 hint · 1 wrong answer · 3 unlocked from the list');
     await expect(player.getByRole('link', { name: 'Send my time to the host' })).toBeVisible();
     const resultLink = (await player.getByTestId('result-link').getAttribute('href'))!;
     expect(resultLink).toMatch(/#\/result\/[0-9A-Za-z_-]+$/);
@@ -182,7 +183,7 @@ test('a player on their own phone sends a result link, and the host adds it to t
     await host.goto(resultLink);
     const card = host.getByTestId('result-card');
     await expect(card).toContainText('Team Lantern finished');
-    await expect(card).toContainText('1 hints · 1 wrong answers · 3 unlocked from the list');
+    await expect(card).toContainText('1 hint · 1 wrong answer · 3 unlocked from the list');
     await expect(host.getByRole('heading', { name: 'The Pumpkin Patrol' })).toBeVisible();
     await expect(host.getByTestId('leaderboard')).not.toContainText('Team Lantern');
     await host.getByRole('button', { name: 'Add to leaderboard' }).click();

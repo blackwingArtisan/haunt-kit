@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { KeyValueStore } from '@haunt-kit/template/adapters';
-import { Leaderboard, formatDuration, score, type Run } from './leaderboard';
+import { Leaderboard, formatDuration, penaltySummary, runDetails, score, type Run } from './leaderboard';
 import { decodeResult, type ResultPayload } from './result-codec';
 import { inspectResult, submitResult } from './result-board';
 import { Scoreboard } from './Scoreboard';
@@ -66,10 +66,8 @@ function ResultCard({ result, store }: { result: ResultPayload; store: KeyValueS
           {result.player} finished
         </h2>
         <p className="sh-bigtime">{formatDuration(score(run))}</p>
-        <p className="sh-note">
-          Time {formatDuration(result.elapsedMs)} plus penalties · {result.hints} hints · {result.wrongAnswers} wrong answers
-          {result.assisted ? ` · ${result.assisted} unlocked from the list` : ''}
-        </p>
+        <p className="sh-note">Time with penalties: {penaltySummary(run)}.</p>
+        <p className="sh-note">{runDetails(run)}</p>
         {added ? (
           <p className="sh-message" role="status" data-testid="result-status">
             Added {result.player} to the leaderboard.

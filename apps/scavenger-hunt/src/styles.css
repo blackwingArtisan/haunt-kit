@@ -35,7 +35,6 @@ body {
   color: var(--sh-paper);
   font: 18px/1.55 var(--hk-font-body);
   background:
-    radial-gradient(circle at 85% 8%, rgba(255, 247, 238, 0.95) 0 34px, rgba(255, 247, 238, 0.15) 36px, transparent 120px),
     radial-gradient(1000px 500px at 50% 120%, rgba(166, 241, 91, 0.12), transparent 60%),
     var(--sh-night);
   background-attachment: fixed;
@@ -46,9 +45,28 @@ body {
 .sh-skip { position: absolute; left: 16px; top: -60px; z-index: 10; background: var(--sh-slime); color: var(--sh-ink); padding: 8px 14px; border-radius: 8px; font-weight: 700; }
 .sh-skip:focus { top: 12px; }
 
-.sh-bats { position: fixed; top: 10px; left: 0; width: min(520px, 70vw); height: auto; pointer-events: none; z-index: 0; }
-.sh-bat { fill: var(--sh-ink); animation: sh-flap 3.4s ease-in-out infinite; transform-box: fill-box; }
+.sh { position: relative; }
+.sh-sky { position: absolute; inset: 0 0 auto; height: 240px; overflow: hidden; pointer-events: none; z-index: 0; }
+.sh-bats { position: absolute; top: 10px; left: 0; width: min(520px, 70vw); height: auto; }
+/* A pale rim keeps the paper-cut bats visible against the purple night. */
+.sh-bat { fill: var(--sh-ink); stroke: rgba(203, 191, 224, 0.75); stroke-width: 1.2px; paint-order: stroke; animation: sh-flap 3.4s ease-in-out infinite; transform-box: fill-box; }
 @keyframes sh-flap { 0%, 100% { translate: 0 0; } 50% { translate: 6px -8px; } }
+.sh-moon {
+  position: absolute; top: 14px; right: 18%;
+  width: 72px; height: 72px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 36%, #fffdf8, #f6ead8 62%, #e7d6bf);
+  box-shadow: 0 0 36px 10px rgba(255, 247, 238, 0.16), 0 0 120px 30px rgba(255, 247, 238, 0.08);
+}
+.sh-moonbat { position: absolute; left: 14%; top: 34%; width: 72%; overflow: visible; animation: sh-cross 2.6s ease-in-out 0.4s 1 both; }
+.sh-moonbat .sh-bat { animation-duration: 0.5s; stroke: none; }
+@keyframes sh-cross {
+  from { transform: translate(-260%, 90%) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  to { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+@media (max-width: 700px) {
+  .sh-moon { top: 6px; right: 16px; width: 40px; height: 40px; }
+}
 
 .sh-main { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 32px 20px 20px; }
 .sh-footer { max-width: 1200px; margin: 0 auto; padding: 0 20px 32px; color: var(--sh-muted); font-size: 0.9rem; }
@@ -143,9 +161,12 @@ body {
 .sh-qr svg { display: block; width: 100%; height: 100%; }
 
 .sh-gamehead { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+/* The clock is a paper tag, so it reads the same wherever the sky decoration falls. */
 .sh-clock {
-  font: 400 2.6rem/1 var(--hk-font-display); color: var(--sh-slime); text-shadow: 3px 3px 0 var(--sh-ink);
-  font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right;
+  font: 400 2.2rem/1 var(--hk-font-display); color: var(--sh-ink);
+  background: var(--sh-paper); border: 3px solid var(--sh-ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--sh-ink);
+  padding: 6px 14px 4px; transform: rotate(2deg);
+  font-variant-numeric: tabular-nums; min-width: 4ch; text-align: center;
 }
 .sh-message { min-height: 1.6em; font-weight: 700; color: var(--sh-slime); margin: 6px 0 14px; }
 .sh-gamegrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
@@ -181,6 +202,8 @@ body {
 .hk-list__item { background: var(--sh-night-2); border: 3px solid var(--sh-ink); }
 
 @media (prefers-reduced-motion: reduce) {
+  .sh-moonbat { animation: none; }
+  .sh-clock { transform: none; }
   .sh-bat, .sh-thermo--here .sh-thermo__fill, .sh-thermo--burning .sh-thermo__fill { animation: none; }
   .sh-thermo__fill { transition: none; }
   .sh-steps li, .sh-steps li:nth-child(even) { transform: none; }

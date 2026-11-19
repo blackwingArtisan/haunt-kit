@@ -23,6 +23,26 @@ export function rank(runs: readonly Run[]): Run[] {
   return [...runs].sort((a, b) => score(a) - score(b) || a.finishedAt - b.finishedAt);
 }
 
+/** "1 hint", "2 hints", "0 hints". */
+export function plural(n: number, singular: string, pluralForm = `${singular}s`): string {
+  return `${n} ${n === 1 ? singular : pluralForm}`;
+}
+
+/** The penalty line under a finish time: "includes +30 s for 1 hint and +20 s for 2 wrong answers". */
+export function penaltySummary(run: Pick<Run, 'hints' | 'wrongAnswers'>): string {
+  const parts: string[] = [];
+  if (run.hints > 0) parts.push(`+${(run.hints * HINT_PENALTY_MS) / 1000} s for ${plural(run.hints, 'hint')}`);
+  if (run.wrongAnswers > 0) parts.push(`+${(run.wrongAnswers * WRONG_PENALTY_MS) / 1000} s for ${plural(run.wrongAnswers, 'wrong answer')}`);
+  return parts.length ? `includes ${parts.join(' and ')}` : 'no penalties';
+}
+
+/** "1 hint · 1 wrong answer · 3 unlocked from the list". */
+export function runDetails(run: Pick<Run, 'hints' | 'wrongAnswers' | 'assisted'>): string {
+  const parts = [plural(run.hints, 'hint'), plural(run.wrongAnswers, 'wrong answer')];
+  if (run.assisted) parts.push(`${run.assisted} unlocked from the list`);
+  return parts.join(' · ');
+}
+
 export function formatDuration(ms: number): string {
   const total = Math.max(0, Math.round(ms / 1000));
   const h = Math.floor(total / 3600);

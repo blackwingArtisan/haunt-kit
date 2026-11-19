@@ -104,6 +104,11 @@
 .hk-list__name { font-weight: 700; }
 .hk-list__meta { color: var(--hk-muted); font-size: 0.9em; }
 .hk-list__lock { color: var(--hk-muted); font-size: 0.85em; }
+/* Narrow phones: the action moves under the name instead of squeezing it into a word per line. */
+@media (max-width: 480px) {
+  .hk-list__item { grid-template-columns: 2.2em minmax(0, 1fr); row-gap: 8px; }
+  .hk-list__actions { grid-column: 2; }
+}
 
 .hk-btn {
   font: inherit;
@@ -117,7 +122,18 @@
   min-height: 44px;
 }
 .hk-btn:hover { filter: brightness(1.08); }
-.hk-btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+/* Disabled reads as "not yet": a dashed outline in muted ink, not a faded copy of the live button. */
+.hk-btn:disabled,
+.hk-btn:disabled:hover {
+  cursor: not-allowed;
+  filter: none;
+  background: transparent;
+  color: var(--hk-muted);
+  border-style: dashed;
+  border-color: var(--hk-locked);
+  box-shadow: none;
+  transform: none;
+}
 .hk-btn--ghost { background: transparent; color: var(--hk-ink); }
 .hk-btn--small { padding: 0.35em 0.9em; font-size: 0.9em; min-height: 36px; }
 .hk-btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {

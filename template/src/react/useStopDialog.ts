@@ -35,6 +35,9 @@ export function useStopDialog() {
     if (!dialog || !request) return;
     shownSeq.current = request.seq;
     if (!dialog.open) dialog.showModal();
+    // showModal focuses the autofocus button at the bottom, which scrolls a
+    // tall story on a phone. Every story starts at its heading.
+    dialog.scrollTop = 0;
   }, [request]);
 
   useEffect(() => {

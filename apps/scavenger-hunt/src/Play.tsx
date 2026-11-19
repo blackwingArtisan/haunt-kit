@@ -5,7 +5,7 @@ import { StopList, TourMap, useTourSession } from '@haunt-kit/template/react';
 import { huntToTour, type SharedHunt } from './hunt';
 import { decodeHunt, huntId } from './hunt-codec';
 import { HEAT_LABEL, heat, heatLevel, trend } from './hotcold';
-import { formatDuration, Leaderboard, type Run } from './leaderboard';
+import { formatDuration, Leaderboard, penaltySummary, runDetails, score, type Run } from './leaderboard';
 import { encodeResult, resultUrl } from './result-codec';
 import { Scoreboard } from './Scoreboard';
 
@@ -141,10 +141,9 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
         {lastRun && (
           <section className="sh-card sh-finish" data-testid="finished">
             <h2 className="sh-h2">{lastRun.player} escaped!</h2>
-            <p className="sh-bigtime">{formatDuration(lastRun.elapsedMs)}</p>
-            <p className="sh-note">
-              {lastRun.hints} hints · {lastRun.wrongAnswers} wrong answers{lastRun.assisted ? ` · ${lastRun.assisted} unlocked from the list` : ''}
-            </p>
+            <p className="sh-bigtime" data-testid="finish-time">{formatDuration(score(lastRun))}</p>
+            <p className="sh-note sh-finish__penalty">Time with penalties: {penaltySummary(lastRun)}.</p>
+            <p className="sh-note">{runDetails(lastRun)}</p>
           </section>
         )}
         <form className="sh-card sh-lobby" onSubmit={start}>
