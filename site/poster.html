@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Haunt Kit · Print a poster</title>
+    <meta name="description" content="Printable posters for the Haunt Kit apps: a QR code, the start point and tonight's sunset time." />
+    <meta name="theme-color" content="#0c0e13" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="pp">
+    <div class="pp-controls">
+      <p><a href="./">Back to Haunt Kit</a></p>
+      <h1>Print the haunting</h1>
+      <p>One page per app. Tape it to a door, a lamppost or a classroom wall; anyone who scans it is playing a moment later.</p>
+      <form class="pp-form" id="hunt-form">
+        <label for="hunt-link">Your own Spook Hunt link (optional)</label>
+        <input id="hunt-link" type="url" inputmode="url" placeholder="Paste the share link from Make the share link" />
+        <button type="submit">Use this link</button>
+      </form>
+      <p><button type="button" id="print">Print the posters</button></p>
+    </div>
+
+    <article class="poster poster--ghost" aria-labelledby="pg-title" data-testid="poster-ghost">
+      <p class="poster__kicker">A free, self-guided ghost walk</p>
+      <h2 id="pg-title" class="poster__title">Des Moines <span>After Dark</span></h2>
+      <p class="poster__sub" data-field="subtitle"></p>
+      <div class="poster__qr" data-qr="./ghost-walk/" data-label="QR code for Des Moines After Dark"></div>
+      <dl class="poster__facts">
+        <div><dt>Start</dt><dd data-field="start"></dd></div>
+        <div><dt>Sunset tonight</dt><dd data-field="sunset" data-testid="poster-sunset"></dd></div>
+      </dl>
+      <p class="poster__foot">Scan with your phone camera. No app, no account, and your location never leaves your phone. Every story can also be read from the list.</p>
+    </article>
+
+    <article class="poster poster--hunt" aria-labelledby="ph-title" data-testid="poster-hunt">
+      <p class="poster__kicker">A Halloween scavenger hunt</p>
+      <h2 id="ph-title" class="poster__title">Spook <span>Hunt</span></h2>
+      <p class="poster__sub" data-field="hunt-sub">Find the hidden spots, answer the questions, beat the clock.</p>
+      <div class="poster__qr" data-qr="./spook-hunt/#/demo" data-label="QR code for Spook Hunt" id="hunt-qr"></div>
+      <dl class="poster__facts">
+        <div><dt>Start</dt><dd data-field="hunt-start"></dd></div>
+        <div><dt>Sunset tonight</dt><dd data-field="sunset"></dd></div>
+      </dl>
+      <p class="poster__foot">Scan with your phone camera, type your name and the first clue appears. Phones buzz hot and cold as you close in.</p>
+    </article>
+
+    <script type="module" src="./src/poster.ts"></script>
+  </body>
+</html>

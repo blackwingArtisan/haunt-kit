@@ -27,8 +27,20 @@ body {
 .lp-skip:focus { top: 12px; }
 a:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
 
-.lp-head, .lp-apps, .lp-bones, .lp-foot { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
-.lp-head { padding-top: 48px; padding-bottom: 28px; }
+.lp-strip, .lp-head, .lp-apps, .lp-bones, .lp-beyond, .lp-foot { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+.lp-head { padding-top: 28px; padding-bottom: 28px; }
+
+/* The Kiroween strip: what this is and where the evidence lives. */
+.lp-strip { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; justify-content: space-between; padding-top: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(236, 227, 207, 0.12); }
+.lp-strip__badge { margin: 0; font-size: 0.8rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--lp-bone-dim); }
+.lp-strip__links { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0; padding: 0; list-style: none; font-size: 0.95rem; }
+.lp-strip__links a { color: var(--lp-bone); text-underline-offset: 4px; text-decoration-color: rgba(255, 138, 61, 0.7); }
+
+/* The stakes: the price of one hosted event against this kit. */
+.lp-stakes { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin: 18px 0 4px; font-size: 1.15rem; }
+.lp-stakes strong { font-size: 1.5rem; }
+.lp-stakes__zero { color: var(--lp-slime); }
+.lp-stakes__src { font-size: 0.85rem; color: var(--lp-bone-dim); text-underline-offset: 3px; }
 .lp-kicker { margin: 0; font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--lp-bone-dim); }
 .lp-title { margin: 0.05em 0 0.1em; font: 400 clamp(3.2rem, 10vw, 6.5rem) / 0.95 'IM Fell English', Georgia, serif; }
 .lp-lede { margin: 0; max-width: 34ch; font: italic 400 clamp(1.4rem, 3.4vw, 2rem) / 1.25 'IM Fell English', Georgia, serif; color: var(--lp-ember); }
@@ -73,11 +85,45 @@ a:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
 .lp-card--hunt .lp-card__title span { color: var(--lp-pumpkin); }
 .lp-card--hunt .lp-btn { background: var(--lp-pumpkin); color: var(--lp-ink); border: 3px solid var(--lp-ink); box-shadow: 3px 3px 0 var(--lp-ink); }
 .lp-card--hunt .lp-qr__code { border: 3px solid var(--lp-ink); }
+.lp-card--hunt .lp-btn--paper { background: var(--lp-paper); }
 
-.lp-bones { margin-top: 40px; }
-.lp-bones h2 { font: 400 2rem 'IM Fell English', Georgia, serif; margin: 0 0 8px; }
-.lp-code code { display: inline-block; padding: 10px 14px; border-radius: 10px; background: rgba(236, 227, 207, 0.06); box-shadow: inset 0 0 0 1px rgba(236, 227, 207, 0.14); font: 1rem ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--lp-bone); overflow-wrap: anywhere; }
-.lp-bones ul { padding-left: 1.2em; color: var(--lp-bone-dim); max-width: 70ch; }
+.lp-bones { margin-top: 48px; }
+.lp-bones h2, .lp-beyond h2 { font: 400 2rem 'IM Fell English', Georgia, serif; margin: 0 0 8px; }
+.lp-bones__intro { max-width: 70ch; color: var(--lp-bone-dim); margin: 0 0 18px; }
+
+/* Engine diagram: inputs flow into the skeleton, which drives two costumes. */
+.lp-engine { margin: 0; display: grid; grid-template-columns: minmax(0, 0.8fr) 36px minmax(0, 1fr) 36px minmax(0, 1.9fr); align-items: center; gap: 0 6px; }
+.lp-engine__inputs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.lp-engine__inputs li { padding: 10px 12px; border-radius: 10px; background: rgba(236, 227, 207, 0.05); box-shadow: inset 0 0 0 1px rgba(236, 227, 207, 0.14); font-size: 0.92rem; color: var(--lp-bone); }
+.lp-engine__arrow { height: 2px; background: linear-gradient(90deg, rgba(255, 138, 61, 0.2), var(--lp-ember)); position: relative; }
+.lp-engine__arrow::after { content: ''; position: absolute; right: -2px; top: -5px; border: 6px solid transparent; border-left: 9px solid var(--lp-ember); border-right: 0; }
+.lp-engine__core { padding: 16px; border-radius: 16px; background: radial-gradient(260px 160px at 50% 0%, rgba(255, 138, 61, 0.16), transparent 70%), #141824; box-shadow: 0 0 0 1px rgba(255, 138, 61, 0.45), 0 0 40px -10px rgba(255, 138, 61, 0.5); }
+.lp-engine__core p { margin: 0; }
+.lp-engine__label { font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--lp-ember); }
+.lp-engine__core code { display: block; margin: 8px 0; font: 0.95rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--lp-bone); overflow-wrap: anywhere; }
+.lp-engine__facts { font-size: 0.88rem; color: var(--lp-bone-dim); }
+.lp-engine__outputs { display: grid; gap: 14px; }
+.lp-screen { margin: 0; display: grid; gap: 8px; }
+.lp-screen img { display: block; width: 100%; height: auto; border-radius: 12px; }
+.lp-screen figcaption { font-size: 0.92rem; color: var(--lp-bone-dim); }
+.lp-screen figcaption strong { color: var(--lp-bone); }
+.lp-screen--ghost img { box-shadow: 0 0 0 1px rgba(236, 227, 207, 0.18), 0 20px 40px -24px #000; }
+.lp-screen--hunt img { border: 3px solid var(--lp-ink); box-shadow: 5px 5px 0 var(--lp-ink); }
+.lp-engine__caption { grid-column: 1 / -1; margin-top: 14px; font: italic 1.2rem 'IM Fell English', Georgia, serif; color: var(--lp-ember); text-align: right; }
+@media (max-width: 900px) {
+  .lp-engine { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .lp-engine__arrow { width: 2px; height: 28px; margin: 4px auto; background: linear-gradient(180deg, rgba(255, 138, 61, 0.2), var(--lp-ember)); }
+  .lp-engine__arrow::after { right: -5px; top: auto; bottom: -2px; border: 6px solid transparent; border-top: 9px solid var(--lp-ember); border-bottom: 0; }
+  .lp-engine__caption { text-align: left; }
+}
+
+.lp-beyond { margin-top: 48px; }
+.lp-beyond__list { padding-left: 1.2em; max-width: 72ch; color: var(--lp-bone-dim); }
+.lp-beyond__list li { margin-bottom: 6px; }
+.lp-beyond__list strong { color: var(--lp-bone); }
+.lp-beyond__list a { color: var(--lp-slime); font-weight: 700; text-underline-offset: 4px; margin-left: 4px; }
+.lp-btn--outline { color: var(--lp-bone); box-shadow: inset 0 0 0 2px rgba(236, 227, 207, 0.5); }
+.lp-beyond__note { color: var(--lp-bone-dim); font-size: 0.95rem; margin-left: 8px; }
 .lp-foot { padding-top: 24px; padding-bottom: 40px; color: var(--lp-bone-dim); font-size: 0.95rem; }
 .lp-foot a { color: var(--lp-ember); }
 

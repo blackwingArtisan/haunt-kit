@@ -4,6 +4,13 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 
 ## Unreleased
 
+### Landing page and posters
+- A Kiroween strip links the Kiro log and the source. Under the tagline, a stakes line compares Goosechase's top single-event price with Haunt Kit's $0, with a link to the published prices.
+- Spook Hunt's card has a third action, **Make a hunt in 30 seconds**, which opens the editor.
+- "The skeleton under both" is now a diagram: the inputs flow into `stepFix`, which drives the two apps, shown with real screenshots.
+- A **Beyond October** section lists three year-round uses and links a playable three-spot **Friday Word Hunt**, made with the same share function the editor uses. A unit test decodes the link and checks that its answers travel only as hashes.
+- A **Print a poster** page (`poster.html`) prints one poster per app: the title, a QR code, the start point and tonight's sunset time in Des Moines. A host can paste their own hunt link to put it on the poster. Print styles give one letter-size page per poster.
+
 ### Ghost Walk start panel
 - One filled primary action, **Watch the 60-second walk**. **Walk with my location** is an outline button beside it, and **Simulate the walk** with its speed picker sits behind a **More ways to walk** disclosure. A `?speed=` link opens the disclosure.
 

@@ -38,3 +38,49 @@ test('one click from the landing page starts each demo', async ({ page }) => {
   await expect(page).toHaveURL(/\/spook-hunt\/#\/play\//);
   await expect(page.getByRole('heading', { name: 'The Pumpkin Patrol' })).toBeVisible();
 });
+
+test('the landing page states the stakes, links the Kiro log, and draws the engine diagram', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByTestId('stakes')).toContainText('$749');
+  await expect(page.getByTestId('stakes')).toContainText('$0');
+  await expect(page.getByTestId('kiro-log')).toHaveAttribute('href', /KIRO-LOG\.md$/);
+  const diagram = page.getByTestId('engine-diagram');
+  await expect(diagram).toContainText('stepFix(tour, state, fix)');
+  for (const img of await diagram.locator('img').all()) {
+    await img.scrollIntoViewIfNeeded();
+    expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+  }
+});
+
+test('"Make a hunt in 30 seconds" opens the editor, and the word hunt link opens a playable hunt', async ({ page }) => {
+  await page.goto('/');
+  await page.getByTestId('make-hunt').click();
+  await expect(page).toHaveURL(/\/spook-hunt\/#\/host$/);
+  await expect(page.getByRole('button', { name: /Make the share link/ })).toBeVisible();
+
+  await page.goto('/');
+  await page.getByTestId('word-hunt').click();
+  await expect(page.getByRole('heading', { name: 'Friday Word Hunt' })).toBeVisible();
+});
+
+test('the poster page prints one poster per app with a QR code and the sunset time', async ({ page }) => {
+  await page.goto('/');
+  await page.getByTestId('poster-link').click();
+  await expect(page).toHaveURL(/\/poster\.html$/);
+  await expect(page.getByTestId('qr')).toHaveCount(2);
+  await expect(page.getByTestId('poster-sunset')).toHaveText(/^\d{1,2}:\d{2} (AM|PM) C[SD]T$/);
+  await expect(page.getByTestId('poster-ghost')).toContainText("The Ferryman's Bell");
+  await audit(page);
+
+  // A host's own link replaces the demo in the hunt poster's QR code.
+  await page.getByLabel('Your own Spook Hunt link (optional)').fill('https://example.org/spook-hunt/#/play/abc123');
+  await page.getByRole('button', { name: 'Use this link' }).click();
+  await expect(page.getByTestId('poster-hunt').getByTestId('qr')).toHaveAttribute('aria-label', /#\/play\/abc123\)$/);
+
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.getByRole('button', { name: 'Print the posters' })).toBeHidden();
+  await expect(page.getByTestId('poster-ghost')).toBeVisible();
+  const pdf = await page.pdf({ format: 'Letter' });
+  const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length;
+  expect(pages).toBe(2);
+});

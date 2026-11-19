@@ -15,11 +15,22 @@
   </head>
   <body>
     <a class="lp-skip" href="#apps">Skip to the apps</a>
+    <nav class="lp-strip" aria-label="Kiroween">
+      <p class="lp-strip__badge">Kiroween 2026 · Skeleton Crew</p>
+      <ul class="lp-strip__links">
+        <li><a href="https://github.com/blackwingArtisan/haunt-kit/blob/main/KIRO-LOG.md" data-testid="kiro-log">How it was built with Kiro</a></li>
+        <li><a href="https://github.com/blackwingArtisan/haunt-kit" data-testid="repo">Source code (MIT)</a></li>
+      </ul>
+    </nav>
     <header class="lp-head">
-      <p class="lp-kicker">Kiroween 2026 · Skeleton Crew</p>
       <h1 class="lp-title">Haunt Kit</h1>
       <p class="lp-lede">A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link.</p>
-      <p class="lp-sub">One open-source skeleton for GPS story walks. Write the stops as data and they unlock as people arrive. Here it is in two costumes.</p>
+      <p class="lp-stakes" data-testid="stakes">
+        <span>Goosechase: up to <strong>$749</strong> per event.</span>
+        <span>Haunt Kit: <strong class="lp-stakes__zero">$0</strong>.</span>
+        <a class="lp-stakes__src" href="https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing">Goosechase's published prices</a>
+      </p>
+      <p class="lp-sub">One open-source skeleton for GPS story walks. Write the stops as data and they unlock as people arrive. Some stops only exist after dark. Here it is in two costumes.</p>
     </header>
 
     <main id="apps" class="lp-apps">
@@ -43,6 +54,7 @@
         <p>Drop hiding spots in your own yard or street, write the clues, and share one link. The whole hunt lives in the link; answers travel as salted hashes.</p>
         <div class="lp-card__row">
           <a class="lp-btn" href="./spook-hunt/#/demo" data-testid="play-hunt">Play the demo hunt</a>
+          <a class="lp-btn lp-btn--paper" href="./spook-hunt/#/host" data-testid="make-hunt">Make a hunt in 30 seconds</a>
           <a class="lp-link" href="./spook-hunt/" data-testid="open-hunt">Open the hunt</a>
         </div>
         <figure class="lp-qr">
@@ -53,14 +65,46 @@
     </main>
 
     <section class="lp-bones" aria-labelledby="bones-h">
-      <h2 id="bones-h">The skeleton under both</h2>
-      <p class="lp-code"><code>stepFix(tour, state, fix) → { state, events }</code></p>
-      <ul>
-        <li>A pure geofence engine: smoothing, dwell, hysteresis and ordering rules, unit-tested in Node.</li>
-        <li>Every stop can be opened from a list, without walking.</li>
-        <li>Works offline. Your location never leaves your phone.</li>
-        <li>A simulated walk replays the route from a chair, through the same engine as real GPS.</li>
+      <h2 id="bones-h">One skeleton under both</h2>
+      <p class="lp-bones__intro">Both apps feed position fixes into the same pure engine and draw what it returns. Only the data and the costume change.</p>
+      <figure class="lp-engine" data-testid="engine-diagram">
+        <ol class="lp-engine__inputs" aria-label="Inputs">
+          <li>Tour data, checked by a schema</li>
+          <li>Phone GPS, smoothed on the device</li>
+          <li>A simulated walk, at any speed</li>
+        </ol>
+        <div class="lp-engine__arrow lp-engine__arrow--in" aria-hidden="true"></div>
+        <div class="lp-engine__core">
+          <p class="lp-engine__label">The skeleton, about 2,600 lines</p>
+          <code>stepFix(tour, state, fix) → { state, events }</code>
+          <p class="lp-engine__facts">Dwell, hysteresis, ordering and sunset rules, unit-tested in Node. Every stop also opens from a list. Your location never leaves your phone.</p>
+        </div>
+        <div class="lp-engine__arrow lp-engine__arrow--out" aria-hidden="true"></div>
+        <div class="lp-engine__outputs">
+          <figure class="lp-screen lp-screen--ghost">
+            <img src="./media/story.jpg" width="720" height="450" loading="lazy" alt="Des Moines After Dark: the Terrace Hill story open, with its three linked sources" />
+            <figcaption><strong>Ghost walk.</strong> A stop's sourced story opens on arrival.</figcaption>
+          </figure>
+          <figure class="lp-screen lp-screen--hunt">
+            <img src="./media/hotcold.jpg" width="720" height="450" loading="lazy" alt="Spook Hunt: the hot-and-cold meter reading Warm on the way to the second hidden spot" />
+            <figcaption><strong>Scavenger hunt.</strong> A hidden spot's question, and hot and cold on the way to the next.</figcaption>
+          </figure>
+        </div>
+        <figcaption class="lp-engine__caption">The same engine, two costumes.</figcaption>
+      </figure>
+    </section>
+
+    <section class="lp-beyond" aria-labelledby="beyond-h">
+      <h2 id="beyond-h">Beyond October</h2>
+      <ul class="lp-beyond__list">
+        <li>
+          <strong>A teacher's weekly word hunt.</strong> A scrambled vocabulary word taped at each spot; unscramble it to get the next clue.
+          <a href="./spook-hunt/#/play/1jZHdbuIwEIVfZZRrFxF-l70rdKGVoLtKy9IVQqtJYpJpjB1spyxvv-NEVXvZG2t0PD5zvvE-FtHSUo5X2Bmbw32jfST6IkqMOUE8iERkuQrFfh89lxKWCovaKMk3S9I5eNY8KiWdh6AD6Var0VY9uIVLsM2QD3LcWEt-YoC8gxSd7EViFI-n8aTfFzez4WQ0mnI1GItoq11m8ZSyY7BrbUxnHdy-QwIbeIAVrOEHbHrw4OEkUTtAOCJpL-CoKKukJV2AoqL0PCsabxbD-bbOX2_io539vbDED51Hy4Eu5EtYrXvRQXSscyrgJ1bctENVhdxhvMGqa21zUR7IvW00466Nqd5TOr7hKFmY3y3ElxwhHjDgt69CPjPiIywY8RYeP0G-SXsV7QlG5YFsMFWTc7Z47cfqmiJtWbojbRw2lndiwwByH2iJxDwkm0udld1fkivfh6dB5bNlaJOhl1bApZTsRD785bkh6UFq0xRlWI1lRw4yZrR49lW-Jyb7BTumvIfkEx_7uVryoltEZ45eXQPlcPf0RtXd-fe_aiWTl5qlP6aB3LShNH--otSi5ebD4fAf" data-testid="word-hunt">Play the Friday Word Hunt</a>
+        </li>
+        <li><strong>A library's monthly story walk.</strong> A picture book split into pages along a path, one page per stop.</li>
+        <li><strong>Campus orientation week.</strong> Find the library, the bursar and the dining hall, with a question at each.</li>
       </ul>
+      <p><a class="lp-btn lp-btn--outline" href="./poster.html" data-testid="poster-link">Print a poster</a> <span class="lp-beyond__note">One page per app, with its QR code, start point and tonight's sunset time.</span></p>
     </section>
 
     <footer class="lp-foot">

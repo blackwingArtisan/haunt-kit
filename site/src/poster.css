@@ -1,0 +1,58 @@
+/* Printable posters: dark and themed on screen, ink-light on paper, one poster per page. */
+:root { --pp-ink: #0d0618; --pp-paper: #fff7ee; --pp-ember: #c4561a; --pp-pumpkin: #ff7518; color-scheme: dark; }
+* { box-sizing: border-box; }
+html { background: #0c0e13; }
+body.pp { margin: 0; color: #ece3cf; font: 18px/1.55 'Atkinson Hyperlegible', system-ui, sans-serif; background: #0c0e13; }
+.pp-controls { max-width: 760px; margin: 0 auto; padding: 24px 20px 8px; }
+.pp-controls h1 { margin: 0 0 4px; font: 400 2.4rem 'IM Fell English', Georgia, serif; }
+.pp-controls a { color: #ff8a3d; text-underline-offset: 4px; }
+.pp-controls button {
+  font: inherit; font-weight: 700; min-height: 44px; padding: 0.5em 1.2em; border-radius: 999px; cursor: pointer;
+  border: 2px solid #ff8a3d; background: #ff8a3d; color: #1a0f06;
+}
+.pp-form { display: grid; gap: 6px; margin: 16px 0; }
+.pp-form label { font-weight: 700; }
+.pp-form input { font: inherit; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(236, 227, 207, 0.4); background: #141824; color: #ece3cf; }
+.pp-form button { justify-self: start; background: transparent; color: #ece3cf; border-color: rgba(236, 227, 207, 0.5); }
+:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
+
+.poster {
+  max-width: 760px; margin: 24px auto; padding: 40px 36px; border-radius: 18px; text-align: center;
+  display: grid; gap: 14px; justify-items: center;
+}
+.poster__kicker { margin: 0; font-size: 0.85rem; letter-spacing: 0.28em; text-transform: uppercase; }
+.poster__title { margin: 0; line-height: 0.95; }
+.poster__sub { margin: 0; max-width: 40ch; font-size: 1.15rem; }
+.poster__qr { width: min(300px, 70vw); aspect-ratio: 1; background: #fff; border-radius: 12px; overflow: hidden; }
+.poster__qr svg { display: block; width: 100%; height: 100%; }
+.poster__facts { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; width: 100%; max-width: 560px; text-align: left; }
+.poster__facts dt { font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; }
+.poster__facts dd { margin: 2px 0 0; font-size: 1.05rem; }
+.poster__foot { margin: 0; max-width: 52ch; font-size: 0.95rem; }
+@media (max-width: 560px) { .poster { padding: 28px 18px; } .poster__facts { grid-template-columns: 1fr; } }
+
+.poster--ghost { background: radial-gradient(500px 300px at 50% 0%, rgba(255, 138, 61, 0.18), transparent 70%), #141824; box-shadow: 0 0 0 1px rgba(236, 227, 207, 0.15); }
+.poster--ghost .poster__kicker, .poster--ghost .poster__facts dt { color: #b3aa95; }
+.poster--ghost .poster__title { font: 400 clamp(2.6rem, 9vw, 4.6rem) / 0.95 'IM Fell English', Georgia, serif; }
+.poster--ghost .poster__title span { font-style: italic; color: #ff8a3d; }
+
+.poster--hunt { background: #2a1846; color: var(--pp-paper); border: 4px solid var(--pp-ink); box-shadow: 8px 8px 0 var(--pp-ink); }
+.poster--hunt .poster__kicker, .poster--hunt .poster__facts dt { color: #a6f15b; }
+.poster--hunt .poster__title { font: 400 clamp(2.8rem, 10vw, 5rem) / 1 'Creepster', system-ui, sans-serif; letter-spacing: 0.03em; }
+.poster--hunt .poster__title span { color: var(--pp-pumpkin); }
+.poster--hunt .poster__qr { border: 4px solid var(--pp-ink); }
+
+@media print {
+  @page { size: letter portrait; margin: 0.5in; }
+  html, body.pp { background: #fff; color: #000; }
+  .pp-controls { display: none; }
+  .poster {
+    max-width: none; min-height: 9.6in; margin: 0; padding: 0.4in; border-radius: 0; box-shadow: none; border: 3px solid #000;
+    background: #fff !important; color: #000 !important; align-content: center; break-after: page; break-inside: avoid;
+  }
+  .poster:last-of-type { break-after: auto; }
+  .poster__kicker, .poster__facts dt, .poster--hunt .poster__kicker, .poster--hunt .poster__facts dt, .poster--ghost .poster__kicker, .poster--ghost .poster__facts dt { color: #000; }
+  .poster--ghost .poster__title span { color: var(--pp-ember); }
+  .poster--hunt .poster__title span { color: var(--pp-pumpkin); }
+  .poster__qr { width: 3.6in; border: 0; }
+}
