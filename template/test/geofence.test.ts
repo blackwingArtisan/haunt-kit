@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { markSolved, recordAttempt, settleInside, stepFix, unlock, type EngineEvent } from '../src/core/geofence';
-import { availability, nextTarget, progressCounts } from '../src/core/rules';
+import { availability, awaitingAnswer, nextTarget, progressCounts } from '../src/core/rules';
 import { createSession, type SessionState } from '../src/core/session';
 import type { Tour } from '../src/core/tour';
 import { east, testTour } from './fixtures';
@@ -137,5 +137,20 @@ describe('geofence engine', () => {
     const solved = markSolved(tour, state, 'b', 5);
     expect(types(solved.events)).toEqual(['solved:b', 'unlock:c']);
     expect(settleInside(tour, solved.state, 6).events).toEqual([]);
+  });
+
+  it('reports the found stop whose question is still unanswered', () => {
+    const tour = testTour();
+    let state = createSession(tour);
+    expect(awaitingAnswer(tour, state)).toBeUndefined();
+    state = unlock(tour, state, 'a', 'gps', 1).state;
+    // A has no question, so nothing waits for an answer.
+    expect(awaitingAnswer(tour, state)).toBeUndefined();
+    state = unlock(tour, state, 'b', 'gps', 2).state;
+    expect(awaitingAnswer(tour, state)?.id).toBe('b');
+    state = recordAttempt(state, 'b', 'wrong');
+    expect(awaitingAnswer(tour, state)?.id).toBe('b');
+    state = markSolved(tour, state, 'b', 3).state;
+    expect(awaitingAnswer(tour, state)).toBeUndefined();
   });
 });

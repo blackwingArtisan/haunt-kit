@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { readJson, writeJson, type KeyValueStore } from '@haunt-kit/template/adapters';
-import { haversine, type EngineEvent, type SessionState, type Stop, type Tour } from '@haunt-kit/template/core';
+import { awaitingAnswer, haversine, type EngineEvent, type SessionState, type Stop, type Tour } from '@haunt-kit/template/core';
 import { StopList, TourMap, useTourSession } from '@haunt-kit/template/react';
 import { huntToTour, type SharedHunt } from './hunt';
 import { decodeHunt, huntId } from './hunt-codec';
@@ -248,7 +248,7 @@ function ActiveGame({
   }, []);
 
   // The stop that needs an answer, if any; otherwise the nearest stop still hidden.
-  const pending = tour.stops.find((s) => s.challenge && state.stops[s.id]?.unlockedAt !== undefined && state.stops[s.id]?.solvedAt === undefined);
+  const pending = awaitingAnswer(tour, state);
   const hidden = tour.stops.filter((s) => state.stops[s.id]?.unlockedAt === undefined);
   const available = hidden.filter((s) => session.target?.id === s.id || tour.ordering === 'free');
   const target = nearest(available, position) ?? session.target;
@@ -313,7 +313,9 @@ function ActiveGame({
             </div>
             <p className="sh-note" data-testid="hunt-status">
               {session.mode === 'simulated'
-                ? 'Practice run: a simulated player walks the route.'
+                ? pending
+                  ? 'Practice run: the simulated player waits here until you answer.'
+                  : 'Practice run: a simulated player walks the route.'
                 : session.status === 'tracking'
                   ? 'Tracking you. Keep the screen on.'
                   : session.status === 'searching'

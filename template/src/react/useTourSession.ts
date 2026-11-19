@@ -4,7 +4,7 @@ import { ProgressStore, type KeyValueStore } from '../adapters/storage';
 import { checkAnswer } from '../core/answers';
 import { haversine, type LatLng } from '../core/geo';
 import { markSolved, recordAttempt, settleInside, stepFix, unlock, type EngineEvent, type GeofenceOptions } from '../core/geofence';
-import { nextTarget, progressCounts } from '../core/rules';
+import { awaitingAnswer, nextTarget, progressCounts } from '../core/rules';
 import { createSession, type SessionState } from '../core/session';
 import { routeWithPauses, type Waypoint } from '../core/simulate';
 import { FixSmoother, type Fix, type SmootherOptions } from '../core/smoothing';
@@ -21,6 +21,8 @@ export interface SimulationOptions {
   /** Override the route (default: the tour route). */
   waypoints?: Waypoint[];
   seed?: number;
+  /** Stand still at a found stop until its question is answered, then walk on. Default true. */
+  waitForAnswers?: boolean;
 }
 
 export interface TourSessionOptions {
@@ -138,6 +140,7 @@ export function useTourSession(tour: Tour, options: TourSessionOptions): TourSes
           jitter: sim.jitter ?? 6,
           seed: sim.seed ?? 13,
           stepSeconds: 2,
+          hold: sim.waitForAnswers === false ? undefined : () => awaitingAnswer(tour, stateRef.current) !== undefined,
         }),
         'simulated',
       );

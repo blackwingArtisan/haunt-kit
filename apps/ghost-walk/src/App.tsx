@@ -11,6 +11,14 @@ const SPEEDS = [
   { value: 60, label: '60x' },
 ];
 
+/**
+ * "Watch the 60-second walk": the whole route at 60x, lingering at each stop
+ * long enough for its story to open. About 2,640 s of walking plus six
+ * 150 s stops, divided by 60, is just under a minute.
+ */
+export const WATCH_SPEED = 60;
+export const WATCH_PAUSE_SECONDS = 150;
+
 function speedFromUrl(): number | null {
   const raw = new URLSearchParams(location.search).get('speed');
   const n = raw ? Number(raw) : NaN;
@@ -33,6 +41,10 @@ export function App() {
   const noticeKey = useRef(0);
   const dialog = useStopDialog();
   const modeRef = useRef<'idle' | 'gps' | 'simulated'>('idle');
+  // True while "Watch the 60-second walk" plays: each story opens on arrival and closes as the walker moves on.
+  const watchingRef = useRef(false);
+  const openIdRef = useRef<string | null>(null);
+  openIdRef.current = dialog.openId;
 
   useEffect(() => {
     createNarrator(
@@ -58,7 +70,12 @@ export function App() {
           if (event.by === 'gps' && modeRef.current === 'gps') {
             navigator.vibrate?.([80, 60, 160]);
             dialog.open(event.stopId);
+          } else if (event.by === 'gps' && watchingRef.current) {
+            dialog.open(event.stopId);
           }
+          break;
+        case 'exit':
+          if (watchingRef.current && openIdRef.current === event.stopId) dialog.close();
           break;
         case 'locked-nearby':
           say(`${name(event.stopId)} stays dark. ${event.waitingFor.length} more ${event.waitingFor.length === 1 ? 'spirit waits' : 'spirits wait'} elsewhere.`);
@@ -75,6 +92,14 @@ export function App() {
 
   const session = useTourSession(tour, { store, onEvent });
   modeRef.current = session.mode;
+  if (session.mode === 'idle') watchingRef.current = false;
+
+  const watch = () => {
+    // A finished walk replays from the start; partial progress is kept.
+    if (session.progress.complete) session.reset();
+    watchingRef.current = true;
+    session.startSimulation({ speedMultiplier: urlSpeed ?? WATCH_SPEED, pauseAtStops: WATCH_PAUSE_SECONDS });
+  };
   const { state, progress, position } = session;
   const openStop = tour.stops.find((s) => s.id === dialog.openId);
 
@@ -98,6 +123,7 @@ export function App() {
   };
 
   const statusText = (() => {
+    if (session.mode === 'simulated' && watchingRef.current) return 'Watching the walk: the lantern follows the route and each story opens as it arrives.';
     if (session.mode === 'simulated') return `Simulated walk at ${speed === 1 ? 'real pace' : `${speed}x`}. Your lantern follows the route.`;
     switch (session.status) {
       case 'starting':
@@ -155,9 +181,14 @@ export function App() {
           <div className="gw-controls" role="group" aria-label="How to walk">
             {session.mode === 'idle' ? (
               <>
-                <button type="button" className="hk-btn" onClick={session.startGps}>
-                  Walk with my location
-                </button>
+                <div className="gw-start">
+                  <button type="button" className="hk-btn" onClick={watch} data-testid="watch">
+                    Watch the 60-second walk
+                  </button>
+                  <button type="button" className="hk-btn" onClick={session.startGps}>
+                    Walk with my location
+                  </button>
+                </div>
                 <div className="gw-sim">
                   <button
                     type="button"

@@ -112,6 +112,7 @@ body {
   box-shadow: 0 0 0 1px rgba(236, 227, 207, 0.08);
 }
 .gw-controls { display: grid; gap: 10px; }
+.gw-start { display: flex; gap: 10px; flex-wrap: wrap; }
 .gw-sim { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .gw-speed { display: inline-flex; align-items: center; gap: 8px; color: var(--gw-bone-dim); font-size: 0.95rem; }
 .gw-speed select {

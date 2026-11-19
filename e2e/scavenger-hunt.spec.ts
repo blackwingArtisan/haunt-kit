@@ -64,6 +64,29 @@ test('a host builds a hunt, shares it, and a player races it with a simulated wa
   await expect(player.getByLabel('Next player or team')).toBeVisible();
 });
 
+test('"Play the demo hunt" goes from the home screen to a finished practice run, and the walker waits at each question', async ({ page }) => {
+  await page.goto('/?speed=150#/');
+  await page.getByRole('button', { name: 'Play the demo hunt' }).click();
+  await expect(page.getByRole('heading', { name: 'The Pumpkin Patrol' })).toBeVisible();
+  await page.getByRole('button', { name: 'Start the hunt' }).click();
+  await page.getByRole('button', { name: 'Practice run (simulated)' }).click();
+
+  const challenge = page.getByTestId('challenge');
+  await expect(challenge).toContainText('The Crooked Bench', { timeout: 20_000 });
+  await expect(page.getByTestId('hunt-status')).toContainText('waits here until you answer');
+  // Standing still: a few seconds later the player is still at the first question.
+  await page.waitForTimeout(2_000);
+  await expect(challenge).toContainText('The Crooked Bench');
+  await challenge.getByLabel(/ribbon/).fill('orange');
+  await challenge.getByRole('button', { name: 'Check answer' }).click();
+
+  // The practice run carries on by itself to the second spot.
+  await expect(challenge).toContainText('The Whispering Tree', { timeout: 20_000 });
+  await challenge.getByLabel(/animal/).fill('bat');
+  await challenge.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByTestId('finished')).toContainText('Mystery guest escaped!', { timeout: 20_000 });
+});
+
 test('a player who cannot reach a spot can unlock it from the list', async ({ page }) => {
   await page.goto('/#/host');
   await page.getByRole('button', { name: 'Load the demo hunt' }).click();

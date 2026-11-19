@@ -144,3 +144,19 @@ test('reduced motion stops the candle flicker and the dialog animation', async (
   expect(running).toBe(0);
   await expect(page.locator('.gw-candle--lit .gw-candle__flame').first()).toHaveCSS('animation-name', 'none');
 });
+
+test('"Watch the 60-second walk" opens each story on arrival, closes it as the walker moves on, and ends on the finale', async ({ page }) => {
+  // The button plays at 60x; ?speed= speeds the same walk up for the test.
+  await page.goto('/?speed=250');
+  await page.getByTestId('watch').click();
+  await expect(page.getByTestId('walk-status')).toContainText('Watching the walk');
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('heading', { name: "The Ferryman's Bell" })).toBeVisible({ timeout: 20_000 });
+  await expect(dialog.getByRole('heading', { name: 'One Too Many' })).toBeVisible({ timeout: 20_000 });
+  // Between stops the story closes, so the map and the lifting fog are in view.
+  await expect(dialog).toBeHidden({ timeout: 20_000 });
+  await expect(dialog.getByRole('heading', { name: 'Terrace Hill' })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('progress')).toHaveAttribute('aria-label', '6 of 6 spirits found');
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  await expect(page.getByTestId('finale')).toBeVisible();
+});

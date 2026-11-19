@@ -91,6 +91,12 @@ export interface SimulatedWalkOptions extends Omit<SampleOptions, 'startTime'> {
   /** Walking pace in m/s. Default 1.4. */
   walkingSpeed?: number;
   scheduler?: Scheduler;
+  /**
+   * Checked before every step. While it returns true the walker stands still
+   * (no fix, no progress along the track), for example while a question at a
+   * found stop is unanswered. The walk carries on by itself once it is false.
+   */
+  hold?: () => boolean;
 }
 
 /**
@@ -120,6 +126,7 @@ export class SimulatedWalkSource implements PositionSource {
     const fixes = sampleTrack(this.track, { ...this.options, stepSeconds: step, startTime: this.scheduler.now() });
     listener.status('tracking');
     const tick = () => {
+      if (this.options.hold?.()) return;
       const next = fixes.next();
       if (next.done) {
         this.stop();

@@ -19,7 +19,7 @@ export function App() {
         {route.name === 'host' && <Host store={store} />}
         {route.name === 'play' && <Play key={route.code} code={route.code} store={store} />}
         {route.name === 'result' && <Result key={route.code} code={route.code} store={store} />}
-        {route.name === 'home' && <Home />}
+        {route.name === 'home' && <Home store={store} />}
       </main>
       <footer className="sh-footer">
         <p>Spook Hunt is built with Haunt Kit by Stubborn Otter Software. No accounts, no tracking: your location stays on your phone.</p>

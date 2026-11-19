@@ -47,6 +47,14 @@ export function availableStops(tour: Tour, state: SessionState): Stop[] {
   return tour.stops.filter((s) => !isUnlocked(s.id, state) && availability(tour, state, s.id).ok);
 }
 
+/**
+ * The first stop the walker has found but whose question is still unanswered.
+ * A simulated walker waits here, and a hunt shows this stop's question.
+ */
+export function awaitingAnswer(tour: Tour, state: SessionState): Stop | undefined {
+  return tour.stops.find((s) => s.challenge && isUnlocked(s.id, state) && state.stops[s.id]?.solvedAt === undefined);
+}
+
 /** The stop a walker should head for: the first available one in tour order. */
 export function nextTarget(tour: Tour, state: SessionState): Stop | undefined {
   return availableStops(tour, state)[0] ?? tour.stops.find((s) => isUnlocked(s.id, state) && !isFinished(s, state));

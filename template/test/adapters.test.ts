@@ -4,6 +4,8 @@ import { createNarrator, createStore } from '../src/adapters/select';
 import { MemoryStore, ProgressStore } from '../src/adapters/storage';
 import { SilentNarrator } from '../src/adapters/narrator';
 import { stepFix } from '../src/core/geofence';
+import { awaitingAnswer } from '../src/core/rules';
+import { markSolved } from '../src/core/geofence';
 import { createSession } from '../src/core/session';
 import type { Fix } from '../src/core/smoothing';
 import { east, testTour } from './fixtures';
@@ -59,6 +61,53 @@ describe('SimulatedWalkSource', () => {
     scheduler.tick(1000);
     // B has an unanswered challenge, so the finale stays locked.
     expect(unlocked).toEqual(['a', 'b', 'c']);
+  });
+
+  it('stands still while held and carries on by itself when released', () => {
+    const scheduler = manualScheduler();
+    let held = false;
+    const src = new SimulatedWalkSource([east(0), east(100)], { stepSeconds: 5, scheduler, hold: () => held });
+    const fixes: Fix[] = [];
+    const statuses: PositionStatus[] = [];
+    src.start({ fix: (f) => fixes.push(f), status: (s) => statuses.push(s) });
+    scheduler.tick(3);
+    const before = fixes.length;
+    held = true;
+    scheduler.tick(50);
+    expect(fixes.length).toBe(before);
+    expect(statuses).toEqual(['tracking']);
+    held = false;
+    scheduler.tick(100);
+    expect(statuses).toEqual(['tracking', 'finished']);
+    // Holding loses no part of the track: the same fixes arrive as in an unheld walk.
+    expect(fixes.length).toBe(Math.ceil(100 / 1.4 / 5) + 1);
+    expect(fixes[before]!.timestamp - fixes[before - 1]!.timestamp).toBe(5000);
+  });
+
+  it('waits at a found stop until its question is answered, then reaches the finale', () => {
+    const tour = testTour({ ordering: 'sequential' });
+    const scheduler = manualScheduler();
+    let state = createSession(tour);
+    const src = new SimulatedWalkSource(tour.stops.map((s) => ({ ...s.position, pause: 10 })), {
+      stepSeconds: 2,
+      scheduler,
+      hold: () => awaitingAnswer(tour, state) !== undefined,
+    });
+    const unlocked: string[] = [];
+    src.start({
+      fix: (f) => {
+        const r = stepFix(tour, state, f);
+        state = r.state;
+        r.events.forEach((e) => e.type === 'unlock' && unlocked.push(e.stopId));
+      },
+      status: () => {},
+    });
+    scheduler.tick(1000);
+    // The walker stays at B while its question waits. Without the hold it would walk past C and the finale.
+    expect(unlocked).toEqual(['a', 'b']);
+    state = markSolved(tour, state, 'b', 1).state;
+    scheduler.tick(1000);
+    expect(unlocked).toEqual(['a', 'b', 'c', 'z']);
   });
 });
 

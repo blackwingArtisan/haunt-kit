@@ -106,6 +106,14 @@ export function Host({ store }: { store: KeyValueStore }) {
         </a>
         <h1 className="sh-h1">Build a hunt</h1>
         <p className="sh-note">Your draft saves on this device as you type. Answers never leave it in readable form.</p>
+        <div className="sh-row">
+          <button type="button" className="hk-btn hk-btn--small" onClick={() => setDraft(demoDraft())}>
+            Load the demo hunt
+          </button>
+          <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setDraft(emptyDraft(draft.center))}>
+            Start a blank hunt
+          </button>
+        </div>
       </header>
 
       <div className="sh-hostgrid">
@@ -240,14 +248,6 @@ export function Host({ store }: { store: KeyValueStore }) {
               </li>
             ))}
           </ol>
-          <div className="sh-row">
-            <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setDraft(demoDraft())}>
-              Load the demo hunt
-            </button>
-            <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setDraft(emptyDraft(draft.center))}>
-              Start a blank hunt
-            </button>
-          </div>
         </section>
 
         <section className="sh-card sh-sharecard" aria-labelledby="share-h">
