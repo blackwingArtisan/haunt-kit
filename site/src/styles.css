@@ -82,7 +82,10 @@ a:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
 .lp-stakes { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin: 18px 0 4px; font-size: 1.15rem; }
 .lp-stakes strong { font-size: 1.5rem; }
 .lp-stakes__zero { color: var(--lp-slime); }
-.lp-stakes__src { font-size: 0.85rem; color: var(--lp-bone-dim); text-underline-offset: 3px; }
+.lp-stakes__src { font-size: 0.85rem; color: var(--lp-bone-dim); }
+/* The price sources sit after the app cards, so keyboard users reach both demos first. */
+.lp-sources { max-width: 1160px; margin: 18px auto 0; padding: 0 20px; font-size: 0.88rem; color: var(--lp-bone-dim); }
+.lp-sources a { color: var(--lp-bone); text-underline-offset: 3px; }
 .lp-kicker { margin: 0; font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--lp-bone-dim); }
 .lp-title { margin: 0.05em 0 0.1em; font: 400 clamp(3.2rem, 10vw, 6.5rem) / 0.95 'IM Fell English', Georgia, serif; }
 .lp-lede { margin: 0; max-width: 34ch; font: italic 400 clamp(1.4rem, 3.4vw, 2rem) / 1.25 'IM Fell English', Georgia, serif; color: var(--lp-ember); }

@@ -33,8 +33,8 @@ export function Home({ store, autoplay = false }: { store: KeyValueStore; autopl
           Spook <span>Hunt</span>
         </h1>
         <p className="sh-lede">
-          A Halloween scavenger hunt for your own street, yard or house. Drop the hiding spots, write the clues, share one link. Phones buzz
-          hot and cold as players close in.
+          A Halloween scavenger hunt for your own street, yard or house. Drop the hiding spots, write the clues, share one link. Each phone's EMF
+          meter warms up as players close in.
         </p>
         <div className="sh-cta sh-row">
           <button type="button" className="hk-btn" onClick={playDemo} disabled={opening}>

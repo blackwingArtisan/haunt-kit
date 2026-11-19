@@ -134,3 +134,19 @@ test('on a phone both demos are on the first screen, over a quiet map with no na
   await expect(page.getByRole('heading', { name: 'The Pumpkin Patrol' })).toBeVisible();
   await context.close();
 });
+
+test('the hero leads with links instead of servers and the teacher, and the price sources come after both demos in tab order', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByTestId('hero-sub')).toContainText('Most GPS hunts need a server and an account');
+  await expect(page.getByTestId('hero-sub')).toContainText('no student accounts, no student data');
+  const sources = page.getByTestId('price-sources').getByRole('link');
+  await expect(sources).toHaveCount(2);
+  // In document order, both app cards' demo links come before the first price source.
+  const order = await page.evaluate(() => {
+    const links = [...document.querySelectorAll('a')];
+    const at = (sel: string) => links.indexOf(document.querySelector(sel) as HTMLAnchorElement);
+    return { play: at('[data-testid="play-hunt"]'), watch: at('[data-testid="watch-ghost"]'), source: at('[data-testid="price-sources"] a') };
+  });
+  expect(order.source).toBeGreaterThan(order.play);
+  expect(order.source).toBeGreaterThan(order.watch);
+});

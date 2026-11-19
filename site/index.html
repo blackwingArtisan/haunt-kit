@@ -28,13 +28,13 @@
       <p class="lp-stakes" data-testid="stakes">
         <span>Goosechase: up to <strong>$749</strong> per event.</span>
         <span>Haunt Kit: <strong class="lp-stakes__zero">$0</strong>.</span>
-        <a class="lp-stakes__src" href="https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing">Goosechase's published prices</a>
+        <span class="lp-stakes__src">Prices sourced below the apps.</span>
       </p>
       <div class="lp-hero__cta" data-testid="hero-cta">
         <a class="lp-btn lp-btn--ember" href="./ghost-walk/?watch" data-testid="hero-watch">Watch the 60-second walk</a>
         <a class="lp-btn lp-btn--pumpkin" href="./spook-hunt/#/demo" data-testid="hero-play">Play the demo hunt</a>
       </div>
-      <p class="lp-sub">One open-source skeleton for GPS story walks. Write the stops as data and they unlock as people arrive. Some stops only exist after dark. Here it is in two costumes.</p>
+      <p class="lp-sub" data-testid="hero-sub">Most GPS hunts need a server and an account. Here the hunt, its answers and the scoreboard all travel in links. Made first for the teacher's Friday hunt: no student accounts, no student data, nothing to install. One open-source skeleton, in two costumes.</p>
       <div class="lp-hero__map" id="hero-map" aria-hidden="true" data-testid="hero-map"></div>
     </header>
 
@@ -69,6 +69,12 @@
       </article>
     </main>
 
+    <p class="lp-sources" data-testid="price-sources">
+      Prices from Goosechase's published pages, November 2026:
+      <a href="https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing">single-event pricing</a> and
+      <a href="https://www.goosechase.com/edu/pricing/">classroom pricing</a> ($99 per educator per year).
+    </p>
+
     <section class="lp-bones" aria-labelledby="bones-h">
       <h2 id="bones-h">One skeleton under both</h2>
       <p class="lp-bones__intro">Both apps feed position fixes into the same pure engine and draw what it returns. Only the data and the costume change.</p>
@@ -91,8 +97,8 @@
             <figcaption><strong>Ghost walk.</strong> A stop's sourced story opens on arrival.</figcaption>
           </figure>
           <figure class="lp-screen lp-screen--hunt">
-            <img src="./media/hotcold.jpg" width="720" height="450" loading="lazy" alt="Spook Hunt: the hot-and-cold meter reading Warm on the way to the second hidden spot" />
-            <figcaption><strong>Scavenger hunt.</strong> A hidden spot's question, and hot and cold on the way to the next.</figcaption>
+            <img src="./media/hotcold.jpg" width="720" height="450" loading="lazy" alt="Spook Hunt: the EMF meter reading Warm on the way to the second hidden spot" />
+            <figcaption><strong>Scavenger hunt.</strong> A hidden spot's question, and the EMF meter warming on the way to the next.</figcaption>
           </figure>
         </div>
         <figcaption class="lp-engine__caption">The same engine, two costumes.</figcaption>

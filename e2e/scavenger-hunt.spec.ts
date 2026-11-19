@@ -242,3 +242,51 @@ test('the builder keeps the map in view, folds exact coordinates away, and scrol
   expect(qr.x).toBeLessThan(link.x);
   expect(qr.width).toBeGreaterThanOrEqual(280);
 });
+
+test('time to value: a two-spot hunt goes from a blank editor to a share link in 8 steps, at a human typing pace', async ({ page }) => {
+  // Paced like a person, not a script: 250 ms per key (about 48 words a minute) and a 1 s pause before each step.
+  // The elapsed time is recorded as an annotation, not asserted: on a busy machine the browser adds its own delay.
+  const KEY_MS = 250;
+  const THINK_MS = 1_000;
+  let steps = 0;
+  let typed = 0;
+  const type = async (label: string | RegExp, text: string, scope = page.locator('body')) => {
+    await page.waitForTimeout(THINK_MS);
+    await scope.getByLabel(label).pressSequentially(text, { delay: KEY_MS });
+    steps += 1;
+    typed += text.length;
+  };
+  await page.goto('/#/host');
+  const started = Date.now();
+  await page.waitForTimeout(THINK_MS);
+  await page.getByRole('button', { name: 'Start a blank hunt' }).click();
+  await type('Hunt title', 'Friday hunt');
+
+  const map = page.getByTestId('tour-map');
+  const stops = page.locator('.sh-stop');
+  for (const [i, spot] of [
+    { x: 0.35, y: 0.55, name: 'Big oak', clue: 'Shade at recess.' },
+    { x: 0.7, y: 0.3, name: 'Gate', clue: 'Where buses stop.' },
+  ].entries()) {
+    const box = (await map.boundingBox())!;
+    await page.waitForTimeout(THINK_MS);
+    await map.click({ position: { x: box.width * spot.x, y: box.height * spot.y } });
+    steps += 1;
+    await expect(stops).toHaveCount(i + 1);
+    await type(/Spot name/, spot.name, stops.nth(i));
+    await type('Clue to find it', spot.clue, stops.nth(i));
+  }
+  await page.waitForTimeout(THINK_MS);
+  await page.getByRole('button', { name: 'Make the share link' }).click();
+  steps += 1;
+  const url = await page.getByTestId('share-url').inputValue();
+  const seconds = (Date.now() - started) / 1000;
+
+  expect(url).toMatch(/#\/play\/1[0-9A-Za-z_-]+$/);
+  await expect(page.getByTestId('qr').locator('svg')).toBeVisible();
+  expect(steps).toBe(8);
+  expect(typed).toBe(55);
+  const note = `${seconds.toFixed(1)} s, ${steps} steps, ${typed} characters typed, link ${url.length} characters`;
+  test.info().annotations.push({ type: 'time-to-share', description: note });
+  console.log(`time-to-share: ${note}`);
+});

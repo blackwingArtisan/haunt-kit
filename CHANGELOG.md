@@ -4,6 +4,16 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 
 ## Unreleased
 
+### Who it is for, and what it replaces
+- The README and the landing page lead with the teacher: a weekly class hunt with no student accounts, no student data and nothing to install. The first lines say what sets the kit apart: most GPS hunts need a server and an account, while Haunt Kit's hunt, answers and scoreboard all travel in links.
+- Goosechase's classroom pricing (Educator Plus at $99 per educator per year, and the free plan's 5-team limit) is cited from its published EDU page, next to the single-event prices.
+- One paragraph answers the free alternatives, izi.TRAVEL and Google My Maps. "How it compares" gains an honest row for what Goosechase does and Haunt Kit does not: photo and video missions and a live activity feed.
+- Time to value, stated as steps: a two-spot hunt is 8 steps and 55 typed characters from a blank editor to its share link. A Playwright test walks it at a human typing pace (250 ms per key, a 1 s pause before each step) and records the elapsed time as an annotation.
+- "Where this goes" keeps the kit free and MIT; only features that need a server (a hosted story-walk builder, rendered narration, shared live leaderboards) would be paid, priced against Goosechase's classroom plan.
+- The copy calls the hot-and-cold meter an EMF meter.
+- On the landing page, the price sources moved below the app cards, so keyboard users reach both demos first.
+- The README is shorter to skim: the hook, the demo path, why it matters, the skeleton and Built with Kiro come first, and the engine, comparison, run, test, architecture, adapter and deploy notes sit under "For developers".
+
 ### First screens
 - The landing page hero has both demos as buttons, **Watch the 60-second walk** and **Play the demo hunt**, right under the stakes line.
 - On wide screens the hero map starts where the 600 px text column ends, so no stop name sits under the tagline. A Playwright test checks the map's left edge against the tagline, the stakes and the subtitle.
