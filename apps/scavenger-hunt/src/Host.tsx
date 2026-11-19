@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getCurrentFix, readJson, writeJson, type KeyValueStore } from '@haunt-kit/template/adapters';
 import { createSession, fitProjection, formatDistance, type LatLng } from '@haunt-kit/template/core';
 import { TourMap } from '@haunt-kit/template/react';
@@ -33,6 +33,14 @@ export function Host({ store }: { store: KeyValueStore }) {
   useEffect(() => writeJson(store, DRAFT_KEY, draft), [store, draft]);
   // Any edit makes an earlier link stale.
   useEffect(() => setShare(null), [draft]);
+
+  // Bring the finished link and QR code into view as soon as they exist.
+  const shareRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!share || !shareRef.current) return;
+    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    shareRef.current.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' });
+  }, [share]);
 
   const tour = useMemo(() => draftToPreviewTour(draft), [draft]);
   const session = useMemo(() => createSession(tour), [tour]);
@@ -117,138 +125,144 @@ export function Host({ store }: { store: KeyValueStore }) {
       </header>
 
       <div className="sh-hostgrid">
-        <section className="sh-card sh-mapcard" aria-labelledby="map-h">
-          <h2 id="map-h" className="sh-h2">
-            1. Hide the spots
-          </h2>
-          <div className="sh-row">
-            <button type="button" className="hk-btn" onClick={() => locate(addStopAt)} disabled={draft.stops.length >= MAX_STOPS}>
-              Record my current spot
-            </button>
-            <button type="button" className="hk-btn hk-btn--ghost" onClick={() => locate((p) => update((d) => ({ ...d, center: p })))}>
-              Center map on me
-            </button>
-          </div>
-          <p className="sh-note" role="status">
-            {locating ?? 'Walk to each hiding spot and record it, or tap the map to drop a pin.'}
-          </p>
-          <TourMap
-            tour={tour}
-            state={session}
-            projection={projection}
-            width={MAP_SIZE}
-            height={MAP_SIZE}
-            onMapClick={addStopAt}
-            selectedId={tour.stops[draft.stops.findIndex((s) => s.key === selected)]?.id}
-            showRoute={draft.ordering === 'sequential'}
-            label={`Hunt map with ${draft.stops.length} hiding spots. Tap to add a spot. Spots can also be added with Record my current spot.`}
-          />
-          <div className="sh-row sh-zoom" role="group" aria-label="Zoom">
-            <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setSpan((s) => Math.max(60, s / 1.6))}>
-              Zoom in
-            </button>
-            <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setSpan((s) => Math.min(5000, s * 1.6))}>
-              Zoom out
-            </button>
-            <span className="sh-note">{draft.stops.length} of {MAX_STOPS} spots</span>
-          </div>
-        </section>
+        <div className="sh-hostcols">
+          <section className="sh-card sh-mapcard" aria-labelledby="map-h">
+            <h2 id="map-h" className="sh-h2">
+              1. Hide the spots
+            </h2>
+            <div className="sh-row">
+              <button type="button" className="hk-btn" onClick={() => locate(addStopAt)} disabled={draft.stops.length >= MAX_STOPS}>
+                Record my current spot
+              </button>
+              <button type="button" className="hk-btn hk-btn--ghost" onClick={() => locate((p) => update((d) => ({ ...d, center: p })))}>
+                Center map on me
+              </button>
+            </div>
+            <p className="sh-note" role="status">
+              {locating ?? 'Walk to each hiding spot and record it, or tap the map to drop a pin.'}
+            </p>
+            <TourMap
+              tour={tour}
+              state={session}
+              projection={projection}
+              width={MAP_SIZE}
+              height={MAP_SIZE}
+              onMapClick={addStopAt}
+              selectedId={tour.stops[draft.stops.findIndex((s) => s.key === selected)]?.id}
+              showRoute={draft.ordering === 'sequential'}
+              label={`Hunt map with ${draft.stops.length} hiding spots. Tap to add a spot. Spots can also be added with Record my current spot.`}
+            />
+            <div className="sh-row sh-zoom" role="group" aria-label="Zoom">
+              <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setSpan((s) => Math.max(60, s / 1.6))}>
+                Zoom in
+              </button>
+              <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setSpan((s) => Math.min(5000, s * 1.6))}>
+                Zoom out
+              </button>
+              <span className="sh-note">{draft.stops.length} of {MAX_STOPS} spots</span>
+            </div>
+          </section>
 
-        <section className="sh-card" aria-labelledby="details-h">
-          <h2 id="details-h" className="sh-h2">
-            2. Write the clues
-          </h2>
-          <label className="sh-field">
-            <span>Hunt title</span>
-            <input value={draft.title} onChange={(e) => update((d) => ({ ...d, title: e.target.value }))} placeholder="The Pumpkin Patrol" maxLength={60} />
-          </label>
-          <label className="sh-field">
-            <span>Hosted by (optional)</span>
-            <input value={draft.host} onChange={(e) => update((d) => ({ ...d, host: e.target.value }))} placeholder="The Hollow Lane crew" maxLength={60} />
-          </label>
-          <fieldset className="sh-field sh-radios">
-            <legend>Order</legend>
-            <label>
-              <input type="radio" name="ordering" checked={draft.ordering === 'sequential'} onChange={() => update((d) => ({ ...d, ordering: 'sequential' }))} />
-              In order: each clue leads to the next
+          <section className="sh-card" aria-labelledby="details-h">
+            <h2 id="details-h" className="sh-h2">
+              2. Write the clues
+            </h2>
+            <label className="sh-field">
+              <span>Hunt title</span>
+              <input value={draft.title} onChange={(e) => update((d) => ({ ...d, title: e.target.value }))} placeholder="The Pumpkin Patrol" maxLength={60} />
             </label>
-            <label>
-              <input type="radio" name="ordering" checked={draft.ordering === 'free'} onChange={() => update((d) => ({ ...d, ordering: 'free' }))} />
-              Any order
+            <label className="sh-field">
+              <span>Hosted by (optional)</span>
+              <input value={draft.host} onChange={(e) => update((d) => ({ ...d, host: e.target.value }))} placeholder="The Hollow Lane crew" maxLength={60} />
             </label>
-          </fieldset>
+            <fieldset className="sh-field sh-radios">
+              <legend>Order</legend>
+              <label>
+                <input type="radio" name="ordering" checked={draft.ordering === 'sequential'} onChange={() => update((d) => ({ ...d, ordering: 'sequential' }))} />
+                In order: each clue leads to the next
+              </label>
+              <label>
+                <input type="radio" name="ordering" checked={draft.ordering === 'free'} onChange={() => update((d) => ({ ...d, ordering: 'free' }))} />
+                Any order
+              </label>
+            </fieldset>
 
-          {draft.stops.length === 0 && <p className="sh-empty">No spots yet. Record one or tap the map.</p>}
-          <ol className="sh-stops">
-            {draft.stops.map((s, i) => (
-              <li key={s.key} className={`sh-stop${selected === s.key ? ' sh-stop--selected' : ''}`} onFocus={() => setSelected(s.key)}>
-                <div className="sh-stop__head">
-                  <span className="sh-stop__num" aria-hidden="true">
-                    {i + 1}
-                  </span>
-                  <label className="sh-field sh-grow">
-                    <span>Spot name (revealed when found)</span>
-                    <input id={`name-${s.key}`} value={s.name} onChange={(e) => updateStop(s.key, { name: e.target.value })} maxLength={50} />
-                  </label>
-                </div>
-                <label className="sh-field">
-                  <span>Clue to find it</span>
-                  <textarea value={s.clue} onChange={(e) => updateStop(s.key, { clue: e.target.value })} rows={2} maxLength={200} />
-                </label>
-                <div className="sh-split">
+            {draft.stops.length === 0 && <p className="sh-empty">No spots yet. Record one or tap the map.</p>}
+            <ol className="sh-stops">
+              {draft.stops.map((s, i) => (
+                <li key={s.key} className={`sh-stop${selected === s.key ? ' sh-stop--selected' : ''}`} onFocus={() => setSelected(s.key)}>
+                  <div className="sh-stop__head">
+                    <span className="sh-stop__num" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    <label className="sh-field sh-grow">
+                      <span>Spot name (revealed when found)</span>
+                      <input id={`name-${s.key}`} value={s.name} onChange={(e) => updateStop(s.key, { name: e.target.value })} maxLength={50} />
+                    </label>
+                  </div>
                   <label className="sh-field">
-                    <span>Question at the spot (optional)</span>
-                    <input value={s.question} onChange={(e) => updateStop(s.key, { question: e.target.value })} maxLength={120} />
+                    <span>Clue to find it</span>
+                    <textarea value={s.clue} onChange={(e) => updateStop(s.key, { clue: e.target.value })} rows={2} maxLength={200} />
                   </label>
-                  <label className="sh-field">
-                    <span>Accepted answers, comma-separated</span>
-                    <input value={s.answers} onChange={(e) => updateStop(s.key, { answers: e.target.value })} maxLength={120} />
-                  </label>
-                </div>
-                <div className="sh-split">
-                  <label className="sh-field">
-                    <span>Hint (costs 30 seconds)</span>
-                    <input value={s.hint} onChange={(e) => updateStop(s.key, { hint: e.target.value })} maxLength={120} />
-                  </label>
-                  <label className="sh-field">
-                    <span>Unlock radius</span>
-                    <select value={s.radius} onChange={(e) => updateStop(s.key, { radius: Number(e.target.value) })}>
-                      {RADIUS_CHOICES.map((r) => (
-                        <option key={r} value={r}>
-                          {r} m{r === 15 ? ' (strong GPS only)' : r === 25 ? ' (yard or street)' : ''}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                <div className="sh-split sh-coords">
-                  <label className="sh-field">
-                    <span>Latitude</span>
-                    <input type="number" step="0.00001" value={s.position.lat} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && updateStop(s.key, { position: { ...s.position, lat: e.target.valueAsNumber } })} />
-                  </label>
-                  <label className="sh-field">
-                    <span>Longitude</span>
-                    <input type="number" step="0.00001" value={s.position.lng} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && updateStop(s.key, { position: { ...s.position, lng: e.target.valueAsNumber } })} />
-                  </label>
-                </div>
-                <div className="sh-row sh-stop__tools">
-                  <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => locate((p) => updateStop(s.key, { position: p }))}>
-                    Move here (my spot)
-                  </button>
-                  <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => move(s.key, -1)} disabled={i === 0} aria-label={`Move stop ${i + 1} earlier`}>
-                    ↑
-                  </button>
-                  <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => move(s.key, 1)} disabled={i === draft.stops.length - 1} aria-label={`Move stop ${i + 1} later`}>
-                    ↓
-                  </button>
-                  <button type="button" className="hk-btn hk-btn--ghost hk-btn--small sh-danger" onClick={() => update((d) => ({ ...d, stops: d.stops.filter((x) => x.key !== s.key) }))} aria-label={`Delete stop ${i + 1}`}>
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
+                  <div className="sh-split">
+                    <label className="sh-field">
+                      <span>Question at the spot (optional)</span>
+                      <input value={s.question} onChange={(e) => updateStop(s.key, { question: e.target.value })} maxLength={120} />
+                    </label>
+                    <label className="sh-field">
+                      <span>Accepted answers, comma-separated</span>
+                      <input value={s.answers} onChange={(e) => updateStop(s.key, { answers: e.target.value })} maxLength={120} />
+                    </label>
+                  </div>
+                  <div className="sh-split">
+                    <label className="sh-field">
+                      <span>Hint (costs 30 seconds)</span>
+                      <input value={s.hint} onChange={(e) => updateStop(s.key, { hint: e.target.value })} maxLength={120} />
+                    </label>
+                    <label className="sh-field">
+                      <span>Unlock radius</span>
+                      <select value={s.radius} onChange={(e) => updateStop(s.key, { radius: Number(e.target.value) })}>
+                        {RADIUS_CHOICES.map((r) => (
+                          <option key={r} value={r}>
+                            {r} m{r === 15 ? ' (strong GPS only)' : r === 25 ? ' (yard or street)' : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <details className="sh-advanced">
+                    <summary>Advanced: exact position</summary>
+                    <div className="sh-split sh-coords">
+                      <label className="sh-field">
+                        <span>Latitude</span>
+                        <input type="number" step="0.00001" value={s.position.lat} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && updateStop(s.key, { position: { ...s.position, lat: e.target.valueAsNumber } })} />
+                      </label>
+                      <label className="sh-field">
+                        <span>Longitude</span>
+                        <input type="number" step="0.00001" value={s.position.lng} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && updateStop(s.key, { position: { ...s.position, lng: e.target.valueAsNumber } })} />
+                      </label>
+                    </div>
+                  </details>
+                  <div className="sh-row sh-stop__tools">
+                    <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => locate((p) => updateStop(s.key, { position: p }))}>
+                      Move here (my spot)
+                    </button>
+                    <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => move(s.key, -1)} disabled={i === 0} aria-label={`Move stop ${i + 1} earlier`}>
+                      ↑
+                    </button>
+                    <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => move(s.key, 1)} disabled={i === draft.stops.length - 1} aria-label={`Move stop ${i + 1} later`}>
+                      ↓
+                    </button>
+                    <button type="button" className="hk-btn hk-btn--ghost hk-btn--small sh-danger" onClick={() => update((d) => ({ ...d, stops: d.stops.filter((x) => x.key !== s.key) }))} aria-label={`Delete stop ${i + 1}`}>
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+        </div>
 
         <section className="sh-card sh-sharecard" aria-labelledby="share-h">
           <h2 id="share-h" className="sh-h2">
@@ -272,20 +286,23 @@ export function Host({ store }: { store: KeyValueStore }) {
             </p>
           )}
           {share && (
-            <div className="sh-share" data-testid="share">
-              <label className="sh-field">
-                <span>Player link ({share.url.length} characters)</span>
-                <input readOnly value={share.url} onFocus={(e) => e.currentTarget.select()} data-testid="share-url" />
-              </label>
-              <div className="sh-row">
-                <button type="button" className="hk-btn hk-btn--small" onClick={copy}>
-                  {copied ? 'Copied' : 'Copy link'}
-                </button>
-                <a className="hk-btn hk-btn--ghost hk-btn--small" href={`#/play/${share.code}`}>
-                  Play it now
-                </a>
-              </div>
+            <div className="sh-share" data-testid="share" ref={shareRef}>
               <QrCode text={share.url} label={`QR code for the hunt ${draft.title}`} />
+              <div className="sh-share__text">
+                <p className="sh-share__title">Your hunt is ready. Scan it or send the link.</p>
+                <label className="sh-field">
+                  <span>Player link ({share.url.length} characters)</span>
+                  <input readOnly value={share.url} onFocus={(e) => e.currentTarget.select()} data-testid="share-url" />
+                </label>
+                <div className="sh-row">
+                  <button type="button" className="hk-btn" onClick={copy}>
+                    {copied ? 'Copied' : 'Copy link'}
+                  </button>
+                  <a className="hk-btn hk-btn--ghost" href={`#/play/${share.code}`}>
+                    Play it now
+                  </a>
+                </div>
+              </div>
             </div>
           )}
         </section>

@@ -206,3 +206,27 @@ test('a player on their own phone sends a result link, and the host adds it to t
     await playerContext.close();
   }
 });
+
+test('the builder keeps the map in view, folds exact coordinates away, and scrolls to a QR-first share card', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/host');
+  await page.getByRole('button', { name: 'Load the demo hunt' }).click();
+  const stop = page.locator('.sh-stop').first();
+  // Latitude and longitude sit behind a per-spot "Advanced" disclosure.
+  await expect(stop.getByLabel('Latitude')).toBeHidden();
+  await stop.getByText('Advanced: exact position').click();
+  await expect(stop.getByLabel('Latitude')).toBeVisible();
+
+  // Scrolled down through the clues, the map is still on screen.
+  await page.locator('.sh-stop').last().scrollIntoViewIfNeeded();
+  await expect(page.getByTestId('tour-map')).toBeInViewport();
+
+  // Scrolled to the share button, the map has stopped above it and does not cover it.
+  await page.getByRole('button', { name: 'Make the share link' }).click();
+  const share = page.getByTestId('share');
+  await expect(share).toBeInViewport();
+  const qr = (await share.getByTestId('qr').boundingBox())!;
+  const link = (await share.getByTestId('share-url').boundingBox())!;
+  expect(qr.x).toBeLessThan(link.x);
+  expect(qr.width).toBeGreaterThanOrEqual(280);
+});

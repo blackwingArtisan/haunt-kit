@@ -121,9 +121,12 @@ body {
 
 .sh-pagehead { margin-bottom: 18px; }
 .sh-back { color: var(--sh-slime); font-weight: 700; }
-.sh-hostgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
-.sh-sharecard { grid-column: 1 / -1; }
-@media (max-width: 900px) { .sh-hostgrid { grid-template-columns: 1fr; } }
+.sh-hostgrid { display: grid; gap: 20px; }
+/* The map and the clues share a two-column row; the sticky map is bounded by it, so it never covers the share card. */
+.sh-hostcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+/* On wide screens the map stays in view while the clues scroll past it. */
+@media (min-width: 901px) { .sh-mapcard { position: sticky; top: 16px; } }
+@media (max-width: 900px) { .sh-hostcols { grid-template-columns: 1fr; } }
 .sh-mapcard .hk-map { border: 3px solid var(--sh-ink); margin: 10px 0; }
 .sh-zoom { justify-content: flex-start; }
 
@@ -156,10 +159,21 @@ body {
   background: var(--sh-pumpkin); color: var(--sh-ink); border: 3px solid var(--sh-ink);
 }
 .sh-coords input { font-size: 0.9rem; }
+.sh-advanced { margin: 0 0 10px; }
+.sh-advanced > summary { cursor: pointer; color: var(--sh-muted); font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+.sh-advanced[open] > summary { margin-bottom: 6px; }
 
 .sh-issues { margin: 0 0 14px; padding-left: 1.2em; color: var(--sh-pumpkin); }
 .sh-error { color: var(--sh-red); font-weight: 700; }
-.sh-share { margin-top: 16px; display: grid; gap: 12px; max-width: 560px; }
+/* The finished hunt: a big QR code first, then the link and its buttons. */
+.sh-share {
+  margin-top: 18px; display: grid; grid-template-columns: minmax(220px, 340px) minmax(0, 1fr); gap: 24px; align-items: center;
+  padding: 20px; border: 3px solid var(--sh-ink); border-radius: 22px; background: rgba(13, 6, 24, 0.35);
+  scroll-margin-top: 16px;
+}
+.sh-share .sh-qr { width: 100%; }
+.sh-share__title { margin: 0 0 12px; font: 400 1.7rem/1.1 var(--hk-font-display); color: var(--sh-slime); }
+@media (max-width: 700px) { .sh-share { grid-template-columns: 1fr; justify-items: center; } .sh-share__text { width: 100%; } .sh-share .sh-qr { width: min(320px, 100%); } }
 .sh-qr { width: min(320px, 100%); aspect-ratio: 1; border: 3px solid var(--sh-ink); border-radius: 16px; overflow: hidden; background: var(--sh-paper); box-shadow: 6px 6px 0 var(--sh-ink); }
 .sh-qr svg { display: block; width: 100%; height: 100%; }
 
