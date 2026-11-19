@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
 /**
  * The full-screen payoff when the last spirit is found: six candles flare,
@@ -80,8 +80,17 @@ export function FinaleOverlay({ open, onClose, onWalkAgain }: { open: boolean; o
   );
 }
 
-const HOUSE_WINDOWS_X = [60, 84, 108, 202, 226, 250];
 const DORMERS_X = [66, 98, 212, 244];
+
+/** Every lit window in the house, in the order they go dark: the wings from the outside in, then the tower from the bottom up. */
+const WINDOWS: { x: number; y: number; w: number; h: number; rx: number }[] = [
+  ...[60, 250, 84, 226, 108, 202].flatMap((x) => [
+    { x, y: 150, w: 10, h: 20, rx: 4 },
+    { x, y: 122, w: 10, h: 18, rx: 4 },
+  ]),
+  ...[66, 244, 98, 212].map((x) => ({ x: x + 3, y: 99, w: 4, h: 7, rx: 2 })),
+  ...[130, 100, 70].map((y) => ({ x: 155, y, w: 10, h: 18, rx: 4 })),
+];
 
 /**
  * Terrace Hill at night, drawn as a silhouette: the Second Empire mansion with
@@ -96,12 +105,22 @@ function TerraceHill() {
         <filter id="gw-fog-blur" x="-20%" y="-50%" width="140%" height="200%">
           <feGaussianBlur stdDeviation="5" />
         </filter>
+        <filter id="gw-grain" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
+          <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.92  0 0 0 0 0.89  0 0 0 0 0.81  0 0 0 0.09 0" result="tint" />
+          <feComposite in="tint" in2="SourceGraphic" operator="in" result="grain" />
+          <feMerge>
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="grain" />
+          </feMerge>
+        </filter>
       </defs>
       <circle className="gw-tower__moon" cx="246" cy="42" r="17" />
       {/* Old oaks on the lawn. */}
       <path className="gw-tower__trees" d="M0 190 V150 C4 132 18 126 26 136 C30 120 48 122 50 140 C58 138 62 150 56 160 V190 Z" />
       <path className="gw-tower__trees" d="M320 190 V146 C316 130 300 126 294 138 C288 124 272 128 272 144 C264 146 262 158 268 166 V190 Z" />
-      <g className="gw-tower__house">
+      {/* Grain over the facade, so the house reads as old stone rather than a flat shape. */}
+      <g className="gw-tower__house" filter="url(#gw-grain)">
         {/* Mansard roof with its iron cresting. */}
         <path d="M40 112 L52 88 H268 L280 112 Z" />
         <path className="gw-tower__crest" d="M54 88 h212" />
@@ -119,19 +138,24 @@ function TerraceHill() {
         <path className="gw-tower__crest" d="M160 25 V13" />
         <circle cx="160" cy="12" r="1.6" />
       </g>
-      {DORMERS_X.map((x) => (
-        <rect key={x} className="gw-tower__window" x={x + 3} y="99" width="4" height="7" rx="2" />
+      {/* The windows start warm and go dark one by one before the tower light goes out. */}
+      {WINDOWS.map((w, i) => (
+        <rect
+          key={`${w.x}-${w.y}`}
+          className="gw-tower__window gw-tower__window--lit"
+          x={w.x}
+          y={w.y}
+          width={w.w}
+          height={w.h}
+          rx={w.rx}
+          style={{ '--gw-window-delay': `${0.2 + i * 0.07}s` } as CSSProperties}
+        />
       ))}
-      {HOUSE_WINDOWS_X.flatMap((x) => [
-        <rect key={`a${x}`} className="gw-tower__window" x={x} y="122" width="10" height="18" rx="4" />,
-        <rect key={`b${x}`} className="gw-tower__window" x={x} y="150" width="10" height="20" rx="4" />,
-      ])}
-      <rect className="gw-tower__window" x="155" y="70" width="10" height="18" rx="4" />
-      <rect className="gw-tower__window" x="155" y="100" width="10" height="18" rx="4" />
-      <rect className="gw-tower__window" x="155" y="130" width="10" height="18" rx="4" />
       <path className="gw-tower__porch" d="M132 168 V190 M146 168 V190 M174 168 V190 M188 168 V190" />
       {/* The one light that matters: it goes out, and smoke rises from it. */}
       <rect className="gw-tower__light" x="155" y="36" width="10" height="15" rx="4" />
+      {/* As the light dies, a faint figure shows in the tower window for a moment. */}
+      <path className="gw-tower__ghost" d="M160 38 c-2.6 0 -3.6 2.2 -3.6 4.6 v7.4 l1.2 -1.2 l1.2 1.2 l1.2 -1.2 l1.2 1.2 l1.2 -1.2 l1.2 1.2 v-7.4 c0 -2.4 -1 -4.6 -3.6 -4.6 z" />
       <path className="gw-tower__smoke" d="M160 35 C154 28 168 23 160 15 S154 4 163 -4" />
       <rect className="gw-tower__ground" x="0" y="189" width="320" height="11" />
       <g className="gw-tower__fog" filter="url(#gw-fog-blur)">

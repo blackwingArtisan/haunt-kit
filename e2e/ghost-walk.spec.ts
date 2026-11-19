@@ -190,6 +190,9 @@ test('with reduced motion the finale appears in its final state, with nothing an
   await expect(finale.locator('.gw-tower__light')).toHaveCSS('fill', 'rgb(35, 35, 42)');
   await expect(finale.locator('.gw-tower__smoke')).toHaveCSS('opacity', '0');
   await expect(finale.locator('.gw-tower__fog-l')).toHaveCSS('opacity', '0');
+  // Every window is already dark, and no figure shows in the tower.
+  for (const w of await finale.locator('.gw-tower__window--lit').all()) await expect(w).toHaveCSS('fill', 'rgb(42, 42, 46)');
+  await expect(finale.locator('.gw-tower__ghost')).toHaveCSS('opacity', '0');
 });
 
 test('the finale draws Terrace Hill: the tower light goes out, smoke rises and the fog rolls off', async ({ page }) => {
@@ -201,6 +204,11 @@ test('the finale draws Terrace Hill: the tower light goes out, smoke rises and t
   await expect(finale.locator('.gw-tower__light')).toHaveCSS('fill', 'rgb(35, 35, 42)', { timeout: 8_000 });
   await expect(finale.locator('.gw-tower__fog-r')).toHaveCSS('opacity', '0', { timeout: 8_000 });
   await expect(finale.locator('.gw-tower__smoke')).toHaveCSS('opacity', '0', { timeout: 10_000 });
+  // The house windows went dark one by one before that, and the figure in the tower faded with them.
+  const windows = finale.locator('.gw-tower__window--lit');
+  expect(await windows.count()).toBeGreaterThanOrEqual(19);
+  await expect(windows.last()).toHaveCSS('fill', 'rgb(42, 42, 46)', { timeout: 8_000 });
+  await expect(finale.locator('.gw-tower__ghost')).toHaveCSS('opacity', '0', { timeout: 10_000 });
 });
 
 test('the start panel has one primary action, and the simulation sits behind "More ways to walk"', async ({ page }) => {

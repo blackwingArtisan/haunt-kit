@@ -31,6 +31,11 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 - The next-player field starts empty instead of keeping the last team's name.
 - On the host's result page, a result that is already on the leaderboard is a neutral note, not a red error.
 
+### Terrace Hill finale
+- The house's windows start warm and go dark one by one, the wings from the outside in and then the tower from the bottom up, before the tower light goes out.
+- As the light dies, a faint figure shows in the tower window for a moment and fades.
+- A fine grain over the facade makes the house read as old stone. Under reduced motion every window is already dark and the figure never shows.
+
 ### Builder map and posters
 - In the Spook Hunt builder, zoom is a pair of **+** and **−** buttons on the map's top right, and the "3 of 20 spots" count is a tag on its bottom left, like any web map.
 - Each printable poster has a handbill-style inner frame and bats across the top, in ink on paper when printed.

@@ -224,6 +224,11 @@ body {
 .gw-tower__crest { fill: none; stroke: rgba(236, 227, 207, 0.55); stroke-width: 1; }
 .gw-tower__porch { fill: none; stroke: rgba(236, 227, 207, 0.3); stroke-width: 1.4; }
 .gw-tower__window { fill: #2a2a2e; }
+/* Lit windows glow warm, then go dark one by one; the animation ends on the dark fill above. */
+.gw-tower__window--lit { animation: gw-window-out 0.5s ease-in var(--gw-window-delay, 0s) both; }
+@keyframes gw-window-out { from { fill: #ffc067; } 60% { fill: #a8642a; } to { fill: #2a2a2e; } }
+.gw-tower__ghost { fill: rgba(236, 227, 207, 0.9); opacity: 0; animation: gw-ghost 3s ease-in-out 2.4s both; }
+@keyframes gw-ghost { 0% { opacity: 0; } 30% { opacity: 0.6; } 60% { opacity: 0.5; } 100% { opacity: 0; } }
 .gw-tower__ground { fill: #0b0e14; }
 .gw-tower__light { fill: var(--gw-ember); filter: drop-shadow(0 0 6px var(--gw-ember)); animation: gw-light-out 1.4s ease-in 1.6s forwards; }
 @keyframes gw-light-out { 60% { fill: #ffd27a; } to { fill: #23232a; filter: none; } }
@@ -248,7 +253,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .gw-finale-overlay[open], .gw-candle--flare .gw-candle__flame { animation: none; }
   .gw-tower__light { animation: none; fill: #23232a; filter: none; }
-  .gw-tower__smoke, .gw-tower__fog ellipse { animation: none; opacity: 0; }
+  .gw-tower__smoke, .gw-tower__fog ellipse, .gw-tower__ghost { animation: none; opacity: 0; }
+  .gw-tower__window--lit { animation: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
