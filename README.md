@@ -37,6 +37,7 @@ Two very different Halloween apps are built from the same template:
     - A practice run replays the hunt as a simulated walk.
     - Anyone who can't reach a spot can unlock it from the list, and these unlocks are marked on the result.
   - The leaderboard on the device ranks runs by time plus penalties.
+  - A player on their own phone can tap "Send my time to the host". The result link holds only the name, time, penalties and the hunt's short id (no answers, no hiding spots, no server). The host opens it and taps "Add to leaderboard"; a result for a different hunt, a damaged link or a repeat is refused with a message.
 
 ## How to run
 Requires Node 24 or newer.
@@ -48,6 +49,14 @@ npm run dev:hunt     # Spook Hunt on http://localhost:3172
 ```
 
 No walking needed: press **Simulate the walk** (or **Practice run** in a hunt). Add `?speed=200` to the Ghost Walk URL for a 200× replay.
+
+Start your own walk with the generator. It copies `template/starter` into a new `apps/<folder>` and prints the workspaces line to add (it does not edit the root `package.json`):
+
+```bash
+npm run create-app -- river-walk --name "River Walk"
+```
+
+See [`template/README.md`](template/README.md) for the options.
 
 Production build and preview (this is what the end-to-end tests run against):
 
@@ -74,6 +83,8 @@ npm run verify                        # all of the above
   - Progress persistence and the projection.
   - The generated service worker, run in a sandbox: precache, the offline shell, cache-first assets, and cleanup of old caches.
   - The hunt-link codec: round-trip, compression fallback, answer secrecy, size budget, damaged links.
+  - The result-link codec and host leaderboard: round-trip, damaged link, wrong hunt, duplicate, no answers or coordinates, size.
+  - The app generator: file map, name checks, refusal to overwrite, and a generated tour that passes the schema.
   - The leaderboard, the hot-and-cold meter, and the Ghost Walk data rules (sources, labels, a completable route).
 - **End-to-end tests (Playwright, Chromium)**: each app is driven through a simulated GPS walk and checked as its stops unlock.
   - Both apps:
@@ -89,6 +100,7 @@ npm run verify                        # all of the above
     - A host builds a hunt from a recorded GPS spot and a map pin.
     - The host shares the link, and a player races it with a wrong answer and then the right one.
     - The leaderboard records the run.
+    - A player on another phone sends a result link and the host adds it to the leaderboard.
     - A list unlock with a hint, and a damaged link.
 
 ## Architecture
@@ -100,6 +112,7 @@ template/                         @haunt-kit/template
   src/react/      useTourSession, TourMap, StopList, Compass, StopSources, useStopDialog
   src/pwa/        Vite plugin (manifest, icon, service worker) + registration
   starter/        three-stop tour and a ~50-line app to copy
+  scripts/        create-app generator (npm run create-app)
 apps/ghost-walk/        Des Moines After Dark (tour data + themed UI)
 apps/scavenger-hunt/    Spook Hunt (editor, link codec, player, leaderboard)
 e2e/                    Playwright specs

@@ -9,11 +9,14 @@ template/                 the skeleton (@haunt-kit/template)
   src/react/              useTourSession hook, TourMap (SVG + fog), StopList, SimControls
   src/pwa/                Vite plugin that writes the web manifest and service worker; register()
   starter/                a three-stop example tour to copy
+  scripts/                create-app generator: create-app-files.ts (pure) and create-tour-app.mjs (file I/O)
   test/                   unit tests for everything in src/core and src/adapters
 apps/ghost-walk/          haunted history walk, downtown Des Moines
   src/tour.ts             stop data with sources for every legend
 apps/scavenger-hunt/      party hunt: host editor, share link and QR, player race, leaderboard
   src/hunt-codec.ts       hunt <-> URL encoding
+  src/result-codec.ts     finished-run <-> URL encoding ("Send my time to the host")
+  src/result-board.ts     host side: shared-hunt list and adding a result to the leaderboard
 e2e/                      Playwright tests that build and serve both apps
 .kiro/                    steering, specs and hooks for Kiro
 ```
@@ -22,4 +25,5 @@ e2e/                      Playwright tests that build and serve both apps
 - Apps import only from `@haunt-kit/template/*` entry points (`core`, `adapters`, `react`, `pwa`), never from deep paths.
 - File names are kebab-case for modules and PascalCase for React components.
 - Tests sit in each package's `test/` folder and are named `<module>.test.ts`; e2e specs are `e2e/<app>.spec.ts`.
+- `npm run create-app -- <folder>` writes a new `apps/<folder>`; it does not edit the root `workspaces` list, so a builder adds that line by hand.
 - Sample data uses invented names, 555-01xx phone numbers and example.com addresses.

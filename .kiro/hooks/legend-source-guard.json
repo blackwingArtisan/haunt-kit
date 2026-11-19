@@ -9,7 +9,8 @@
       "action": {
         "type": "agent",
         "prompt": "You just edited the Ghost Walk tour data. Check every stop: a legend must say \"legend says\" in its story and cite at least one public source with a working URL and an accessed date; history must cite a source; anything without a confirmed source must be kind \"fiction\", set in a public space (never a home or a business), and say it was invented for this walk. Stops at homes or residences need an etiquette note asking walkers to stay on the public sidewalk. Then run `npm test` (apps/ghost-walk/test/tour.test.ts checks these rules)."
-      }
+      },
+      "enabled": true
     }
   ]
 }

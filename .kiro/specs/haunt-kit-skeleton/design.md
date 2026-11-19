@@ -41,6 +41,16 @@ interface KeyValueStore { get; set; remove }
 - **Service worker written by a Vite plugin.** No extra dependency; the precache list comes straight from the bundle. Cache lookups use `ignoreVary` because module scripts are requested with an `Origin` header and the precache is not.
 - **Paid adapters behind build-time constants.** `__HAUNT_POLLY__` lets the bundler drop the AWS SDK from default builds.
 
+## Starter generator
+`npm run create-app -- <folder> [--name ...] [--dev-port N] [--preview-port N]` runs `template/scripts/create-tour-app.mjs`. The script only reads files (the starter, the existing apps' `package.json` files) and writes the new folder. Every decision is in `template/scripts/create-app-files.ts`, a pure TypeScript module that Node runs through built-in type stripping, so there is no build step and nothing to install.
+
+- `createAppFiles(options)` takes the starter's source text, the existing folder and package names, the ports and the pinned versions, and returns a map of relative path to file text. It throws `CreateAppError` for a bad name, an existing folder, a taken package name or bad ports.
+- The starter imports the template by relative path (`../src/react`). The generator rewrites those to `@haunt-kit/template/*`, sets the tour id and title, and sets the storage prefix, using exact-text replacement. A replacement that finds nothing fails loudly, so a changed starter cannot silently produce a broken app.
+- Ports: apps in this repository use 3170 to 3173. The generator reads the `--port` values in the other apps' scripts and picks the first free pair from 3174 to 3179, or uses the ports the builder passes.
+- The script creates the folder with a non-recursive `mkdir` and writes files with the `wx` flag, so a folder that appears between the check and the write is still never overwritten.
+- It does not edit the root `package.json`. It prints the `"apps/<folder>"` line to add, and the builder runs `npm install` once so npm links the workspace.
+- Tests evaluate the generated tour source (an object literal) and pass it through `defineTour`.
+
 ## Error handling
 - Invalid tours throw `TourValidationError` with one readable line per issue.
 - Location denial stops the watch and the UI points to the list; timeouts show "searching" and keep trying.

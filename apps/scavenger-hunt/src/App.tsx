@@ -3,6 +3,7 @@ import { createStore } from '@haunt-kit/template/adapters';
 import { Home } from './Home';
 import { Host } from './Host';
 import { Play } from './Play';
+import { Result } from './Result';
 import { useHashRoute } from './useHashRoute';
 
 export function App() {
@@ -17,6 +18,7 @@ export function App() {
       <main id="main" className="sh-main">
         {route.name === 'host' && <Host store={store} />}
         {route.name === 'play' && <Play key={route.code} code={route.code} store={store} />}
+        {route.name === 'result' && <Result key={route.code} code={route.code} store={store} />}
         {route.name === 'home' && <Home />}
       </main>
       <footer className="sh-footer">

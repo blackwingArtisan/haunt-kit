@@ -5,7 +5,9 @@ import { StopList, TourMap, useTourSession } from '@haunt-kit/template/react';
 import { huntToTour, type SharedHunt } from './hunt';
 import { decodeHunt, huntId } from './hunt-codec';
 import { HEAT_LABEL, heat, heatLevel, trend } from './hotcold';
-import { formatDuration, Leaderboard, score, type Run } from './leaderboard';
+import { formatDuration, Leaderboard, type Run } from './leaderboard';
+import { encodeResult, resultUrl } from './result-codec';
+import { Scoreboard } from './Scoreboard';
 
 type Loaded = { hunt: SharedHunt; tour: Tour; id: string };
 
@@ -155,6 +157,7 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
           </button>
           <p className="sh-note">The clock starts now. Hints cost 30 seconds, wrong answers 10.</p>
         </form>
+        {lastRun && <SendResult run={lastRun} huntId={id} />}
         <Scoreboard runs={runs} highlight={lastRun} />
       </div>
     );
@@ -172,6 +175,48 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
       position={position}
       state={state}
     />
+  );
+}
+
+/** "Send my time to the host": a link carrying this run, for a player who is not on the host's device. */
+function SendResult({ run, huntId }: { run: Run; huntId: string }) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    let live = true;
+    setUrl(null);
+    encodeResult({ ...run, huntId })
+      .then((code) => live && setUrl(resultUrl(location.href, code)))
+      .catch(() => live && setUrl(null));
+    return () => {
+      live = false;
+    };
+  }, [run, huntId]);
+  if (!url) return null;
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+  return (
+    <section className="sh-card sh-send" aria-labelledby="send-h">
+      <h2 id="send-h" className="sh-h2">
+        Playing on your own phone?
+      </h2>
+      <p className="sh-note">Message this link to the host. It holds only your name, your time and your penalties. No answers or hiding spots.</p>
+      <div className="sh-row">
+        <a className="hk-btn" href={url} data-testid="result-link">
+          Send my time to the host
+        </a>
+        <button type="button" className="hk-btn hk-btn--ghost" onClick={copy}>
+          {copied ? 'Copied' : 'Copy result link'}
+        </button>
+      </div>
+    </section>
   );
 }
 
@@ -399,30 +444,6 @@ function Thermometer({ target, position }: { target: Stop; position: { lat: numb
         {h !== 'here' && direction !== 'steady' && <span> · getting {direction}</span>}
       </p>
     </div>
-  );
-}
-
-function Scoreboard({ runs, highlight }: { runs: Run[]; highlight?: Run | null }) {
-  return (
-    <section className="sh-card sh-board" aria-labelledby="board-h" data-testid="leaderboard">
-      <h2 id="board-h" className="sh-h2">
-        Leaderboard
-      </h2>
-      {runs.length === 0 ? (
-        <p className="sh-note">No one has finished yet. Be the first.</p>
-      ) : (
-        <ol className="sh-board__list">
-          {runs.slice(0, 10).map((r, i) => (
-            <li key={`${r.player}-${r.finishedAt}`} className={highlight && r.finishedAt === highlight.finishedAt ? 'sh-board__me' : undefined}>
-              <span className="sh-board__rank">{i + 1}</span>
-              <span className="sh-board__name">{r.player}</span>
-              <span className="sh-board__time">{formatDuration(score(r))}</span>
-            </li>
-          ))}
-        </ol>
-      )}
-      <p className="sh-note">Scores include penalties. Saved on this device only.</p>
-    </section>
   );
 }
 

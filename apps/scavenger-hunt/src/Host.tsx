@@ -14,7 +14,8 @@ import {
   type DraftStop,
   type HuntDraft,
 } from './hunt';
-import { encodeHunt, HuntCodeError, huntUrl } from './hunt-codec';
+import { encodeHunt, HuntCodeError, huntId, huntUrl } from './hunt-codec';
+import { rememberSharedHunt } from './result-board';
 import { QrCode } from './QrCode';
 
 const DRAFT_KEY = 'draft';
@@ -79,6 +80,8 @@ export function Host({ store }: { store: KeyValueStore }) {
     try {
       const code = await encodeHunt(await shareableHunt(draft));
       setShare({ code, url: huntUrl(location.href.split('#')[0]!, code) });
+      // Lets this device accept results sent back for this hunt.
+      rememberSharedHunt(store, { id: await huntId(code), title: draft.title.trim(), sharedAt: Date.now() });
     } catch (err) {
       setShareError(err instanceof HuntCodeError ? err.message : 'Could not make the link.');
     }

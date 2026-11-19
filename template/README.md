@@ -4,6 +4,21 @@ The skeleton for GPS-triggered story walks. Write a tour as data; get stops that
 
 Both apps in this repository are built from it: [`apps/ghost-walk`](../apps/ghost-walk) and [`apps/scavenger-hunt`](../apps/scavenger-hunt).
 
+## Start a new walk with the generator
+
+```bash
+npm run create-app -- river-walk --name "River Walk"
+```
+
+This copies `starter/` into `apps/river-walk/` as a working Vite app (`index.html`, `package.json`, `vite.config.ts` with `hauntKitPwa`, `src/main.tsx`, `src/StarterApp.tsx`, `src/starter-tour.ts`). It imports the template only through its package entry points.
+
+- **Folder name:** lowercase letters, digits and single dashes, starting with a letter. The script refuses a name that already exists in `apps/` and never overwrites anything.
+- **`--name`:** the tour's display name. It defaults to the folder name in title case.
+- **Ports:** the app gets the first free pair from 3174 to 3179 (dev, then preview). Pass `--dev-port` and `--preview-port` to choose others. Ports 3170 to 3173 belong to Ghost Walk and Spook Hunt.
+- **Workspaces:** the script does not edit the root `package.json`. It prints the line to add (`"apps/river-walk",`), then you run `npm install` once so npm links the new app. No new packages are installed.
+
+The file logic is in [`scripts/create-app-files.ts`](scripts/create-app-files.ts) (pure, covered by `test/create-app.test.ts`). [`scripts/create-tour-app.mjs`](scripts/create-tour-app.mjs) only reads and writes files. To copy the starter by hand instead, use the four steps below.
+
 ## Start a new walk in four steps
 
 1. **Copy the starter.** [`starter/starter-tour.ts`](starter/starter-tour.ts) is a three-stop tour and [`starter/StarterApp.tsx`](starter/StarterApp.tsx) is the smallest complete app (about 50 lines).

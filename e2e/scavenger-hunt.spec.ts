@@ -114,3 +114,71 @@ test('a damaged hunt link shows a friendly error', async ({ page }) => {
   await page.goto('/#/play/1ThisIsNotAHunt');
   await expect(page.getByRole('heading', { name: 'This hunt link is cursed' })).toBeVisible();
 });
+
+test('a player on their own phone sends a result link, and the host adds it to the leaderboard', async ({ browser }) => {
+  // Two browser contexts have separate storage, like two phones.
+  const hostContext = await browser.newContext();
+  const playerContext = await browser.newContext();
+  try {
+    const host = await hostContext.newPage();
+    await host.goto('/#/host');
+    await host.getByRole('button', { name: 'Load the demo hunt' }).click();
+    await host.getByRole('button', { name: 'Make the share link' }).click();
+    const huntLink = await host.getByTestId('share-url').inputValue();
+
+    // The player finishes the demo hunt from the list: one hint, one wrong answer, three list unlocks.
+    const player = await playerContext.newPage();
+    await player.goto(huntLink);
+    await player.getByLabel('Player or team name').fill('Team Lantern');
+    await player.getByRole('button', { name: 'Start the hunt' }).click();
+    const unlock = (n: number) => player.locator('.hk-list__item').nth(n).getByRole('button', { name: /Can't reach it\? Unlock/ }).click();
+    const challenge = player.getByTestId('challenge');
+
+    await unlock(0);
+    await challenge.getByRole('button', { name: 'Hint (+30 s)' }).click();
+    await challenge.getByLabel(/ribbon/).fill('green');
+    await challenge.getByRole('button', { name: 'Check answer' }).click();
+    await expect(challenge).toContainText('Not quite');
+    await challenge.getByLabel(/ribbon/).fill('orange');
+    await challenge.getByRole('button', { name: 'Check answer' }).click();
+    await unlock(1);
+    await challenge.getByLabel(/animal/).fill('a bat');
+    await challenge.getByRole('button', { name: 'Check answer' }).click();
+    await unlock(2);
+
+    const finished = player.getByTestId('finished');
+    await expect(finished).toContainText('Team Lantern escaped!');
+    await expect(finished).toContainText('1 hints · 1 wrong answers · 3 unlocked from the list');
+    await expect(player.getByRole('link', { name: 'Send my time to the host' })).toBeVisible();
+    const resultLink = (await player.getByTestId('result-link').getAttribute('href'))!;
+    expect(resultLink).toMatch(/#\/result\/[0-9A-Za-z_-]+$/);
+    expect(resultLink.length).toBeLessThan(2000);
+    for (const secret of ['orange', 'ribbon', '41.57', '-93.64']) expect(resultLink).not.toContain(secret);
+
+    // The host opens the link on their own device and adds the run.
+    await host.goto(resultLink);
+    const card = host.getByTestId('result-card');
+    await expect(card).toContainText('Team Lantern finished');
+    await expect(card).toContainText('1 hints · 1 wrong answers · 3 unlocked from the list');
+    await expect(host.getByRole('heading', { name: 'The Pumpkin Patrol' })).toBeVisible();
+    await expect(host.getByTestId('leaderboard')).not.toContainText('Team Lantern');
+    await host.getByRole('button', { name: 'Add to leaderboard' }).click();
+    await expect(host.getByTestId('result-status')).toContainText('Added Team Lantern to the leaderboard');
+    await expect(host.getByTestId('leaderboard')).toContainText('Team Lantern');
+
+    // Opening the same link again is refused, and the run is not listed twice.
+    await host.reload();
+    await expect(host.getByTestId('result-status')).toContainText('already on the leaderboard');
+    await expect(host.getByRole('button', { name: 'Add to leaderboard' })).toHaveCount(0);
+    await expect(host.getByTestId('leaderboard').locator('li')).toHaveCount(1);
+
+    // A damaged link is refused with a message, and a result for another hunt is not accepted.
+    await host.goto(`${resultLink.slice(0, -8)}`);
+    await expect(host.getByTestId('result-error')).toContainText('nothing was added');
+    await player.goto(resultLink);
+    await expect(player.getByTestId('result-status')).toContainText('different hunt');
+  } finally {
+    await hostContext.close();
+    await playerContext.close();
+  }
+});

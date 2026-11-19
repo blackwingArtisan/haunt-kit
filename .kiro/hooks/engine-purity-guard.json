@@ -9,7 +9,8 @@
       "action": {
         "type": "agent",
         "prompt": "You just edited template/src/core. Keep it pure TypeScript: no DOM, no React, no timers, no storage, and never mutate an input state (return a new one plus events). Any change to unlock, ordering, dwell, hysteresis or smoothing rules needs a matching unit test in template/test and an update to .kiro/specs/haunt-kit-skeleton/requirements.md if behavior changed. Run `npm run check`."
-      }
+      },
+      "enabled": true
     }
   ]
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-export type Route = { name: 'home' } | { name: 'host' } | { name: 'play'; code: string };
+export type Route = { name: 'home' } | { name: 'host' } | { name: 'play'; code: string } | { name: 'result'; code: string };
 
 export function parseHash(hash: string): Route {
   const path = hash.replace(/^#/, '');
   if (path.startsWith('/play/')) return { name: 'play', code: path.slice('/play/'.length) };
+  if (path.startsWith('/result/')) return { name: 'result', code: path.slice('/result/'.length) };
   if (path === '/host') return { name: 'host' };
   return { name: 'home' };
 }

@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const GHOST_PORT = 3171;
-const HUNT_PORT = 3173;
+// Override with PW_GHOST_PORT / PW_HUNT_PORT when the default preview ports are taken.
+const GHOST_PORT = Number(process.env.PW_GHOST_PORT ?? 3171);
+const HUNT_PORT = Number(process.env.PW_HUNT_PORT ?? 3173);
 
 export default defineConfig({
   testDir: 'e2e',
@@ -33,14 +34,14 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `npm run build -w apps/ghost-walk && npm run preview -w apps/ghost-walk`,
+      command: `npm run build -w apps/ghost-walk && cd apps/ghost-walk && npx vite preview --port ${GHOST_PORT} --strictPort`,
       url: `http://localhost:${GHOST_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,
       env: { VITE_HAUNT_NARRATOR: 'silent' },
     },
     {
-      command: `npm run build -w apps/scavenger-hunt && npm run preview -w apps/scavenger-hunt`,
+      command: `npm run build -w apps/scavenger-hunt && cd apps/scavenger-hunt && npx vite preview --port ${HUNT_PORT} --strictPort`,
       url: `http://localhost:${HUNT_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,

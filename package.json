@@ -17,6 +17,7 @@
   "scripts": {
     "dev:ghost": "npm run dev -w apps/ghost-walk",
     "dev:hunt": "npm run dev -w apps/scavenger-hunt",
+    "create-app": "node template/scripts/create-tour-app.mjs",
     "build": "npm run build -w apps/ghost-walk && npm run build -w apps/scavenger-hunt",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",

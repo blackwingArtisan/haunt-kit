@@ -17,9 +17,12 @@
   - `KeyValueStore`: `localStorage` (default) or in-memory (tests).
 - Maps are stylized SVG drawn from the tour's own coordinates. No tile server, no map keys.
 - Hunt links carry the whole hunt: compact JSON, deflate-raw through `CompressionStream`, base64url, in the URL hash so it never reaches a server log. Answers travel as salted SHA-256 digests, not plain text.
+- Result links ("Send my time to the host") use the same encoding in the URL hash. They carry the player name, the hunt's short id (a digest of the hunt link), time, penalty counts, list unlocks and finish time, and never answers, answer digests or coordinates. The host's device accepts a result only for a hunt it shared, and only once.
+- `npm run create-app -- <folder> [--name ...]` generates a new app from `template/starter`. The generator logic is pure TypeScript (`template/scripts/create-app-files.ts`, run by Node's built-in type stripping) and is unit-tested; the `.mjs` wrapper only reads and writes files.
 
 ## Quality bar
 - `npm run check` (typecheck plus unit tests) and `npm run test:e2e` (both apps built and served, driven by Playwright) must pass before every commit.
+- The template's generator and the hunt result codec have unit tests (`template/test/create-app.test.ts`, `apps/scavenger-hunt/test/result-codec.test.ts`).
 - Each app has at least one end-to-end test that drives a simulated GPS walk and sees stops unlock, plus one that uses Playwright's real geolocation override against the browser Geolocation adapter.
 - No paid API is called in development or tests.
 
@@ -27,4 +30,4 @@
 Static hosting (Cloudflare Pages or any static host). `npm run build` writes `apps/*/dist`. Nothing is deployed from this repo by default.
 
 ## Ports
-Dev and preview servers use ports 3170 to 3179: Ghost Walk dev 3170 and preview 3171, Scavenger Hunt dev 3172 and preview 3173.
+Dev and preview servers use ports 3170 to 3179: Ghost Walk dev 3170 and preview 3171, Scavenger Hunt dev 3172 and preview 3173. Generated apps take the first free pair from 3174 to 3179.
