@@ -7,5 +7,5 @@ export default defineConfig({
   root: fileURLToPath(new URL('.', import.meta.url)),
   base: './',
   build: { outDir: fileURLToPath(new URL('../dist', import.meta.url)), emptyOutDir: true },
-  preview: { port: 3175, strictPort: true },
+  preview: { port: 3169, strictPort: true },
 });

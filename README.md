@@ -9,7 +9,7 @@ Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in t
 ## Judge it in 60 seconds
 ```bash
 npm ci
-npm run build:site && npm run preview:site   # http://localhost:3175
+npm run build:site && npm run preview:site   # http://localhost:3169
 ```
 The landing page shows both apps side by side, each with a QR code. Then:
 
@@ -131,7 +131,7 @@ The hosted layout (landing page at the root, the apps in `ghost-walk/` and `spoo
 
 ```bash
 npm run build:site
-npm run preview:site                    # http://localhost:3175
+npm run preview:site                    # http://localhost:3169
 ```
 
 Each app on its own, as the end-to-end tests run it:

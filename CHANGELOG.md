@@ -4,6 +4,9 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 
 ## Unreleased
 
+### Fixes
+- The hosted-site preview moved from port 3175 to 3169. The first app made by `npm run create-app` takes 3174 and 3175, so the two used to collide. The generator now reserves 3169, and a unit test keeps the site config, the Playwright config and the generator in step.
+
 ### A 60-second demo path
 - Spook Hunt's home screen has a **Play the demo hunt** button that builds the three-spot demo exactly as a host would share it and opens it as a player. **Load the demo hunt** moved to the top of the host editor.
 - A practice run waits at a found spot until its question is answered, then walks on by itself. The rule is part of the skeleton: `awaitingAnswer()` in `core/rules` and a `hold` option on `SimulatedWalkSource`.

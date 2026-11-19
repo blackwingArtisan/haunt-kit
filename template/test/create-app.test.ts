@@ -6,9 +6,11 @@ import {
   choosePorts,
   CreateAppError,
   createAppFiles,
+  DEFAULT_PORT_RANGE,
   defaultAppName,
   folderNameProblem,
   nextSteps,
+  SITE_PREVIEW_PORT,
   workspaceEntry,
   type CreateAppOptions,
 } from '../scripts/create-app-files';
@@ -141,6 +143,20 @@ describe('create-app validation', () => {
     expect(() => choosePorts(taken, { dev: 4000, preview: 4000 })).toThrow(/different/);
     expect(() => choosePorts(taken, { dev: 80 })).toThrow(/1024/);
     expect(() => createAppFiles(options({ ports: { dev: 3174, preview: 3174 } }))).toThrow(CreateAppError);
+  });
+
+  it('never hands out the hosted-site preview port, which the site and Playwright configs both use', () => {
+    const { first, last } = DEFAULT_PORT_RANGE;
+    expect(SITE_PREVIEW_PORT < first || SITE_PREVIEW_PORT > last).toBe(true);
+    expect(() => choosePorts([], { dev: SITE_PREVIEW_PORT })).toThrow(/hosted-site preview/);
+    expect(() => choosePorts([], { dev: 4000, preview: SITE_PREVIEW_PORT })).toThrow(/hosted-site preview/);
+    const siteConfig = readFileSync(new URL('../../site/vite.config.ts', import.meta.url), 'utf8');
+    const playwrightConfig = readFileSync(new URL('../../playwright.config.ts', import.meta.url), 'utf8');
+    expect(siteConfig).toContain(`preview: { port: ${SITE_PREVIEW_PORT}, strictPort: true }`);
+    expect(playwrightConfig).toContain(`PW_SITE_PORT ?? ${SITE_PREVIEW_PORT}`);
+    // The first app the generator makes must not collide with the site preview.
+    const firstApp = choosePorts([3170, 3171, 3172, 3173]);
+    expect([firstApp.dev, firstApp.preview]).not.toContain(SITE_PREVIEW_PORT);
   });
 
   it('prints the workspace line and next steps', () => {

@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 // Override with PW_GHOST_PORT / PW_HUNT_PORT / PW_SITE_PORT when the default preview ports are taken.
 const GHOST_PORT = Number(process.env.PW_GHOST_PORT ?? 3171);
 const HUNT_PORT = Number(process.env.PW_HUNT_PORT ?? 3173);
-const SITE_PORT = Number(process.env.PW_SITE_PORT ?? 3175);
+const SITE_PORT = Number(process.env.PW_SITE_PORT ?? 3169);
 
 export default defineConfig({
   testDir: 'e2e',

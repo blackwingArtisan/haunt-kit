@@ -16,6 +16,9 @@ export class CreateAppError extends Error {
 /** Ports 3170 to 3173 belong to the two apps in this repository; the next six are free for new ones. */
 export const DEFAULT_PORT_RANGE = { first: 3174, last: 3179 } as const;
 
+/** The hosted-site preview (`npm run preview:site`) lives outside `apps/`, so its port is reserved here. */
+export const SITE_PREVIEW_PORT = 3169;
+
 const RESERVED_FOLDERS = ['node_modules', 'dist', 'src', 'test'];
 const FOLDER_NAME = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 export const MAX_APP_NAME = 60;
@@ -60,7 +63,7 @@ const validPort = (n: unknown): n is number => Number.isInteger(n) && (n as numb
  * `taken` lists ports that other apps in the repository already use.
  */
 export function choosePorts(taken: readonly number[], requested: { dev?: number; preview?: number } = {}): Ports {
-  const used = new Set(taken);
+  const used = new Set([...taken, SITE_PREVIEW_PORT]);
   const { first, last } = DEFAULT_PORT_RANGE;
   let dev = requested.dev;
   let preview = requested.preview;
@@ -77,6 +80,7 @@ export function choosePorts(taken: readonly number[], requested: { dev?: number;
   preview ??= dev + 1;
   for (const [label, port] of [['dev', dev], ['preview', preview]] as const) {
     if (!validPort(port)) throw new CreateAppError(`The ${label} port must be a whole number from 1024 to 65535.`);
+    if (port === SITE_PREVIEW_PORT) throw new CreateAppError(`The ${label} port ${port} is used by the hosted-site preview.`);
     if (used.has(port)) throw new CreateAppError(`The ${label} port ${port} is already used by another app in apps/.`);
   }
   if (dev === preview) throw new CreateAppError('The dev and preview ports must be different.');
