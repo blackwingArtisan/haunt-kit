@@ -123,3 +123,12 @@ Criteria use EARS form. Numbers never change once assigned; new criteria for an 
 14. THE SYSTEM SHALL NOT edit the root `package.json`.
 15. THE SYSTEM SHALL compute every generated file in a pure function that reads and writes nothing.
 16. IF the starter no longer contains text the generator rewrites, THEN THE SYSTEM SHALL fail with a message that names it.
+
+## Requirement 13: Stops that wake at sunset
+**User story:** As a tour builder, I want a stop that only wakes after dark, so that a ghost story can wait for the evening without ever locking anyone out.
+1. WHERE a stop sets `wakesAfter: 'sunset'`, THE SYSTEM SHALL compute sunset on the device for the stop's position, with no network call.
+2. WHILE the sun is above the horizon at the stop, WHEN a walker arrives by GPS, THEN THE SYSTEM SHALL keep the stop locked and emit a `sleeping` event with the time of the next sunset.
+3. WHEN the sun sets while the walker is still inside the stop's circle, THEN THE SYSTEM SHALL unlock the stop on the next position fix.
+4. THE SYSTEM SHALL unlock a sunset stop from the stop list at any hour.
+5. WHILE a simulated walk is running, THE SYSTEM SHALL treat sunset stops as awake.
+6. IF `wakesAfter` holds any value other than `sunset`, THEN THE SYSTEM SHALL reject the tour with an error that names the field.

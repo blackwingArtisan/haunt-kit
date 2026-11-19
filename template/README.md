@@ -49,6 +49,7 @@ defineTour({
       challenge: { question: 'What year is carved on the door?', answers: ['1877'], hint: 'Look up.' },
       requires: ['another-stop-id'],
       finale: false,             // a finale waits for every other stop
+      wakesAfter: 'sunset',      // optional: GPS wakes it only after dark; the list always works
     },
   ],
 });
@@ -58,7 +59,7 @@ defineTour({
 
 | Import | What you get |
 |---|---|
-| `@haunt-kit/template/core` | `haversine`, `bearing`, `FixSmoother`, `defineTour`/`parseTour`, `stepFix`, `unlock`, `markSolved`, `settleInside`, `availability`, `buildTrack`, `sampleTrack`, `checkAnswer`, `hashAnswer`, `fitProjection` |
+| `@haunt-kit/template/core` | `haversine`, `bearing`, `FixSmoother`, `defineTour`/`parseTour`, `stepFix`, `unlock`, `markSolved`, `settleInside`, `availability`, `isAfterSunset`, `nextSunset`, `buildTrack`, `sampleTrack`, `checkAnswer`, `hashAnswer`, `fitProjection` |
 | `@haunt-kit/template/adapters` | `BrowserGeolocationSource`, `SimulatedWalkSource`, `getCurrentFix`, `LocalStorageStore`, `MemoryStore`, `ProgressStore`, `SpeechSynthesisNarrator`, `SilentNarrator`, `createNarrator`, `createStore` |
 | `@haunt-kit/template/adapters/polly` | `PollyNarrator` (Amazon Polly, paid, opt-in) |
 | `@haunt-kit/template/react` | `useTourSession`, `TourMap`, `StopList`, `Compass`, `StopSources`, `useStopDialog`, `useReducedMotion` |
@@ -70,7 +71,7 @@ defineTour({
 1. A `PositionSource` (real GPS or a simulated walk) reports a fix.
 2. `FixSmoother` drops vague fixes (worse than 60 m) and impossible jumps (faster than 9 m/s), then blends the rest with a Kalman filter weighted by accuracy.
 3. `stepFix` checks each stop: two fixes in a row inside the radius count as an arrival; leaving needs 1.3 × the radius, so a walker at the edge does not flicker in and out.
-4. If the ordering rules allow it, the stop unlocks (`unlock` event). If not, the walker hears what is missing (`locked-nearby`). When the rules later allow a stop the walker is standing in, `settleInside` unlocks it on the spot.
+4. If the ordering rules allow it, the stop unlocks (`unlock` event). If not, the walker hears what is missing (`locked-nearby`). When the rules later allow a stop the walker is standing in, `settleInside` unlocks it on the spot. A `wakesAfter: 'sunset'` stop reached in daylight stays asleep (`sleeping`, with the next sunset time, computed on the device by `nextSunset`) and wakes on the first fix after dark. The list and simulated walks ignore it.
 5. When every stop is finished (unlocked, and solved if it has a question), `complete` fires once.
 
 The engine is pure: it returns a new state and a list of events and never mutates its input, so it works with any UI and is easy to test.

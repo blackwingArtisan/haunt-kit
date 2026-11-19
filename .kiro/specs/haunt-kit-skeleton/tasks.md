@@ -36,3 +36,8 @@ A task is checked only when code and a test implement it. Gaps found in review a
 - [ ] 27. Render test for StopList: disabled "visit from here" and the waiting-for text (Req 8.8)
 - [ ] 28. E2E check that buttons show a visible focus ring under keyboard focus (Req 8.6)
 - [ ] 29. Build-output check that no default app bundle contains AWS SDK code (Req 11.2)
+- [x] 30. Sunset-wake stops (Req 13)
+  - [x] 30.1 Pure solar position, `isAfterSunset` and `nextSunset` in `core/sun.ts`, tested against published Des Moines sunset times (`template/test/sun.test.ts`)
+  - [x] 30.2 `wakesAfter` in the stop schema; `settleInside` keeps a sleeping stop locked and emits `sleeping`; `ignoreWake` for simulated walks (`template/test/sunset-wake.test.ts`)
+  - [x] 30.3 `useTourSession` passes `ignoreWake` while a simulated walk runs
+  - [x] 30.4 Ghost Walk: the Lamplighter's Round wakes at sunset, with a notice that names the time

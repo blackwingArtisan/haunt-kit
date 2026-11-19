@@ -51,6 +51,8 @@ export const stopSchema = z.object({
   requires: z.array(z.string()).default([]),
   /** A finale unlocks only after every other stop is finished. */
   finale: z.boolean().default(false),
+  /** 'sunset': GPS wakes this stop only after sunset at its position. The stop list and simulated walks ignore it. */
+  wakesAfter: z.enum(['sunset']).optional(),
 });
 
 const mapFeature = z.object({

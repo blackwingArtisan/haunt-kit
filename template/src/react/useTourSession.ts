@@ -71,6 +71,13 @@ export function useTourSession(tour: Tour, options: TourSessionOptions): TourSes
   const optsRef = useRef(options);
   optsRef.current = options;
   const now = useCallback(() => (optsRef.current.now ?? Date.now)(), []);
+  const modeRef = useRef<WalkMode>('idle');
+  modeRef.current = mode;
+  // A simulated walk runs on its own clock, so sunset-wake stops are awake for it.
+  const geofenceOptions = useCallback(
+    (): GeofenceOptions => ({ ...optsRef.current.geofence, ignoreWake: optsRef.current.geofence?.ignoreWake || modeRef.current === 'simulated' }),
+    [],
+  );
 
   const commit = useCallback(
     (next: SessionState, events: EngineEvent[]) => {
@@ -93,10 +100,10 @@ export function useTourSession(tour: Tour, options: TourSessionOptions): TourSes
     (raw: Fix) => {
       const smoothed = smootherRef.current.push(raw);
       if (!smoothed.accepted) return;
-      const result = stepFix(tour, stateRef.current, smoothed.fix, optsRef.current.geofence);
+      const result = stepFix(tour, stateRef.current, smoothed.fix, geofenceOptions());
       commit(result.state, result.events);
     },
-    [tour, commit],
+    [tour, commit, geofenceOptions],
   );
 
   const stop = useCallback(() => {
@@ -111,6 +118,7 @@ export function useTourSession(tour: Tour, options: TourSessionOptions): TourSes
       sourceRef.current?.stop();
       smootherRef.current.reset();
       sourceRef.current = source;
+      modeRef.current = nextMode;
       setMode(nextMode);
       source.start({
         fix: onFix,
@@ -154,12 +162,12 @@ export function useTourSession(tour: Tour, options: TourSessionOptions): TourSes
     (stopId: string) => {
       const r = unlock(tour, stateRef.current, stopId, 'list', now());
       // Unlocking from the list may open a stop the walker is already standing in.
-      const settled = settleInside(tour, r.state, now());
+      const settled = settleInside(tour, r.state, now(), new Set(), geofenceOptions());
       const events = [...r.events, ...settled.events];
       commit(settled.state, events);
       return events;
     },
-    [tour, commit, now],
+    [tour, commit, now, geofenceOptions],
   );
 
   const answer = useCallback(
@@ -168,14 +176,14 @@ export function useTourSession(tour: Tour, options: TourSessionOptions): TourSes
       if (!stopDef?.challenge) return false;
       const ok = await checkAnswer(text, stopDef.challenge.answers);
       if (ok) {
-        const r = markSolved(tour, stateRef.current, stopId, now());
+        const r = markSolved(tour, stateRef.current, stopId, now(), geofenceOptions());
         commit(r.state, r.events);
       } else {
         commit(recordAttempt(stateRef.current, stopId, 'wrong'), []);
       }
       return ok;
     },
-    [tour, commit, now],
+    [tour, commit, now, geofenceOptions],
   );
 
   const takeHint = useCallback((stopId: string) => commit(recordAttempt(stateRef.current, stopId, 'hint'), []), [commit]);

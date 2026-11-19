@@ -3,6 +3,7 @@ import { createNarrator, createStore, SilentNarrator, type Narrator } from '@hau
 import type { EngineEvent } from '@haunt-kit/template/core';
 import { Compass, StopList, StopSources, TourMap, useStopDialog, useTourSession } from '@haunt-kit/template/react';
 import { FinaleOverlay } from './Finale';
+import { sleepingNotice } from './notices';
 import { tour } from './tour';
 
 const SPEEDS = [
@@ -82,6 +83,9 @@ export function App() {
           break;
         case 'locked-nearby':
           say(`${name(event.stopId)} stays dark. ${event.waitingFor.length} more ${event.waitingFor.length === 1 ? 'spirit waits' : 'spirits wait'} elsewhere.`);
+          break;
+        case 'sleeping':
+          say(sleepingNotice(name(event.stopId), event.wakesAt));
           break;
         case 'complete': {
           say('Every spirit is found. The tower light goes out.');

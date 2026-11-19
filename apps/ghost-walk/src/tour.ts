@@ -81,7 +81,8 @@ export const tour = defineTour({
       position: { lat: 41.5911, lng: -93.6403 },
       radius: 45,
       kind: 'fiction',
-      clue: 'Walk the old streets of Sherman Hill, among the city’s oldest homes.',
+      wakesAfter: 'sunset',
+      clue: 'Walk the old streets of Sherman Hill, among the city’s oldest homes. The lamplighter starts his round at sunset.',
       etiquette: 'These are private homes. Keep to the public sidewalk and keep your voice low.',
       story: [
         'A tale invented for this walk, and it belongs to the street, not to any house on it.',

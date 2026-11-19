@@ -83,12 +83,14 @@ The engine is a set of pure functions (`stepFix` for a position fix, `unlock` fo
   - Simulated walk: a time-based track at walking pace, pauses at stops, seeded noise for repeatable replays, and any speed.
   - Progress saved on the device, which survives reloads and falls back to memory when storage is blocked.
   - Stylized SVG map with fog of war that lifts along your trail. No tiles and no keys.
+  - Stops that wake at sunset: `wakesAfter: 'sunset'` keeps a stop asleep to GPS until dark, with sunset computed on the device. The list and simulated walks always open it.
   - Accessible list of every stop: you can unlock any stop the rules allow without walking, everything works by keyboard, the story dialog returns focus, and there is a reduced-motion mode.
   - Installable offline PWA: a Vite plugin writes the manifest, the icon and a precaching service worker.
 - **Des Moines After Dark**
   - Walk with your GPS, and each story opens as you arrive.
   - Simulate the walk from 1× to 500× speed.
   - Read from home through the list. A speech synthesis "Read it to me" option.
+  - The Lamplighter's Round wakes at sunset. A daytime walker is told the exact time to come back, or can read it from the list.
   - Six candles light as you find stops. The Terrace Hill finale waits for the other five, and finding it plays a full-screen finale.
   - "Watch the 60-second walk" plays the whole route at 60x, opening and closing each story as the lantern passes.
 - **Spook Hunt**
@@ -155,6 +157,7 @@ npm run verify                        # all of the above
   - Geo math and smoothing.
   - Tour validation.
   - The geofence engine: dwell, hysteresis, each ordering rule, overlap, settle-in-place, completion, immutability.
+  - Solar math against published Des Moines sunset times, and sunset-wake stops.
   - Simulation determinism.
   - Adapters, using fake geolocation and a manual clock.
   - Progress persistence and the projection.

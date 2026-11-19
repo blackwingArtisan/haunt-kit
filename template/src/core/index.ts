@@ -7,3 +7,4 @@ export * from './geofence';
 export * from './simulate';
 export * from './answers';
 export * from './projection';
+export * from './sun';

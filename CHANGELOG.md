@@ -20,6 +20,10 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 - Ghost Walk ends on a full-screen finale: six candles flare, the Terrace Hill tower light goes out, and the walker can walk again or share. Spook Hunt's finish bursts into bats and pumpkins.
 - Reduced motion shows every payoff in its final state.
 
+### Stops that wake at sunset
+- A stop can set `wakesAfter: 'sunset'`. GPS wakes it only after dark, with sunset worked out on the device from the NOAA solar equations (tested against published Des Moines sunset times). A daytime walker gets a `sleeping` event with the time to come back. The stop list and simulated walks always open it.
+- Ghost Walk's Lamplighter's Round now starts at sunset.
+
 ### Polish
 - The big finish time includes penalties, so it matches the leaderboard, with a line naming them.
 - Correct plurals on the finish and result cards ("1 wrong answer").

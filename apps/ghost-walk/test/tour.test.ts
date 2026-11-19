@@ -10,6 +10,7 @@ import {
   stepFix,
   tourRoute,
 } from '@haunt-kit/template/core';
+import { sleepingNotice } from '../src/notices';
 import { tour } from '../src/tour';
 
 // A box around downtown Des Moines, Sherman Hill and Terrace Hill.
@@ -82,11 +83,28 @@ describe('Des Moines After Dark data', () => {
     for (const raw of sampleTrack(track, { stepSeconds: 2, jitter: 8, seed: 99 })) {
       const r = smoother.push(raw);
       if (!r.accepted) continue;
-      const step = stepFix(tour, state, r.fix);
+      // A simulated walk runs on its own clock, so the sunset-wake stop is awake for it.
+      const step = stepFix(tour, state, r.fix, { ignoreWake: true });
       state = step.state;
       step.events.forEach((e) => e.type === 'unlock' && unlocked.push(e.stopId));
     }
     expect(unlocked).toEqual(tour.stops.map((s) => s.id));
     expect(state.completedAt).toBeDefined();
+  });
+});
+
+describe('sunset-wake notice', () => {
+  it('names the stop and the local sunset time, and points to the list', () => {
+    const wakesAt = Date.parse('2026-10-31T23:10:00Z');
+    const text = sleepingNotice("The Lamplighter's Round", wakesAt, (t) => new Date(t).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }));
+    expect(text).toBe("The Lamplighter's Round is still asleep. It wakes at sunset, 6:10 PM. Come back then, or read it from the list now.");
+  });
+
+  it('falls back to plain words when the sun will not set', () => {
+    expect(sleepingNotice('A stop', null)).toBe('A stop is still asleep until sunset. Read it from the list now.');
+  });
+
+  it('marks only the Lamplighter, on a public street, as a sunset stop', () => {
+    expect(tour.stops.filter((s) => s.wakesAfter === 'sunset').map((s) => s.id)).toEqual(['lamplighters-round']);
   });
 });
