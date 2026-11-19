@@ -1,18 +1,81 @@
 # Haunt Kit
 
-**A skeleton for GPS story walks: write the stops as data, and they unlock as people arrive. No server, no API keys, works offline.**
+**A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link.**
 
-Two very different Halloween apps are built from the same template:
+Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in two costumes: a sourced ghost walk through downtown Des Moines and a backyard Halloween scavenger hunt. Write the stops as data and they unlock as people arrive.
 
-- **Des Moines After Dark** (`apps/ghost-walk`): a self-guided haunted history walk from the Des Moines River to Terrace Hill. Six stops, about 4 km. Every legend is phrased "legend says" and links its public source. Every invented story is labeled as fiction and set in a public space.
-- **Spook Hunt** (`apps/scavenger-hunt`): a party scavenger hunt. The host drops pins or records the spot they are standing on, writes clues and questions, and shares the whole hunt as a link or QR code. The hunt lives in the URL; answers travel only as salted hashes. Players race on one device, with a hot-and-cold meter and a leaderboard.
+![A simulated walk through Des Moines After Dark: the fog lifts along the lantern's trail, the candles light one by one, and the finale plays](docs/media/hero-walk.gif)
 
-## Who it's for
-- **Tour builders**: historical societies, libraries, schools, and haunted-tour guides who want a walking tour without paying for an app platform or a map API.
-- **Party hosts and teachers** who want a 15-minute setup for a trick-or-treat hunt, a campus orientation, or a field-trip trail.
-- **Developers** who want a tested geofence engine (smoothing, dwell, hysteresis, ordering rules) to drop into their own app.
+## Judge it in 60 seconds
+```bash
+npm ci
+npm run build:site && npm run preview:site   # http://localhost:3175
+```
+The landing page shows both apps side by side, each with a QR code. Then:
+
+1. **Watch the 60-second walk.** The whole Ghost Walk route plays at 60x. Each story opens as the lantern arrives, the fog burns off, and the Terrace Hill finale plays. Direct link: `ghost-walk/?watch`.
+2. **Play the demo hunt.** One click opens Spook Hunt's three-spot demo exactly as a player receives it. Press **Practice run** and a simulated player walks to each spot and waits for your answer (the answers are "orange" and "bat"). Direct link: `spook-hunt/#/demo`.
+3. **Build your own.** In Spook Hunt, choose **Build a hunt**, drop a pin, write a clue, and press **Make the share link**. That link, or its QR code, is the whole hunt.
+
+No GPS or walking needed for any of it. Every stop in both apps can also be opened from the list.
+
+| | |
+|---|---|
+| ![The Terrace Hill story, with its three linked sources](docs/media/story.jpg) | ![Spook Hunt's share card: the whole hunt in one link and a QR code drawn on the device](docs/media/share.jpg) |
+| ![The hot-and-cold meter reading Warm on the way to the second hidden spot](docs/media/hotcold.jpg) | ![A finished hunt: the escape time includes a 10-second penalty for one wrong answer](docs/media/escaped.jpg) |
+
+## Why it matters
+Picture a county historical society that wants a ghost walk for October. It is one of at least [21,588 history organizations](https://aaslh.org/census/) in the United States. Halloween is the moment people go looking for local stories: Americans are expected to spend [$13.5 billion on it in 2026](https://nrf.com/media-center/press-releases/nrf-halloween-survey-shows-consumer-spending-expected-to-reach-13-5-billion), a record. But the hosted game platforms charge per event: Goosechase is free for 3 participants for 24 hours, then [$99 for 10 participants up to $749 for 175](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing), for one run.
+
+Haunt Kit costs nothing to run. The tour is a typed data file, the app is static files on any free host, and a hunt travels inside its own link. There is no server to pay for, no account to create, and no player location ever leaves the phone.
+
+| | Haunt Kit | izi.TRAVEL | Actionbound | Goosechase | Google My Maps |
+|---|---|---|---|---|---|
+| Players install an app | No: a web page, installable for offline use | Mobile app; tours can also be browsed at izi.travel | Yes: [iOS or Android app](https://actionbound.com/faq) | No: [app or browser](https://goosechase.com/download) | No |
+| Content opens on arrival | Yes | Yes | Yes | Yes, as GPS check-in missions | No: a static map |
+| Where the tour lives | In the link, or a static file you host | izi.TRAVEL's platform | Actionbound's platform | Goosechase's platform | Google Drive |
+| Cost per event | Free (MIT, static hosting) | Free app for visitors | [Free for personal use](https://en.actionbound.com/pricing); paid EDU and PRO licenses | [Free for 3 people, then $99 to $749](https://support.goosechase.com/en/articles/4571290-how-much-does-goosechase-cost) | Free |
+| Source code | Open (MIT) | Closed | Closed | Closed | Closed |
+
+Prices and features are from each product's published pages in November 2026.
+
+## Built with Kiro
+| Kiro feature | In this repo |
+|---|---|
+| Steering | Product rules written before any code: no server and no keys, every stop reachable without walking, honest stories with sources, respect for real places. [`.kiro/steering/`](.kiro/steering/) |
+| Specs | One spec for the skeleton and one per app, with EARS requirements, a design and a task list. Kiro rewrote every criterion in EARS form and audited each task against its tests. [`.kiro/specs/`](.kiro/specs/) |
+| Spec task execution | Kiro built two tasks end to end: Spook Hunt's "Send my time to the host" result link and the `create-app` starter generator, each with unit tests. |
+| Hooks | Run the unit suite on save, guard the Ghost Walk honesty rules when tour data changes, and keep the core engine pure. [`.kiro/hooks/`](.kiro/hooks/) |
+| Agent session | One recorded `kiro-cli` session with its exact prompt, time and credits. Unit tests went from 82 to 104. |
+
+[KIRO-LOG.md](KIRO-LOG.md) has the evidence for each row and an honest note on who wrote what. Changes since that session are in the [changelog](CHANGELOG.md).
+
+## How it works
+```mermaid
+flowchart LR
+  T[Tour data<br/>typed, validated by zod] --> E
+  G[Phone GPS] --> S[FixSmoother<br/>Kalman filter, outlier rejection]
+  W[Simulated walk<br/>any speed] --> S
+  S --> E["stepFix(tour, state, fix)<br/>pure geofence engine"]
+  E --> N[New state]
+  E --> V[Events: enter, exit, unlock,<br/>locked-nearby, solved, complete]
+  N --> R[useTourSession<br/>saves progress on the device]
+  V --> R
+  R --> U[Map with fog of war,<br/>stop list, story dialog, app UI]
+  L["Stop list<br/>unlock(tour, state, id, 'list')"] --> N
+```
+
+The engine is a set of pure functions (`stepFix` for a position fix, `unlock` for the list, `markSolved` for an answer), so every rule (two-fix dwell, exit at 1.3x the radius, free, in-order, `requires` and finale ordering) is unit-tested without a browser. The React layer only stores and renders. Spook Hunt compresses its whole hunt into the URL hash and stores answers only as salted hashes, so the share link never gives the answers away.
+
+## Where this goes
+- **Free to self-host, forever.** MIT license, static files, no keys. A library or historical society copies the starter with `npm run create-app`, writes its stops, and hosts the folder for free.
+- **A no-code builder next.** Spook Hunt's editor already makes a tour without code. The same editor for story walks (text, legend or history or fiction label, source link, finale) would let a librarian publish a walk as a link. An optional hosted builder could carry a flat yearly price for organizations.
+- **Seasonal costumes.** The same skeleton fits a campus orientation, a library StoryWalk, a museum trail or a holiday-lights tour. Each one is a data file and a stylesheet.
 
 ## What works
+<details>
+<summary>Everything the template and both apps do today</summary>
+
 - **Template (`template/`)**
   - Tour format validated with zod, with readable errors: duplicate ids, unknown or circular `requires`, a missing source on a legend.
   - Geofence engine: haversine distance, a two-fix dwell, an exit at 1.3 × the radius, and free, sequential, `requires` and finale ordering. Overlapping stops unlock in tour order, and a walker already standing in a stop gets it the moment the rules allow.
@@ -26,7 +89,8 @@ Two very different Halloween apps are built from the same template:
   - Walk with your GPS, and each story opens as you arrive.
   - Simulate the walk from 1× to 500× speed.
   - Read from home through the list. A speech synthesis "Read it to me" option.
-  - Six candles light as you find stops. The Terrace Hill finale waits for the other five.
+  - Six candles light as you find stops. The Terrace Hill finale waits for the other five, and finding it plays a full-screen finale.
+  - "Watch the 60-second walk" plays the whole route at 60x, opening and closing each story as the lantern passes.
 - **Spook Hunt**
   - Editor: record your current spot, tap the map, zoom, edit coordinates, reorder stops, choose any order or in order, and the draft autosaves.
   - Share: a compressed link (the three-stop demo link is about 520 characters), a QR code drawn on the device, and copy and play-now buttons.
@@ -34,10 +98,13 @@ Two very different Halloween apps are built from the same template:
     - The hiding spots stay hidden until found.
     - A hot-and-cold meter shows a "warmer" or "colder" trend.
     - Questions take penalties: +10 s per wrong answer, +30 s per hint.
-    - A practice run replays the hunt as a simulated walk.
+    - A practice run replays the hunt as a simulated walk, waiting at each found spot until its question is answered.
+    - "Play the demo hunt" on the home screen opens the three-spot demo as a player in one click.
     - Anyone who can't reach a spot can unlock it from the list, and these unlocks are marked on the result.
   - The leaderboard on the device ranks runs by time plus penalties.
   - A player on their own phone can tap "Send my time to the host". The result link holds only the name, time, penalties and the hunt's short id (no answers, no hiding spots, no server). The host opens it and taps "Add to leaderboard"; a result for a different hunt, a damaged link or a repeat is refused with a message.
+
+</details>
 
 ## How to run
 Requires Node 24 or newer.
@@ -58,7 +125,14 @@ npm run create-app -- river-walk --name "River Walk"
 
 See [`template/README.md`](template/README.md) for the options.
 
-Production build and preview (this is what the end-to-end tests run against):
+The hosted layout (landing page at the root, the apps in `ghost-walk/` and `spook-hunt/`), built into `dist/`:
+
+```bash
+npm run build:site
+npm run preview:site                    # http://localhost:3175
+```
+
+Each app on its own, as the end-to-end tests run it:
 
 ```bash
 npm run build
@@ -73,6 +147,9 @@ npx playwright install chromium       # once
 npm run test:e2e                      # builds both apps and runs Playwright against the preview servers
 npm run verify                        # all of the above
 ```
+
+<details>
+<summary>What the unit and end-to-end tests cover</summary>
 
 - **Unit tests (Vitest)** cover:
   - Geo math and smoothing.
@@ -102,6 +179,9 @@ npm run verify                        # all of the above
     - The leaderboard records the run.
     - A player on another phone sends a result link and the host adds it to the leaderboard.
     - A list unlock with a hint, and a damaged link.
+- **Hosted layout (Playwright)**: the landing page passes axe-core with both QR codes, both apps run from their subfolders, and one click starts each demo.
+
+</details>
 
 ## Architecture
 ```
@@ -115,22 +195,19 @@ template/                         @haunt-kit/template
   scripts/        create-app generator (npm run create-app)
 apps/ghost-walk/        Des Moines After Dark (tour data + themed UI)
 apps/scavenger-hunt/    Spook Hunt (editor, link codec, player, leaderboard)
+site/                   landing page that hosts both apps (npm run build:site)
+docs/media/             README images
 e2e/                    Playwright specs
 .kiro/                  steering, specs, hooks
 ```
 
-```
-GPS or simulated walk --fix--> FixSmoother --> stepFix(tour, state, fix) --> { state, events }
-                                                                                |
-            TourMap, StopList, Compass, app UI <-- useTourSession (save + events)
-```
-
-The engine is a pure function: it takes the tour, the current state and one position fix, and it returns a new state and a list of events (enter, exit, unlock, locked-nearby, solved, complete). The React layer only stores and renders, so the rules are easy to test and to reuse.
-
 Builder docs for the template are in [`template/README.md`](template/README.md).
 
 ## Adapters (local vs real)
-Every outside service sits behind an interface. The free local implementation is the default and the one used in tests. Environment variables select the implementation:
+<details>
+<summary>Every outside service sits behind an interface with a free local default</summary>
+
+The free local implementation is the default and the one used in tests. Environment variables select the implementation:
 
 | Adapter | Local (default, free) | Real | Selected by |
 |---|---|---|---|
@@ -146,34 +223,15 @@ The Polly adapter is written and type-checked, but it has not been run against A
 - `VITE_POLLY_IDENTITY_POOL_ID` (an unauthenticated Cognito role limited to `polly:SynthesizeSpeech`)
 - optionally `VITE_POLLY_VOICE`
 
-## Built with Kiro
-- **Steering** (`.kiro/steering/`) set the product rules before any code was written:
-  - honest stories with sources
-  - every stop reachable without walking
-  - respect for real places
-  - no server and no keys
-  - adapters with free defaults
-  - It also set the stack and the folder conventions.
-- **Specs** (`.kiro/specs/`):
-  - one for the skeleton and one for each app
-  - each has EARS requirements, a design and a task checklist
-  - The checked tasks are built and tested. The unchecked ones are planned follow-ups.
-- **Hooks** (`.kiro/hooks/`):
-  - Run the unit suite whenever a source file is saved.
-  - Guard the honesty rules when the Ghost Walk data changes.
-  - Keep the core engine pure and tested.
-- [`KIRO-LOG.md`](KIRO-LOG.md) records how each piece was produced.
+</details>
 
 ## Deploy (free, static)
-Both apps build to plain static files with relative paths, so any static host works. The suggested target is **Cloudflare Pages** (free tier):
+`npm run build:site` writes one static folder, `dist/`, with relative paths throughout, so it can be served from any static host or a subfolder of one: Cloudflare Pages, GitHub Pages, Netlify, or Amazon S3 behind CloudFront. Geolocation and the service worker need HTTPS, which all of these provide.
 
 ```bash
-npm run build
-npx wrangler pages deploy apps/ghost-walk/dist --project-name des-moines-after-dark
-npx wrangler pages deploy apps/scavenger-hunt/dist --project-name spook-hunt
+npm run build:site
+npx wrangler pages deploy dist --project-name haunt-kit   # for example
 ```
-
-GitHub Pages or Netlify work too. Geolocation and the service worker need HTTPS, which these hosts provide. *These apps have not been deployed yet.*
 
 ## Sources for the Ghost Walk
 Every legend and history stop links its sources in the app. The sources are:
