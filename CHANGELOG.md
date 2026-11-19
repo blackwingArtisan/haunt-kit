@@ -24,6 +24,9 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 - Before the first find, the Spook Hunt map glows softly over the search area and says "Hidden spots appear here as you find them".
 - Spook Hunt's bats fly in a band above the kicker line instead of across it.
 
+### Continuous integration
+- A GitHub Actions workflow runs `npm run verify` (typecheck, unit tests and the Playwright suite) on every push to `main` and every pull request, with a README badge.
+
 ### Fixes
 - The hosted-site preview moved from port 3175 to 3169. The first app made by `npm run create-app` takes 3174 and 3175, so the two used to collide. The generator now reserves 3169, and a unit test keeps the site config, the Playwright config and the generator in step.
 

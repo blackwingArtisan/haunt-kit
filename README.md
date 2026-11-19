@@ -1,5 +1,7 @@
 # Haunt Kit
 
+[![CI](https://github.com/blackwingArtisan/haunt-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/blackwingArtisan/haunt-kit/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link.**
 
 A Goosechase hunt for 10 participants costs [$99, for one event](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing). This one is free, needs no app or account, and fits in a link.
@@ -192,6 +194,8 @@ npx playwright install chromium       # once
 npm run test:e2e                      # builds both apps and runs Playwright against the preview servers
 npm run verify                        # all of the above
 ```
+
+The same `npm run verify` runs in GitHub Actions on every push to `main` and every pull request ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 <details>
 <summary>What the unit and end-to-end tests cover</summary>
