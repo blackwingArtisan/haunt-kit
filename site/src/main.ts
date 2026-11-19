@@ -5,7 +5,11 @@ import '@fontsource/creepster/400.css';
 import '@fontsource/atkinson-hyperlegible/400.css';
 import '@fontsource/atkinson-hyperlegible/700.css';
 import QRCode from 'qrcode';
+import '@haunt-kit/template/styles.css';
+import { mountHeroMap } from './hero';
 import './styles.css';
+
+mountHeroMap(document.getElementById('hero-map'));
 
 // Each QR code points at the app's address on whatever host serves this page, drawn on the device.
 for (const el of document.querySelectorAll<HTMLElement>('[data-qr]')) {

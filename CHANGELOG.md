@@ -9,6 +9,7 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 - New sections: "One skeleton, two costumes" (what each app does with the same engine, with measured line counts), "How it compares" (with the izi.TRAVEL row corrected: its publisher CMS is free, and two new rows on reaching stops without walking and where player location goes), "Beyond October" and a priced "Where this goes" with sourced market counts.
 
 ### Landing page and posters
+- The hero plays the real Ghost Walk map behind the title: the `TourMap` component in a simulated walk, the lantern moving and the fog lifting along its trail, looping after the finale. It keeps no progress, and under reduced motion it is a still map.
 - A Kiroween strip links the Kiro log and the source. Under the tagline, a stakes line compares Goosechase's top single-event price with Haunt Kit's $0, with a link to the published prices.
 - Spook Hunt's card has a third action, **Make a hunt in 30 seconds**, which opens the editor.
 - "The skeleton under both" is now a diagram: the inputs flow into `stepFix`, which drives the two apps, shown with real screenshots.

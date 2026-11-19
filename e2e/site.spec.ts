@@ -84,3 +84,21 @@ test('the poster page prints one poster per app with a QR code and the sunset ti
   const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length;
   expect(pages).toBe(2);
 });
+
+test('the hero plays the real Ghost Walk map behind the title, and holds still under reduced motion', async ({ page, browser }) => {
+  await page.goto('/');
+  const hero = page.getByTestId('hero-map');
+  await expect(hero.getByTestId('tour-map')).toBeVisible();
+  // The lantern appears and the first stop unlocks as the simulated walk plays.
+  await expect(hero.getByTestId('map-me')).toBeVisible({ timeout: 10_000 });
+  await expect(hero.locator('.hk-marker[data-stop="ferrymans-bell"]')).toHaveAttribute('data-status', 'finished', { timeout: 20_000 });
+
+  const still = await browser.newContext({ reducedMotion: 'reduce' });
+  const quiet = await still.newPage();
+  await quiet.goto(page.url());
+  await expect(quiet.getByTestId('hero-map').getByTestId('tour-map')).toBeVisible();
+  await quiet.waitForTimeout(3000);
+  await expect(quiet.getByTestId('hero-map').getByTestId('map-me')).toHaveCount(0);
+  await audit(quiet);
+  await still.close();
+});
