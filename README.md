@@ -170,7 +170,12 @@ Every legend and history stop links its sources in the app. The sources are:
 - Iowa PBS, "Iowa's Unique Gravestones and Burials"
 - the Wikipedia articles on Hoyt Sherman Place, Woodland Cemetery and Terrace Hill
 
-Terrace Hill is the residence of the Governor of Iowa, so walkers are asked to stay on the public sidewalk there.
+The stories are paraphrased in our own words. Wikipedia text is available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), and the facts drawn from it are credited to the Wikipedia contributors of the linked articles. Stop coordinates were checked against Wikipedia and OpenStreetMap (© OpenStreetMap contributors, ODbL).
+
+Terrace Hill is the residence of the Governor of Iowa, so its stop wakes on the public sidewalk on Grand Avenue, about 130 m north of the house, and walkers are asked to stay there.
+
+## Third-party notices
+Dependency, font and content credits are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## License
 MIT © 2026 Stubborn Otter Software

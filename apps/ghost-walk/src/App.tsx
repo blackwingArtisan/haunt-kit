@@ -231,6 +231,11 @@ export function App() {
           Stories marked <strong>Local legend</strong> retell legends already published about these places, with sources. Stories marked{' '}
           <strong>Fiction</strong> were invented for this walk. Your location never leaves this device.
         </p>
+        <p>
+          Facts drawn from Wikipedia are paraphrased and credited to its contributors (
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>). Coordinates checked against
+          OpenStreetMap (© OpenStreetMap contributors).
+        </p>
         <p>Built with Haunt Kit by Stubborn Otter Software.</p>
       </footer>
 

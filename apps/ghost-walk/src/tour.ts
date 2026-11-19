@@ -120,12 +120,16 @@ export const tour = defineTour({
     {
       id: 'terrace-hill',
       name: 'Terrace Hill',
-      position: { lat: 41.58333, lng: -93.64917 },
+      // The trigger is the public sidewalk on Grand Avenue in front of the
+      // house, not the house itself. The mansion stands about 130 m up the
+      // hill at 41.58333, -93.64917 (Wikipedia; OpenStreetMap agrees), on
+      // grounds that are not open to walkers.
+      position: { lat: 41.5843, lng: -93.6491 },
       radius: 60,
       kind: 'legend',
       finale: true,
       clue: 'The finale: the mansion with the 90-foot tower on Grand Avenue. It wakes only after every other stop.',
-      etiquette: 'Terrace Hill is the official residence of the Governor of Iowa. View it from the public sidewalk on Grand Avenue.',
+      etiquette: 'Terrace Hill is the official residence of the Governor of Iowa. This stop wakes on the public sidewalk on Grand Avenue; view the house from there, up the hill.',
       story: [
         'Terrace Hill was built in the 1860s and later became the Hubbell family home. Today it is the official residence of the Governor of Iowa, its 90-foot tower looking down over the whole city.',
         'Legend says a little girl haunts this house. She is transparent, according to the stories, and she likes to ride the elevator, even though it is only supposed to run with a code.',
@@ -151,13 +155,13 @@ export const tour = defineTour({
     { lat: 41.5895, lng: -93.6465 },
     { lat: 41.589486, lng: -93.648094 },
     { lat: 41.5868, lng: -93.6484 },
-    { lat: 41.5845, lng: -93.6490 },
-    { lat: 41.58333, lng: -93.64917 },
+    { lat: 41.5843, lng: -93.6491 },
   ],
   mapFeatures: [
     {
       kind: 'river',
       name: 'Des Moines River',
+      labelAt: { lat: 41.5905, lng: -93.6145 },
       path: [
         { lat: 41.5935, lng: -93.6138 },
         { lat: 41.5895, lng: -93.6146 },

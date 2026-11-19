@@ -47,6 +47,21 @@ describe('tour format', () => {
     expect(fin.ok === false && fin.issues.join()).toMatch(/at most one finale/);
   });
 
+  it('accepts an optional label position for map features', () => {
+    const t = parseTour({
+      id: 't',
+      title: 'T',
+      stops: [stop('a')],
+      mapFeatures: [
+        { kind: 'river', name: 'River', path: [ORIGIN, ORIGIN] },
+        { kind: 'street', name: 'Main St', path: [ORIGIN], labelAt: ORIGIN },
+      ],
+    });
+    expect(t.mapFeatures[0]!.labelAt).toBeUndefined();
+    expect(t.mapFeatures[1]!.labelAt).toEqual(ORIGIN);
+    expect(validateTour({ id: 't', title: 'T', stops: [stop('a')], mapFeatures: [{ kind: 'river', name: 'R', path: [ORIGIN], labelAt: { lat: 200, lng: 0 } }] }).ok).toBe(false);
+  });
+
   it('uses the explicit route or falls back to the stops', () => {
     const t = parseTour({ id: 't', title: 'T', stops: [stop('a'), stop('b')] });
     expect(tourRoute(t)).toHaveLength(2);

@@ -57,6 +57,8 @@ const mapFeature = z.object({
   kind: z.enum(['river', 'street', 'park', 'landmark']),
   name: z.string(),
   path: z.array(latLng).min(1),
+  /** Where to print the name. Defaults to the middle point of the path. */
+  labelAt: latLng.optional(),
 });
 
 export const tourSchema = z

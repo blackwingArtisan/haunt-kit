@@ -88,6 +88,29 @@ test('every stop can be read from the list with the keyboard alone', async ({ pa
   await expect(page.getByTestId('finale')).toBeVisible();
 });
 
+test('a fast keyboard user moving straight to the next stop keeps focus and opens the right story', async ({ page }) => {
+  await page.goto('/');
+  await stopRow(page, 'ferrymans-bell').getByRole('button', { name: /Read from here/ }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('heading', { name: "The Ferryman's Bell" })).toBeVisible();
+
+  // Close the dialog and open the next stop in the same task, before the
+  // dialog's own close event has been delivered.
+  await page.evaluate(() => {
+    document.querySelector('dialog')!.close();
+    const next = document.querySelector<HTMLButtonElement>('.hk-list__item[data-stop="one-too-many"] button')!;
+    next.focus();
+    next.click();
+  });
+
+  await expect(dialog.getByRole('heading', { name: 'One Too Many' })).toBeVisible();
+  await expect(stopRow(page, 'one-too-many')).toHaveAttribute('data-status', /unlocked|finished/);
+  await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(stopRow(page, 'one-too-many').getByRole('button')).toBeFocused();
+});
+
 test('fiction is labeled as fiction', async ({ page }) => {
   await page.goto('/');
   await stopRow(page, 'one-too-many').getByRole('button').click();

@@ -19,7 +19,7 @@ defineTour({
   title: 'My Walk',
   ordering: 'free',              // or 'sequential': each stop waits for the one before
   route: [/* optional LatLng[] for drawing and the simulated walk */],
-  mapFeatures: [{ kind: 'river', name: 'Raccoon River', path: [/* LatLng[] */] }],
+  mapFeatures: [{ kind: 'river', name: 'Raccoon River', path: [/* LatLng[] */], labelAt: { lat: 41.579, lng: -93.63 } }], // labelAt is optional
   stops: [
     {
       id: 'old-mill',

@@ -54,6 +54,16 @@ describe('Des Moines After Dark data', () => {
     }
   });
 
+  it('wakes Terrace Hill on the Grand Avenue sidewalk, not on the private grounds', () => {
+    const stop = tour.stops.find((s) => s.id === 'terrace-hill')!;
+    // Grand Avenue centerline in front of the house, from OpenStreetMap.
+    const grandAve = { lat: 41.58442, lng: -93.6491 };
+    // The house itself, from Wikipedia and OpenStreetMap.
+    const mansion = { lat: 41.58333, lng: -93.64917 };
+    expect(haversine(stop.position, grandAve)).toBeLessThan(stop.radius / 3);
+    expect(haversine(stop.position, mansion)).toBeGreaterThan(stop.radius);
+  });
+
   it('is a walkable route of roughly 4 km whose stops sit on the route', () => {
     const route = tourRoute(tour);
     expect(pathLength(route) / 1000).toBeGreaterThan(3);

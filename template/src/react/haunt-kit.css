@@ -40,7 +40,6 @@
 .hk-map__feature-label {
   fill: var(--hk-muted);
   font: italic 15px var(--hk-font-display);
-  text-anchor: middle;
   letter-spacing: 0.08em;
   paint-order: stroke;
   stroke: var(--hk-ground);

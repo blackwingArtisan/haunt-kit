@@ -132,7 +132,7 @@ export function TourMap({
       <rect width={width} height={height} fill={`url(#${uid}-grid)`} />
 
       {tour.mapFeatures.map((f, i) => (
-        <MapFeature key={i} kind={f.kind} name={f.name} d={pathData(f.path, proj)} anchor={proj.project(f.path[Math.floor(f.path.length / 2)]!)} />
+        <MapFeature key={i} kind={f.kind} d={pathData(f.path, proj)} />
       ))}
 
       {showRoute && route.length > 1 && <path d={pathData(route, proj)} className="hk-map__route" />}
@@ -146,6 +146,29 @@ export function TourMap({
           <rect width={width} height={height} filter={`url(#${uid}-noise)`} className="hk-map__fog-drift" />
         </g>
       )}
+
+      {/* Place names are printed above the fog, like names on an old survey
+          map, so walkers can orient themselves before anything is revealed. */}
+      <g className="hk-map__labels" aria-hidden="true">
+        {tour.mapFeatures.map((f, i) => {
+          if (!f.name) return null;
+          const anchor = proj.project(f.labelAt ?? f.path[Math.floor(f.path.length / 2)]!);
+          // Keep names near the edges inside the frame.
+          const textAnchor = anchor.x > width * 0.85 ? 'end' : anchor.x < width * 0.15 ? 'start' : 'middle';
+          const x = textAnchor === 'end' ? anchor.x - 14 : textAnchor === 'start' ? anchor.x + 14 : anchor.x;
+          return (
+            <text
+              key={i}
+              x={x}
+              y={anchor.y - 10}
+              textAnchor={textAnchor}
+              className={`hk-map__feature-label hk-map__feature-label--${f.kind}`}
+            >
+              {f.name}
+            </text>
+          );
+        })}
+      </g>
 
       {tour.stops.map((s, i) =>
         revealOnlyUnlocked && state.stops[s.id]?.unlockedAt === undefined ? null : (
@@ -176,15 +199,10 @@ export function TourMap({
   );
 }
 
-function MapFeature({ kind, name, d, anchor }: { kind: string; name: string; d: string; anchor: { x: number; y: number } }) {
+function MapFeature({ kind, d }: { kind: string; d: string }) {
   return (
     <g className={`hk-map__feature hk-map__feature--${kind}`}>
       <path d={d} />
-      {name && (
-        <text x={anchor.x} y={anchor.y - 10} className="hk-map__feature-label">
-          {name}
-        </text>
-      )}
     </g>
   );
 }
