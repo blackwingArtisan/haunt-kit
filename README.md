@@ -29,7 +29,7 @@ Two very different Halloween apps are built from the same template:
   - Six candles light as you find stops. The Terrace Hill finale waits for the other five.
 - **Spook Hunt**
   - Editor: record your current spot, tap the map, zoom, edit coordinates, reorder stops, choose any order or in order, and the draft autosaves.
-  - Share: a compressed link (the three-stop demo is under 500 characters), a QR code drawn on the device, and copy and play-now buttons.
+  - Share: a compressed link (the three-stop demo link is about 520 characters), a QR code drawn on the device, and copy and play-now buttons.
   - Play:
     - The hiding spots stay hidden until found.
     - A hot-and-cold meter shows a "warmer" or "colder" trend.
@@ -72,6 +72,7 @@ npm run verify                        # all of the above
   - Simulation determinism.
   - Adapters, using fake geolocation and a manual clock.
   - Progress persistence and the projection.
+  - The generated service worker, run in a sandbox: precache, the offline shell, cache-first assets, and cleanup of old caches.
   - The hunt-link codec: round-trip, compression fallback, answer secrecy, size budget, damaged links.
   - The leaderboard, the hot-and-cold meter, and the Ghost Walk data rules (sources, labels, a completable route).
 - **End-to-end tests (Playwright, Chromium)**: each app is driven through a simulated GPS walk and checked as its stops unlock.
@@ -82,6 +83,7 @@ npm run verify                        # all of the above
     - Fiction labels.
     - An offline reload through the service worker.
     - A phone-width layout.
+  - Both apps also pass an axe-core audit for WCAG 2.1 A and AA on every main screen, checked after real use (a finished walk, an open story, a shared hunt, a hunt in play).
   - Spook Hunt:
     - A host builds a hunt from a recorded GPS spot and a map pin.
     - The host shares the link, and a player races it with a wrong answer and then the right one.

@@ -17,7 +17,7 @@ export default defineConfig({
   projects: [
     {
       name: 'ghost-walk',
-      testMatch: /ghost-walk\.spec\.ts/,
+      testMatch: /ghost-walk(\.a11y)?\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${GHOST_PORT}` },
     },
     {
@@ -27,7 +27,7 @@ export default defineConfig({
     },
     {
       name: 'scavenger-hunt',
-      testMatch: /scavenger-hunt\.spec\.ts/,
+      testMatch: /scavenger-hunt(\.a11y)?\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${HUNT_PORT}` },
     },
   ],
