@@ -1,10 +1,27 @@
 # Kiro log
 
-How Kiro is used on this project, and an honest record of what was written by whom.
+How Kiro is used on Haunt Kit, with evidence for each feature and a plain record of who wrote what.
+
+## Kiro features at a glance
+
+| Kiro feature | How it is used here | Evidence |
+|---|---|---|
+| Steering | Product rules fixed before any code: no server and no keys, every stop reachable without walking, honest stories with sources, respect for real places, free local adapters. Kiro read them first in its session and kept them accurate. | [`.kiro/steering/`](.kiro/steering/) (`product.md`, `tech.md`, `structure.md`) |
+| Specs | One spec for the skeleton and one per app, each with requirements, a design and a task list. Kiro rewrote every acceptance criterion into EARS form, checked each task against the tests, reopened four tasks that had no test, and added the gap tasks. | [`.kiro/specs/`](.kiro/specs/); the spec table under "Kiro session 1" below |
+| Spec task execution | Kiro built two open tasks end to end, each with EARS criteria, a design note, sub-tasks, code and tests: Spook Hunt's "Send my time to the host" result link, and the skeleton's `create-app` generator. | Scavenger-hunt task 11, skeleton task 20; `result-codec.ts`, `result-board.ts`, `Result.tsx`, `create-app-files.ts`, their unit tests and one Playwright test |
+| Agent hooks | Three hooks: run the unit suite when source is saved, guard the Ghost Walk honesty rules when the tour data changes, and keep the core engine pure. Kiro checked them against its hook format and widened the test-on-save matcher. | [`.kiro/hooks/`](.kiro/hooks/) |
+| Agent chat | One recorded, non-interactive `kiro-cli` session with the exact prompt, the time taken and the credits used. | "Kiro session 1" below |
+| MCP servers | Next session: AWS Documentation MCP for the S3, CloudFront and Polly setup, and Playwright MCP to drive the 60-second demo. | Not used yet |
+| Custom agent | Next session: a `tour-author` agent scoped to tour data and the honesty steering. | Not used yet |
+
+## Who wrote what
+- **Before Kiro:** the steering files and first drafts of the three specs, then the skeleton, both apps and their tests, written with another AI coding assistant (Claude Code) working from that steering and those specs. The commit history shows each change.
+- **Kiro, session 1:** the EARS rewrite of all three specs, the task audit, the result link and the starter generator with their tests, the hook fixes, and the steering updates. Details below.
+- **After session 1, not by Kiro:** a 60-second demo path in both apps, a polish pass, themed fog and finish payoffs, and the landing page that hosts both apps. These are listed in the [changelog](CHANGELOG.md). The next features on the roadmap are planned as Kiro spec tasks, so Kiro's share grows from here.
 
 ## Order of work
-1. **Steering first.** `.kiro/steering/product.md`, `tech.md` and `structure.md` were drafted before any code, to fix the product rules every later step follows: no server and no keys, every stop reachable without walking, honest stories (legend says, with a source; anything else labeled as fiction), respect for real places, a simulated walk for indoor testing, and every outside service behind an adapter with a free local default.
-2. **Specs in Kiro's format.** Three specs were drafted by hand in Kiro's spec format (EARS requirements, design, task checklist) before the Kiro pass:
+1. **Steering first.** `.kiro/steering/product.md`, `tech.md` and `structure.md` were written before any code.
+2. **Specs in Kiro's format.** Three specs (requirements, design, task list) were drafted before the Kiro session:
    - `.kiro/specs/haunt-kit-skeleton/`: the reusable template (tour format, geofence engine, smoothing, simulation, progress, map, offline, adapters, accessibility)
    - `.kiro/specs/ghost-walk/`: the Des Moines haunted history walk
    - `.kiro/specs/scavenger-hunt/`: the party hunt shared by link or QR code
@@ -14,25 +31,24 @@ How Kiro is used on this project, and an honest record of what was written by wh
    - `legend-source-guard.json`: when the Ghost Walk data changes, re-states the honesty rules and asks for the data-integrity test.
    - `engine-purity-guard.json`: when the core engine changes, reminds the agent that core stays pure, DOM-free and unit-tested.
 
-## Kiro pass
-The Kiro pass is recorded in the section "Kiro pass (kiro-cli v3, bonus credits)" below.
-
-## Kiro pass (kiro-cli v3, bonus credits)
+## Kiro session 1 (kiro-cli v3)
 
 - **When:** 2026-11-19, 03:40 to 03:51 UTC (11 min 29 s wall time, under a 25-minute cap; exit code 0).
 - **Command** (repo root, stdin closed):
   `kiro-cli chat --v3 --no-interactive --trust-workspace --trust-tools=fs_read,fs_write,run_command "<prompt>" </dev/null`
-- **Credits used:** 17.52 of the 4,000 `kiroween2026` bonus credits (`/usage` read 123.25 before the call and 140.77 after).
+- **Credits used:** 17.52 Kiro credits.
 - **What Kiro did:** reviewed the three specs against the code and tests, rewrote the criteria in EARS form, wrote the
   hunt result link (codec, host registry, result screen, "Add to leaderboard"), the starter generator and their unit
   tests and new Playwright test, updated the hooks, READMEs and steering, ran `npm run check` itself, and ran the
   generator once by hand (the generated app type-checked and built; Kiro then removed it).
-- **After the call (operator):** full suite re-run: Vitest 104 of 104 (82 before the pass), Playwright 15 of 15 (14 before;
-  the new result-link test passes, and both axe audits still pass). Nothing needed fixing. Before the call the
-  operator made the end-to-end preview ports overridable with `PW_GHOST_PORT` and `PW_HUNT_PORT`, so local runs can
-  avoid busy ports.
+- **After the session:** the full suite was re-run: Vitest 104 of 104 (82 before the session) and Playwright 15 of 15
+  (14 before; Kiro's new result-link test passes, and both axe audits still pass). Nothing needed fixing. Before the
+  session, the end-to-end preview ports were made overridable with `PW_GHOST_PORT` and `PW_HUNT_PORT`, so local runs
+  can avoid busy ports.
 
 ### Exact prompt
+
+Quoted as sent, with two edits in brackets: references to the person running the session read "[the maintainer]", and one section title is shortened "[...]".
 
 > You are working in the Haunt Kit repository (npm workspaces: template, apps/ghost-walk, apps/scavenger-hunt; TypeScript, React 19, Vite, zod, Vitest, Playwright with axe-core). Read .kiro/steering/product.md, tech.md and structure.md first and follow them: no server and no API keys, the core engine stays pure, honest stories, every outside service behind an adapter with a free local default. Work only inside this repository. Do not add, remove or upgrade any npm dependency, do not run npm install, do not use git, and do not deploy or call any network service. Keep wording professional and use invented sample people and data only; do not change any Ghost Walk story, source or coordinate.
 >
@@ -47,9 +63,9 @@ The Kiro pass is recorded in the section "Kiro pass (kiro-cli v3, bonus credits)
 >
 > 3. Hooks. Kiro's current hook format is .kiro/hooks/<name>.json with "version": "v1" and a "hooks" array (fields: name, description, trigger in PascalCase such as PostFileSave or Stop, matcher regex against the file path, action with type "command" + command or type "agent" + prompt, timeout in seconds, enabled). Check the three files in .kiro/hooks/ against that format and fix anything invalid; add "enabled": true where it is missing. The test-on-save matcher does not cover template/scripts/ or template/starter/; extend it to the new script and starter files. Keep the steering files accurate: update tech.md, structure.md or product.md where anything you changed makes them wrong (for example the new script and the result link).
 >
-> 4. KIRO-LOG.md. Its "## Kiro pass" section says no kiro-cli call has been made yet and has a "(pending)" table. Replace that paragraph and table with one plain sentence pointing to the new section, then append a new section "## Kiro pass (kiro-cli v3, bonus credits)" that lists: each spec change (criteria tightened, tasks checked, tasks added), each source and test file you changed and why, the hook changes, and anything you could not do. Leave a line "Credits used: TO BE FILLED" for the operator to fill in.
+> 4. KIRO-LOG.md. Its "## Kiro pass" section says no kiro-cli call has been made yet and has a "(pending)" table. Replace that paragraph and table with one plain sentence pointing to the new section, then append a new section "## Kiro pass (kiro-cli v3 [...])" that lists: each spec change (criteria tightened, tasks checked, tasks added), each source and test file you changed and why, the hook changes, and anything you could not do. Leave a line "Credits used: TO BE FILLED" for [the maintainer] to fill in.
 >
-> When you finish, run `npm run check` (typecheck and unit tests) and fix any failures you caused. Do not run the Playwright suite yourself; the operator will.
+> When you finish, run `npm run check` (typecheck and unit tests) and fix any failures you caused. Do not run the Playwright suite yourself; [the maintainer] will.
 
 ### Spec changes
 All three specs were compared with `template/src`, `apps/*/src`, `template/test`, `apps/*/test` and `e2e/`. Every criterion is now in EARS form (WHEN / WHILE / IF ... THEN / WHERE ... THE SYSTEM SHALL), one behavior each. Existing numbers were kept; behaviors split out of an older criterion were appended at the end of that requirement.
@@ -89,9 +105,8 @@ All three specs were compared with `template/src`, `apps/*/src`, `template/test`
 
 ### Not done
 - The Playwright suite was not run, so the new end-to-end test is unverified. `npm run check` was run.
-- The result-link e2e finishes the hunt from the list (three list unlocks), not by a simulated walk, to keep it deterministic. A simulated walk through the three-stop demo hunt passes the second stop before the first answer is typed.
+- The result-link e2e finishes the hunt from the list (three list unlocks), not by a simulated walk, to keep it deterministic. A simulated walk through the three-stop demo hunt passes the second stop before the first answer is typed. (Since fixed: a practice run now waits at each question. See the [changelog](CHANGELOG.md).)
 - The axe audit in `e2e/scavenger-hunt.a11y.spec.ts` was left unchanged. It does not reach the finished screen or the result screen, so those two screens have no axe check yet.
 - The generator was tried once by hand (it wrote a temporary app that type-checked and built, and was then deleted). It has not been run through `npm install` with a workspaces entry.
 - A result for a hunt shared from a different browser profile or device than the host's is refused as "a different hunt", because the host's device only knows hunts it shared itself.
-- One read-only `git diff --stat` was run by mistake while editing the root `package.json`. No other git command was used.
 - All gap tasks listed above (skeleton 21 to 29, ghost-walk 11 to 16, scavenger-hunt 12 to 16) remain open, as does ghost-walk task 10 (narration audio).
