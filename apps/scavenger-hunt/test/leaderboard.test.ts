@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MemoryStore } from '@haunt-kit/template/adapters';
-import { formatDuration, Leaderboard, penaltySummary, plural, sentence, rank, runDetails, score, type Run } from '../src/leaderboard';
+import { formatDuration, Leaderboard, penaltySummary, placeOf, plural, sentence, rank, runDetails, score, type Run } from '../src/leaderboard';
 
 const run = (player: string, seconds: number, extra: Partial<Run> = {}): Run => ({
   player,
@@ -35,6 +35,13 @@ describe('leaderboard', () => {
     expect(a.list()).toEqual([]);
   });
 
+  it('finds a run\'s place on the ranked board', () => {
+    const ranked = rank([run('Steady', 340), run('Quick', 120), run('Slow', 600)]);
+    expect(placeOf(ranked, { player: 'Quick', finishedAt: 120 })).toBe(1);
+    expect(placeOf(ranked, { player: 'Slow', finishedAt: 600 })).toBe(3);
+    expect(placeOf(ranked, { player: 'Nobody', finishedAt: 1 })).toBeNull();
+  });
+
   it('formats durations', () => {
     expect(formatDuration(65_000)).toBe('1:05');
     expect(formatDuration(3_725_000)).toBe('1:02:05');
@@ -54,7 +61,8 @@ describe('finish time wording', () => {
     expect(penaltySummary(run('B', 30, { wrongAnswers: 1 }))).toBe('includes +10 s for 1 wrong answer');
     expect(penaltySummary(run('C', 30, { hints: 2, wrongAnswers: 3 }))).toBe('includes +60 s for 2 hints and +30 s for 3 wrong answers');
     expect(runDetails(run('D', 30, { hints: 1, wrongAnswers: 1, assisted: 3 }))).toBe('1 hint · 1 wrong answer · 3 unlocked from the list');
-    expect(runDetails(run('E', 30))).toBe('0 hints · 0 wrong answers');
+    expect(runDetails(run('E', 30))).toBe('');
+    expect(runDetails(run('G', 30, { wrongAnswers: 2 }))).toBe('2 wrong answers');
     expect(sentence(penaltySummary(run('F', 30)))).toBe('No penalties.');
   });
 

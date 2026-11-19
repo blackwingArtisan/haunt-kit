@@ -141,6 +141,7 @@ export function Host({ store }: { store: KeyValueStore }) {
             <p className="sh-note" role="status">
               {locating ?? 'Walk to each hiding spot and record it, or tap the map to drop a pin.'}
             </p>
+            <div className="sh-mapwrap">
             <TourMap
               tour={tour}
               state={session}
@@ -152,14 +153,18 @@ export function Host({ store }: { store: KeyValueStore }) {
               showRoute={draft.ordering === 'sequential'}
               label={`Hunt map with ${draft.stops.length} hiding spots. Tap to add a spot. Spots can also be added with Record my current spot.`}
             />
-            <div className="sh-row sh-zoom" role="group" aria-label="Zoom">
-              <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setSpan((s) => Math.max(60, s / 1.6))}>
-                Zoom in
+            {/* Map controls sit on the map itself, like any web map: zoom at the top right, the spot count at the bottom left. */}
+            <div className="sh-zoom" role="group" aria-label="Zoom">
+              <button type="button" className="sh-zoom__btn" onClick={() => setSpan((s) => Math.max(60, s / 1.6))} aria-label="Zoom in">
+                +
               </button>
-              <button type="button" className="hk-btn hk-btn--ghost hk-btn--small" onClick={() => setSpan((s) => Math.min(5000, s * 1.6))}>
-                Zoom out
+              <button type="button" className="sh-zoom__btn" onClick={() => setSpan((s) => Math.min(5000, s * 1.6))} aria-label="Zoom out">
+                −
               </button>
-              <span className="sh-note">{draft.stops.length} of {MAX_STOPS} spots</span>
+            </div>
+            <p className="sh-mapcount" data-testid="spot-count">
+              {draft.stops.length} of {MAX_STOPS} spots
+            </p>
             </div>
           </section>
 

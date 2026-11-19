@@ -20,6 +20,14 @@ body.pp { margin: 0; color: #ece3cf; font: 18px/1.55 'Atkinson Hyperlegible', sy
   max-width: 760px; margin: 24px auto; padding: 40px 36px; border-radius: 18px; text-align: center;
   display: grid; gap: 14px; justify-items: center;
 }
+/* A spooky frame: an inner border like an old handbill, and bats crossing the top. */
+.poster { position: relative; isolation: isolate; }
+.poster::before { content: ''; position: absolute; inset: 12px; z-index: -1; border-radius: 10px; pointer-events: none; }
+.poster--ghost::before { border: 1px solid rgba(236, 227, 207, 0.25); box-shadow: inset 0 0 0 5px rgba(20, 24, 36, 1), inset 0 0 0 6px rgba(255, 138, 61, 0.35); }
+.poster--hunt::before { border: 3px dashed rgba(166, 241, 91, 0.45); }
+.poster__bats { position: absolute; top: 6px; left: 24px; right: 24px; width: calc(100% - 48px); height: auto; pointer-events: none; }
+.poster--ghost .poster__bats path { fill: #0b0e14; stroke: rgba(236, 227, 207, 0.5); stroke-width: 1; }
+.poster--hunt .poster__bats path { fill: var(--pp-ink); stroke: rgba(203, 191, 224, 0.7); stroke-width: 1; }
 .poster__kicker { margin: 0; font-size: 0.85rem; letter-spacing: 0.28em; text-transform: uppercase; }
 .poster__title { margin: 0; line-height: 0.95; }
 .poster__sub { margin: 0; max-width: 40ch; font-size: 1.15rem; }
@@ -55,4 +63,6 @@ body.pp { margin: 0; color: #ece3cf; font: 18px/1.55 'Atkinson Hyperlegible', sy
   .poster--ghost .poster__title span { color: var(--pp-ember); }
   .poster--hunt .poster__title span { color: var(--pp-pumpkin); }
   .poster__qr { width: 3.6in; border: 0; }
+  .poster::before { inset: 0.12in; border: 2px dashed #000; box-shadow: none; }
+  .poster--ghost .poster__bats path, .poster--hunt .poster__bats path { fill: #000; stroke: none; }
 }

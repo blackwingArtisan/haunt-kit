@@ -128,7 +128,20 @@ body {
 @media (min-width: 901px) { .sh-mapcard { position: sticky; top: 16px; } }
 @media (max-width: 900px) { .sh-hostcols { grid-template-columns: 1fr; } }
 .sh-mapcard .hk-map { border: 3px solid var(--sh-ink); margin: 10px 0; }
-.sh-zoom { justify-content: flex-start; }
+.sh-mapwrap { position: relative; }
+.sh-zoom { position: absolute; top: 20px; right: 10px; display: grid; gap: 0; border: 3px solid var(--sh-ink); border-radius: 12px; overflow: hidden; box-shadow: 3px 3px 0 var(--sh-ink); }
+.sh-zoom__btn {
+  width: 44px; height: 44px; border: 0; background: var(--sh-paper); color: var(--sh-ink);
+  font: 700 1.5rem/1 var(--hk-font-body); cursor: pointer;
+}
+.sh-zoom__btn + .sh-zoom__btn { border-top: 2px solid var(--sh-ink); }
+.sh-zoom__btn:hover { background: #ffe6cc; }
+.sh-zoom__btn:focus-visible { outline: 3px solid var(--sh-slime); outline-offset: -5px; }
+.sh-mapcount {
+  position: absolute; left: 10px; bottom: 20px; margin: 0; padding: 4px 10px; pointer-events: none;
+  border: 3px solid var(--sh-ink); border-radius: 10px; background: var(--sh-paper); color: var(--sh-ink);
+  font-weight: 700; font-size: 0.9rem; box-shadow: 3px 3px 0 var(--sh-ink);
+}
 
 .sh-field { display: grid; gap: 4px; margin: 0 0 12px; font-weight: 700; font-size: 0.95rem; border: 0; padding: 0; }
 .sh-field > span, .sh-field legend { color: var(--sh-muted); font-weight: 700; }
@@ -177,7 +190,11 @@ body {
 .sh-qr { width: min(320px, 100%); aspect-ratio: 1; border: 3px solid var(--sh-ink); border-radius: 16px; overflow: hidden; background: var(--sh-paper); box-shadow: 6px 6px 0 var(--sh-ink); }
 .sh-qr svg { display: block; width: 100%; height: 100%; }
 
-.sh-gamehead { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+/* The title and the clock share one row at every width, so the clock never drops onto a line of its own. */
+.sh-gamehead { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sh-gamehead > div { min-width: 0; }
+.sh-gamehead .sh-h1 { overflow-wrap: anywhere; }
+@media (max-width: 520px) { .sh-gamehead .sh-h1 { font-size: 1.7rem; } .sh-clock { font-size: 1.7rem; } }
 /* The clock is a paper tag, so it reads the same wherever the sky decoration falls. */
 .sh-clock {
   font: 400 2.2rem/1 var(--hk-font-display); color: var(--sh-ink);
@@ -186,6 +203,25 @@ body {
   font-variant-numeric: tabular-nums; min-width: 4ch; text-align: center;
 }
 .sh-message { min-height: 1.6em; font-weight: 700; color: var(--sh-slime); margin: 6px 0 14px; }
+/* The status is a tab on top of the current card: the card and its news read as one thing. */
+.sh-turn { margin-bottom: 20px; }
+.sh-turn > .sh-card { margin-bottom: 0; }
+.sh-turn__status {
+  margin: 0; padding: 8px 16px 10px; min-height: 0;
+  background: var(--sh-ink); color: var(--sh-slime); border-radius: 18px 18px 0 0;
+  width: fit-content; max-width: calc(100% - 24px); margin-left: 12px;
+}
+.sh-turn__status:empty { display: none; }
+.sh-turn__status:not(:empty) + .sh-card { border-top-left-radius: 8px; }
+/* Check and Hint side by side; a used hint takes the whole row under them. */
+.sh-answer-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: center; }
+.sh-answer-actions .hk-btn { width: 100%; padding-inline: 0.5em; white-space: nowrap; }
+.sh-answer-actions .sh-hint { grid-column: 1 / -1; }
+.sh-answer-actions > :only-child, .sh-answer-actions:has(.sh-hint) > .hk-btn { grid-column: 1 / -1; }
+/* "Not yet" is a solid, quiet button rather than a dashed outline, so it still reads as the place to press. */
+.sh-challenge .hk-btn:disabled, .sh-challenge .hk-btn:disabled:hover {
+  border-style: solid; border-color: var(--sh-ink); background: #4a3a66; color: var(--sh-muted);
+}
 .sh-gamegrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
 @media (max-width: 900px) {
   /* One column on a phone: the clue first, then the map, then the list of spots and the scores. */
@@ -225,11 +261,39 @@ body {
 @keyframes sh-pulse { 50% { filter: brightness(1.25); } }
 
 .sh-lobby { max-width: 560px; }
-.sh-finish { position: relative; text-align: center; background: var(--sh-slime); color: var(--sh-ink); }
+/* The finish: a dark stage with the escape time in big Creepster, lit from below like a jack-o'-lantern. */
+.sh-finish {
+  position: relative; text-align: center; color: var(--sh-paper); padding: 28px 20px 24px;
+  background: radial-gradient(420px 220px at 50% 70%, rgba(255, 117, 24, 0.28), transparent 70%), radial-gradient(500px 260px at 50% 0%, rgba(166, 241, 91, 0.12), transparent 70%), var(--sh-ink);
+  border-color: var(--sh-pumpkin);
+}
+.sh-finish__title { margin: 4px 0 0; font: 400 clamp(2rem, 6vw, 2.8rem) / 1.05 var(--hk-font-display); letter-spacing: 0.03em; overflow-wrap: anywhere; }
+.sh-finish__time {
+  margin: 4px 0 2px; font: 400 clamp(4.2rem, 18vw, 6rem) / 1 var(--hk-font-display); color: var(--sh-pumpkin);
+  text-shadow: 4px 4px 0 #000, 0 0 36px rgba(255, 117, 24, 0.45); font-variant-numeric: tabular-nums;
+}
+.sh-finish__rank {
+  display: inline-block; margin: 6px 0 4px; padding: 4px 14px; border: 3px solid #000; border-radius: 999px;
+  background: var(--sh-slime); color: var(--sh-ink); font-weight: 700; box-shadow: 3px 3px 0 #000; rotate: -2deg;
+}
+.sh-finish .sh-note { color: var(--sh-muted); margin: 6px 0 0; }
+/* Confetti falls behind the words, so the time and the place stay readable while it runs. */
+.sh-confetti { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.sh-finish > :not(.sh-confetti):not(.sh-burst) { position: relative; z-index: 1; }
+.sh-confetti__bit {
+  position: absolute; top: -18px; width: 8px; height: 14px; border-radius: 2px; opacity: 0;
+  animation: sh-confetti 2.2s ease-in both;
+}
+@keyframes sh-confetti {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate(var(--drift), 420px) rotate(540deg); opacity: 0; }
+}
 .sh-burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 2; }
 .sh-burst__piece {
   position: absolute; left: -16px; top: -10px; width: 34px; height: 22px; overflow: visible;
-  animation: sh-burst 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation: sh-burst 2.4s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 .sh-burst__bat { fill: var(--sh-ink); }
 .sh-burst__pumpkin { fill: var(--sh-pumpkin); stroke: var(--sh-ink); stroke-width: 2; }
@@ -240,7 +304,6 @@ body {
   80% { opacity: 1; }
   to { transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--spin)); opacity: 0; }
 }
-.sh-finish .sh-note { color: var(--sh-ink); }
 .sh-bigtime { font: 400 4rem/1 var(--hk-font-display); margin: 6px 0; }
 .sh-board__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .sh-board__list li { display: grid; grid-template-columns: 2em 1fr auto; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 12px; background: rgba(13, 6, 24, 0.35); }
@@ -255,7 +318,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .sh-moonbat { animation: none; }
-  .sh-burst { display: none; }
+  .sh-burst, .sh-confetti { display: none; }
   .sh-clock { transform: none; }
   .sh-mapframe--empty::after, .sh-bat, .sh-thermo--here .sh-thermo__fill, .sh-thermo--burning .sh-thermo__fill { animation: none; }
   .sh-thermo__fill { transition: none; }

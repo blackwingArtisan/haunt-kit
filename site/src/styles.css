@@ -33,13 +33,14 @@ a:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
 /* Cinematic hero: the real Ghost Walk map plays behind the title, fog lifting along the lantern's trail. */
 .lp-hero { position: relative; isolation: isolate; min-height: 520px; }
 .lp-hero > :not(.lp-hero__map) { position: relative; z-index: 1; max-width: 600px; }
+/* On wide screens the map starts where the 600px text column ends, so no stop name ever sits under the tagline. */
 .lp-hero__map {
-  position: absolute; z-index: 0; top: 0; right: -20px; width: min(780px, 66%);
+  position: absolute; z-index: 0; top: 36px; left: 620px; right: -20px;
   pointer-events: none;
-  /* Fade the map out toward the title on the left and softly at every other edge. */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 42%), radial-gradient(ellipse 66% 64% at 60% 50%, #000 55%, transparent 100%);
+  /* Fade the map in from the text column and softly at every other edge. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 16%), radial-gradient(ellipse 70% 68% at 55% 50%, #000 58%, transparent 100%);
   -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(90deg, transparent 0%, #000 42%), radial-gradient(ellipse 66% 64% at 60% 50%, #000 55%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 16%), radial-gradient(ellipse 70% 68% at 55% 50%, #000 58%, transparent 100%);
   mask-composite: intersect;
   /* The Ghost Walk's own map palette. */
   --hk-ground: #10131b; --hk-ink: #ece3cf; --hk-muted: #b3aa95; --hk-accent: #ff8a3d; --hk-accent-ink: #1a0f06;
@@ -49,13 +50,26 @@ a:focus-visible { outline: 3px solid #ffd27a; outline-offset: 3px; }
   --hk-radius: 0px; --hk-font-display: 'IM Fell English', Georgia, serif; --hk-font-body: 'Spectral', Georgia, serif;
 }
 .lp-hero__map .hk-map { background: transparent; }
+/* The two demos, one tap from the first screen. */
+.lp-hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0 4px; }
+.lp-btn--ember { background: var(--lp-ember); color: #1a0f06; box-shadow: 0 0 22px rgba(255, 138, 61, 0.3); }
+.lp-btn--pumpkin { background: var(--lp-pumpkin); color: var(--lp-ink); border: 3px solid var(--lp-ink); box-shadow: 3px 3px 0 var(--lp-ink); font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; }
+@media (max-width: 1080px) and (min-width: 901px) {
+  /* Between tablet and desktop the text column narrows so the map keeps room beside it. */
+  .lp-hero > :not(.lp-hero__map) { max-width: 520px; }
+  .lp-hero__map { left: 540px; }
+}
 @media (max-width: 900px) {
-  .lp-hero { min-height: 0; }
+  /* Phones: the map is a quiet backdrop behind the title, with no names on it, and both demos sit on the first screen. */
+  .lp-hero { min-height: 0; overflow: hidden; }
   .lp-hero__map {
-    position: relative; top: auto; right: auto; width: calc(100% + 40px); margin: 4px -20px -12px;
-    -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 55%, transparent 100%);
-    mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 55%, transparent 100%);
+    top: 0; left: 50%; right: auto; width: 820px; translate: -50% 0; opacity: 0.35;
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 50%, transparent 100%);
   }
+  .lp-hero__map .hk-map__labels, .lp-hero__map .hk-marker__name, .lp-hero__map .hk-marker__num, .lp-hero__map .hk-map__scale { display: none; }
+  .lp-hero__cta { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 360px; }
+  .lp-hero__cta .lp-btn { justify-content: center; }
 }
 
 /* The Kiroween strip: what this is and where the evidence lives. */

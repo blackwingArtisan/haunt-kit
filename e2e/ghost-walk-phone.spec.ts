@@ -39,3 +39,15 @@ test('map place names and stop names stay at 12 px or larger on a phone', async 
   expect(sizes.length).toBeGreaterThanOrEqual(3);
   for (const px of sizes) expect(px).toBeGreaterThanOrEqual(11.99);
 });
+
+test('a bar pinned to the bottom of a phone screen starts the 60-second walk, then gets out of the way', async ({ page }) => {
+  await page.goto('/?speed=250');
+  const bar = page.getByTestId('watch-bar');
+  await expect(bar).toBeInViewport({ ratio: 1 });
+  // It stays on screen as the visitor scrolls down to the list of stops.
+  await page.locator('.hk-list__item[data-stop="terrace-hill"]').scrollIntoViewIfNeeded();
+  await expect(bar).toBeInViewport({ ratio: 1 });
+  await bar.click();
+  await expect(page.getByTestId('walk-status')).toContainText('Watching the walk');
+  await expect(bar).toHaveCount(0);
+});

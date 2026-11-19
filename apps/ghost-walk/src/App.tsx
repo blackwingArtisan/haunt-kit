@@ -304,6 +304,15 @@ export function App() {
         <p>Built with Haunt Kit by Stubborn Otter Software.</p>
       </footer>
 
+      {session.mode === 'idle' && (
+        // On a phone the start panel sits below the map, so the main action also rides along the bottom of the screen.
+        <div className="gw-watchbar">
+          <button type="button" className="hk-btn gw-primary" onClick={watch} data-testid="watch-bar">
+            Watch the 60-second walk
+          </button>
+        </div>
+      )}
+
       <FinaleOverlay open={finaleArmed && progress.complete && !dialog.openId} onClose={closeFinale} onWalkAgain={walkAgain} />
 
       <dialog ref={dialog.ref} className="gw-dialog" aria-labelledby="gw-dialog-title">

@@ -4,6 +4,27 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 
 ## Unreleased
 
+### First screens
+- The landing page hero has both demos as buttons, **Watch the 60-second walk** and **Play the demo hunt**, right under the stakes line.
+- On wide screens the hero map starts where the 600 px text column ends, so no stop name sits under the tagline. A Playwright test checks the map's left edge against the tagline, the stakes and the subtitle.
+- On phones the hero map is a quiet backdrop behind the title at 35% opacity, with no names on it, and both demo buttons are on the first screen of a 390 x 664 viewport.
+- Ghost Walk on a phone pins **Watch the 60-second walk** to the bottom of the screen until a walk starts.
+
+### Spook Hunt in play
+- The clock shares the title row at every width.
+- The status line ("You found The Crooked Bench!") is a tab on top of the clue or question card, so the news and the card read as one thing. It stays a single live region as the card changes.
+- **Check answer** and **Hint** sit side by side, and **Check answer** is a solid, quiet button until something is typed.
+
+### Finish screen
+- The finish card is a dark stage: the escape time in Creepster at up to 6rem, the player's place ("#1 on the leaderboard of 3"), and bats, pumpkins and confetti for a little over 2 seconds. Reduced motion shows none of it.
+- A clean run reads "No penalties." with no "0 hints · 0 wrong answers" line. `runDetails` leaves out counts of zero, and a new `placeOf` finds a run's place on the ranked board; both are unit-tested.
+- The next-player field starts empty instead of keeping the last team's name.
+- On the host's result page, a result that is already on the leaderboard is a neutral note, not a red error.
+
+### Builder map and posters
+- In the Spook Hunt builder, zoom is a pair of **+** and **−** buttons on the map's top right, and the "3 of 20 spots" count is a tag on its bottom left, like any web map.
+- Each printable poster has a handbill-style inner frame and bats across the top, in ink on paper when printed.
+
 ### README
 - The top of the README is a two-line hook (the tagline, then the per-event price it replaces), a clearly labeled fictional scenario under the hero GIF, and the 60-second judging path.
 - New sections: "One skeleton, two costumes" (what each app does with the same engine, with measured line counts), "How it compares" (with the izi.TRAVEL row corrected: its publisher CMS is free, and two new rows on reaching stops without walking and where player location goes), "Beyond October" and a priced "Where this goes" with sourced market counts.

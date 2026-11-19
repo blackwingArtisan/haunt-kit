@@ -29,6 +29,11 @@ test('a host builds a hunt, shares it, and a player races it with a simulated wa
   await expect(stops).toHaveCount(2);
   await stops.nth(1).getByLabel(/Spot name/).fill('The Old Shed');
   await stops.nth(1).getByLabel('Clue to find it').fill('Where the rakes sleep.');
+  // The spot count and the zoom buttons sit on the map itself.
+  await expect(page.getByTestId('spot-count')).toHaveText('2 of 20 spots');
+  const zoom = page.getByRole('group', { name: 'Zoom' });
+  await zoom.getByRole('button', { name: 'Zoom out' }).click();
+  await zoom.getByRole('button', { name: 'Zoom in' }).click();
 
   await page.getByRole('button', { name: 'Make the share link' }).click();
   const url = await page.getByTestId('share-url').inputValue();
@@ -62,7 +67,9 @@ test('a host builds a hunt, shares it, and a player races it with a simulated wa
   await expect(player.getByTestId('finished')).toContainText('1 wrong answer');
   await expect(player.getByTestId('finished')).toContainText('Includes +10 s for 1 wrong answer.');
   await expect(player.getByTestId('leaderboard')).toContainText('Team Cauldron');
-  await expect(player.getByLabel('Next player or team')).toBeVisible();
+  await expect(player.getByTestId('finish-rank')).toHaveText('#1 on the leaderboard');
+  // The next player starts with an empty name field, not the last team's name.
+  await expect(player.getByLabel('Next player or team')).toHaveValue('');
 });
 
 test('"Play the demo hunt" goes from the home screen to a finished practice run, and the walker waits at each question', async ({ page }) => {
@@ -86,6 +93,9 @@ test('"Play the demo hunt" goes from the home screen to a finished practice run,
   await challenge.getByLabel(/animal/).fill('bat');
   await challenge.getByRole('button', { name: 'Check answer' }).click();
   await expect(page.getByTestId('finished')).toContainText('Mystery guest escaped!', { timeout: 20_000 });
+  // A clean run says "No penalties." once, with no "0 hints · 0 wrong answers" line under it.
+  await expect(page.getByTestId('finished')).toContainText('No penalties.');
+  await expect(page.getByTestId('finished')).not.toContainText('0 hints');
 });
 
 test('a player who cannot reach a spot can unlock it from the list', async ({ page }) => {
@@ -193,6 +203,8 @@ test('a player on their own phone sends a result link, and the host adds it to t
     // Opening the same link again is refused, and the run is not listed twice.
     await host.reload();
     await expect(host.getByTestId('result-status')).toContainText('already on the leaderboard');
+    // A repeat is a plain note, not an error.
+    await expect(host.getByTestId('result-status')).toHaveAttribute('role', 'status');
     await expect(host.getByRole('button', { name: 'Add to leaderboard' })).toHaveCount(0);
     await expect(host.getByTestId('leaderboard').locator('li')).toHaveCount(1);
 

@@ -67,7 +67,7 @@ function ResultCard({ result, store }: { result: ResultPayload; store: KeyValueS
         </h2>
         <p className="sh-bigtime">{formatDuration(score(run))}</p>
         <p className="sh-note">{sentence(penaltySummary(run))}</p>
-        <p className="sh-note">{runDetails(run)}</p>
+        {runDetails(run) && <p className="sh-note">{runDetails(run)}</p>}
         {added ? (
           <p className="sh-message" role="status" data-testid="result-status">
             Added {result.player} to the leaderboard.
@@ -83,6 +83,11 @@ function ResultCard({ result, store }: { result: ResultPayload; store: KeyValueS
               </p>
             )}
           </>
+        ) : state.status === 'duplicate' ? (
+          // A result that is already on the board is not a mistake, so it reads as a plain note.
+          <p className="sh-note sh-result-note" role="status" data-testid="result-status">
+            {state.message}
+          </p>
         ) : (
           <p className="sh-error" role="alert" data-testid="result-status">
             {state.message}

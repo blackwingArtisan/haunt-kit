@@ -102,3 +102,35 @@ test('the hero plays the real Ghost Walk map behind the title, and holds still u
   await audit(quiet);
   await still.close();
 });
+
+test('on a wide screen the hero map starts beside the text column, so no stop name sits under the tagline', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const map = page.getByTestId('hero-map');
+  await expect(map.getByTestId('tour-map')).toBeVisible();
+  const mapBox = (await map.boundingBox())!;
+  for (const selector of ['.lp-lede', '.lp-stakes', '.lp-sub']) {
+    const text = (await page.locator(selector).boundingBox())!;
+    expect(mapBox.x).toBeGreaterThanOrEqual(text.x + text.width - 1);
+  }
+});
+
+test('on a phone both demos are on the first screen, over a quiet map with no names on it', async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 664 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  await page.goto('/');
+  await expect(page.getByTestId('hero-watch')).toBeInViewport({ ratio: 1 });
+  await expect(page.getByTestId('hero-play')).toBeInViewport({ ratio: 1 });
+  const map = page.getByTestId('hero-map');
+  await expect(map).toHaveCSS('opacity', '0.35');
+  await expect(map.locator('.hk-marker__name').first()).toBeHidden();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+
+  await page.getByTestId('hero-watch').click();
+  await expect(page.getByTestId('walk-status')).toContainText('Watching the walk');
+  await page.goto('/');
+  await page.getByTestId('hero-play').click();
+  await expect(page.getByRole('heading', { name: 'The Pumpkin Patrol' })).toBeVisible();
+  await context.close();
+});

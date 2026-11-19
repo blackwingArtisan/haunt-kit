@@ -5,7 +5,7 @@ import { StopList, TourMap, useTourSession } from '@haunt-kit/template/react';
 import { huntToTour, type SharedHunt } from './hunt';
 import { decodeHunt, huntId } from './hunt-codec';
 import { HEAT_LABEL, heat, heatLevel, trend } from './hotcold';
-import { formatDuration, Leaderboard, penaltySummary, runDetails, sentence, score, type Run } from './leaderboard';
+import { formatDuration, Leaderboard, penaltySummary, placeOf, runDetails, sentence, score, type Run } from './leaderboard';
 import { encodeResult, resultUrl } from './result-codec';
 import { Scoreboard } from './Scoreboard';
 
@@ -85,6 +85,8 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
       setRuns(board.add(result));
       setLastRun(result);
       setRun(null);
+      // The next player types their own name; the field never carries the last team over.
+      setName('');
       store.remove(runKey);
     },
     [board, store, runKey],
@@ -138,19 +140,11 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
             {tour.stops.length} hidden {tour.stops.length === 1 ? 'spot' : 'spots'} · {hunt.ordering === 'sequential' ? 'each clue leads to the next' : 'find them in any order'}
           </p>
         </header>
-        {lastRun && (
-          <section className="sh-card sh-finish" data-testid="finished">
-            <FinishBurst key={lastRun.finishedAt} />
-            <h2 className="sh-h2">{lastRun.player} escaped!</h2>
-            <p className="sh-bigtime" data-testid="finish-time">{formatDuration(score(lastRun))}</p>
-            <p className="sh-note sh-finish__penalty">{sentence(penaltySummary(lastRun))}</p>
-            <p className="sh-note">{runDetails(lastRun)}</p>
-          </section>
-        )}
+        {lastRun && <FinishCard run={lastRun} place={placeOf(runs, lastRun)} total={runs.length} />}
         <form className="sh-card sh-lobby" onSubmit={start}>
           <label className="sh-field">
             <span>{lastRun ? 'Next player or team' : 'Player or team name'}</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} placeholder="Team Cauldron" autoComplete="off" />
+            <input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} placeholder={lastRun ? 'Team Night Owls' : 'Team Cauldron'} autoComplete="off" />
           </label>
           <button type="submit" className="hk-btn">
             Start the hunt
@@ -175,6 +169,30 @@ function Game({ hunt, tour, id, store }: Loaded & { store: KeyValueStore }) {
       position={position}
       state={state}
     />
+  );
+}
+
+/** The finish: the escape time large, the place on this device's board, and a burst of bats, pumpkins and confetti. */
+function FinishCard({ run, place, total }: { run: Run; place: number | null; total: number }) {
+  const details = runDetails(run);
+  return (
+    <section className="sh-card sh-finish" data-testid="finished" aria-labelledby="finish-h">
+      <FinishBurst key={run.finishedAt} />
+      <p className="sh-kicker">Out of the haunt</p>
+      <h2 id="finish-h" className="sh-finish__title">
+        {run.player} escaped!
+      </h2>
+      <p className="sh-finish__time" data-testid="finish-time">
+        {formatDuration(score(run))}
+      </p>
+      {place !== null && (
+        <p className="sh-finish__rank" data-testid="finish-rank">
+          #{place} on the leaderboard{total > 1 ? ` of ${total}` : ''}
+        </p>
+      )}
+      <p className="sh-note sh-finish__penalty">{sentence(penaltySummary(run))}</p>
+      {details && <p className="sh-note">{details}</p>}
+    </section>
   );
 }
 
@@ -266,12 +284,13 @@ function ActiveGame({
         </div>
       </header>
 
-      <p className="sh-message" role="status" aria-live="polite" data-testid="hunt-message">
-        {message}
-      </p>
-
       <div className="sh-gamegrid">
         <div className="sh-gamecol">
+          {/* The status rides on top of the clue or question card, and stays one live region as the card below it changes. */}
+          <div className="sh-turn">
+            <p className="sh-message sh-turn__status" role="status" aria-live="polite" data-testid="hunt-message">
+              {message}
+            </p>
           {pending ? (
             <ChallengeCard stop={pending} session={session} setMessage={setMessage} hintUsed={state.stops[pending.id]!.hintUsed} />
           ) : target ? (
@@ -293,6 +312,7 @@ function ActiveGame({
               <Thermometer target={target} position={position} />
             </section>
           ) : null}
+          </div>
 
           <section className="sh-card">
             <div className="sh-row">
@@ -403,7 +423,7 @@ function ChallengeCard({
           {feedback}
         </p>
       )}
-      <div className="sh-row">
+      <div className="sh-answer-actions">
         <button type="submit" className="hk-btn" disabled={!answer.trim()}>
           Check answer
         </button>
@@ -460,32 +480,62 @@ function nearest(stops: Stop[], position: { lat: number; lng: number } | null): 
 
 const BURST_BAT = 'M0 8 C6 0 12 0 16 6 C18 2 20 2 22 6 C26 0 32 0 38 8 C32 6 28 8 26 14 C24 10 22 12 19 16 C16 12 14 10 12 14 C10 8 6 6 0 8 Z';
 
-/** Bats and pumpkins burst out of the finish card once. Hidden with reduced motion. */
+const CONFETTI_COLORS = ['var(--sh-pumpkin)', 'var(--sh-slime)', 'var(--sh-grape)', 'var(--sh-paper)'];
+
+/** Bats and pumpkins burst out of the finish card, then confetti falls for a couple of seconds. Hidden with reduced motion. */
 function FinishBurst() {
-  const pieces = Array.from({ length: 12 }, (_, i) => {
-    const angle = (i / 12) * Math.PI * 2 + 0.3;
+  const pieces = Array.from({ length: 16 }, (_, i) => {
+    const angle = (i / 16) * Math.PI * 2 + 0.3;
     const reach = 150 + (i % 3) * 60;
     return { i, dx: Math.cos(angle) * reach * 1.6, dy: Math.sin(angle) * reach * 0.7, spin: (i % 2 ? 1 : -1) * (90 + i * 20), bat: i % 2 === 0 };
   });
+  // Deterministic scatter (no Math.random), so a re-render draws the same confetti.
+  const confetti = Array.from({ length: 36 }, (_, i) => ({
+    i,
+    left: (i * 37) % 100,
+    delay: ((i * 7) % 10) / 20,
+    duration: 2 + ((i * 5) % 7) / 10,
+    drift: ((i % 5) - 2) * 18,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  }));
   return (
-    <div className="sh-burst" aria-hidden="true">
-      {pieces.map((p) => (
-        <svg
-          key={p.i}
-          className="sh-burst__piece"
-          viewBox={p.bat ? '-2 -2 42 20' : '0 0 24 24'}
-          style={{ '--dx': `${p.dx}px`, '--dy': `${p.dy}px`, '--spin': `${p.spin}deg`, animationDelay: `${(p.i % 4) * 0.05}s` } as CSSProperties}
-        >
-          {p.bat ? (
-            <path className="sh-burst__bat" d={BURST_BAT} />
-          ) : (
-            <>
-              <ellipse className="sh-burst__pumpkin" cx="12" cy="14" rx="10" ry="8" />
-              <path className="sh-burst__stem" d="M11 6 q1 -4 4 -4" />
-            </>
-          )}
-        </svg>
-      ))}
-    </div>
+    <>
+      <div className="sh-confetti" aria-hidden="true">
+        {confetti.map((c) => (
+          <span
+            key={c.i}
+            className="sh-confetti__bit"
+            style={
+              {
+                left: `${c.left}%`,
+                background: c.color,
+                animationDelay: `${c.delay}s`,
+                animationDuration: `${c.duration}s`,
+                '--drift': `${c.drift}px`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
+      <div className="sh-burst" aria-hidden="true">
+        {pieces.map((p) => (
+          <svg
+            key={p.i}
+            className="sh-burst__piece"
+            viewBox={p.bat ? '-2 -2 42 20' : '0 0 24 24'}
+            style={{ '--dx': `${p.dx}px`, '--dy': `${p.dy}px`, '--spin': `${p.spin}deg`, animationDelay: `${(p.i % 4) * 0.08}s` } as CSSProperties}
+          >
+            {p.bat ? (
+              <path className="sh-burst__bat" d={BURST_BAT} />
+            ) : (
+              <>
+                <ellipse className="sh-burst__pumpkin" cx="12" cy="14" rx="10" ry="8" />
+                <path className="sh-burst__stem" d="M11 6 q1 -4 4 -4" />
+              </>
+            )}
+          </svg>
+        ))}
+      </div>
+    </>
   );
 }

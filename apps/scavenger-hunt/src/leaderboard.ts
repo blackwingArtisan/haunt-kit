@@ -41,11 +41,19 @@ export function sentence(phrase: string): string {
   return `${phrase.charAt(0).toUpperCase()}${phrase.slice(1)}.`;
 }
 
-/** "1 hint · 1 wrong answer · 3 unlocked from the list". */
+/** "1 hint · 1 wrong answer · 3 unlocked from the list". Counts of zero are left out, so a clean run has no details line. */
 export function runDetails(run: Pick<Run, 'hints' | 'wrongAnswers' | 'assisted'>): string {
-  const parts = [plural(run.hints, 'hint'), plural(run.wrongAnswers, 'wrong answer')];
+  const parts: string[] = [];
+  if (run.hints) parts.push(plural(run.hints, 'hint'));
+  if (run.wrongAnswers) parts.push(plural(run.wrongAnswers, 'wrong answer'));
   if (run.assisted) parts.push(`${run.assisted} unlocked from the list`);
   return parts.join(' · ');
+}
+
+/** A run's 1-based place in a ranked list, or null when it is not on it. */
+export function placeOf(ranked: readonly Run[], run: Pick<Run, 'player' | 'finishedAt'>): number | null {
+  const i = ranked.findIndex((r) => r.finishedAt === run.finishedAt && r.player === run.player);
+  return i === -1 ? null : i + 1;
 }
 
 export function formatDuration(ms: number): string {
