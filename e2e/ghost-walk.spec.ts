@@ -111,3 +111,13 @@ test('works offline once visited (service worker)', async ({ page, context }) =>
   await expect(page.locator('.hk-list__item')).toHaveCount(6);
   await context.setOffline(false);
 });
+
+test('reduced motion stops the candle flicker and the dialog animation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('./');
+  await stopRow(page, 'ferrymans-bell').getByRole('button', { name: /Read from here/ }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length);
+  expect(running).toBe(0);
+  await expect(page.locator('.gw-candle--lit .gw-candle__flame').first()).toHaveCSS('animation-name', 'none');
+});

@@ -82,6 +82,7 @@ npm run verify                        # all of the above
     - Keyboard-only reading.
     - Fiction labels.
     - An offline reload through the service worker.
+    - Reduced motion: no animation runs, candles stop flickering.
     - A phone-width layout.
   - Both apps also pass an axe-core audit for WCAG 2.1 A and AA on every main screen, checked after real use (a finished walk, an open story, a shared hunt, a hunt in play).
   - Spook Hunt:
