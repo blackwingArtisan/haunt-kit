@@ -2,9 +2,13 @@
 
 **A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link.**
 
-Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in two costumes: a sourced ghost walk through downtown Des Moines and a backyard Halloween scavenger hunt. Write the stops as data and they unlock as people arrive.
+A Goosechase hunt for 10 participants costs [$99, for one event](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing). This one is free, needs no app or account, and fits in a link.
+
+Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in two costumes: a sourced ghost walk through downtown Des Moines and a backyard Halloween scavenger hunt. Write the stops as data and they unlock as people arrive. Some stops only exist after dark.
 
 ![A simulated walk through Des Moines After Dark: the fog lifts along the lantern's trail, the candles light one by one, and the finale plays](docs/media/hero-walk.gif)
+
+> **Scenario (fictional).** A volunteer at the invented Marlow County Historical Society copies the starter on a Tuesday evening and writes six stops about the courthouse square, each legend with its source. She builds the site, puts the folder on a free static host, and tapes one printed poster with its QR code to the courthouse door. Through October, walkers scan it and each story opens as they arrive, with the after-dark stops waking at sunset. The society pays $0, where a hosted platform such as Goosechase charges [$99 to $749 per event](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing).
 
 ## Judge it in 60 seconds
 ```bash
@@ -25,19 +29,35 @@ No GPS or walking needed for any of it. Every stop in both apps can also be open
 | ![The hot-and-cold meter reading Warm on the way to the second hidden spot](docs/media/hotcold.jpg) | ![A finished hunt: the escape time includes a 10-second penalty for one wrong answer](docs/media/escaped.jpg) |
 
 ## Why it matters
-Picture a county historical society that wants a ghost walk for October. It is one of at least [21,588 history organizations](https://aaslh.org/census/) in the United States. Halloween is the moment people go looking for local stories: Americans are expected to spend [$13.5 billion on it in 2026](https://nrf.com/media-center/press-releases/nrf-halloween-survey-shows-consumer-spending-expected-to-reach-13-5-billion), a record. But the hosted game platforms charge per event: Goosechase is free for 3 participants for 24 hours, then [$99 for 10 participants up to $749 for 175](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing), for one run.
+- **Party hosts and teachers** run hunts and pay for them per event: Goosechase is free for 3 participants for 24 hours, then [$99 for 10 participants up to $749 for 175](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing), for one event. Spook Hunt is free, the hunt travels inside its own link, and no one creates an account.
+- **Local history groups** have the stories but rarely a budget. There are at least [21,588 history organizations](https://aaslh.org/census/) in the United States, and Halloween is when people go looking for local legends: Americans are expected to spend [$13.5 billion on it in 2026](https://nrf.com/media-center/press-releases/nrf-halloween-survey-shows-consumer-spending-expected-to-reach-13-5-billion), above last year's record of $13.1 billion. A walk like Des Moines After Dark is a typed data file and a folder of static files.
+- **Nothing to run.** No server to pay for, no account to create, and no player location ever leaves the phone.
 
-Haunt Kit costs nothing to run. The tour is a typed data file, the app is static files on any free host, and a hunt travels inside its own link. There is no server to pay for, no account to create, and no player location ever leaves the phone.
+## One skeleton, two costumes
+Both apps run on the same engine, `stepFix(tour, state, fix) → { state, events }`, and the same React pieces. They do different jobs:
 
-| | Haunt Kit | izi.TRAVEL | Actionbound | Goosechase | Google My Maps |
-|---|---|---|---|---|---|
-| Players install an app | No: a web page, installable for offline use | Mobile app; tours can also be browsed at izi.travel | Yes: [iOS or Android app](https://actionbound.com/faq) | No: [app or browser](https://goosechase.com/download) | No |
-| Content opens on arrival | Yes | Yes | Yes | Yes, as GPS check-in missions | No: a static map |
-| Where the tour lives | In the link, or a static file you host | izi.TRAVEL's platform | Actionbound's platform | Goosechase's platform | Google Drive |
-| Cost per event | Free (MIT, static hosting) | Free app for visitors | [Free for personal use](https://en.actionbound.com/pricing); paid EDU and PRO licenses | [Free for 3 people, then $99 to $749](https://support.goosechase.com/en/articles/4571290-how-much-does-goosechase-cost) | Free |
-| Source code | Open (MIT) | Closed | Closed | Closed | Closed |
+| | Des Moines After Dark | Spook Hunt |
+|---|---|---|
+| Who writes it | A volunteer or developer, as a typed data file (`tour.ts`) | A party host or teacher, in the browser editor, with no code |
+| Where the content lives | In the app build | In the share link's URL hash; answers only as salted hashes |
+| The loop | Walk to a stop and its sourced story opens; one stop wakes only after sunset | Walk to a hidden spot, answer its question, get the next clue; hot and cold guides you |
+| The ending | The Terrace Hill finale, after the other five stops | An escape time with penalties, a leaderboard and a result link for the host |
+| Skeleton parts used | `useTourSession`, `TourMap` (ink fog), `StopList`, `Compass`, `StopSources`, `useStopDialog`, `createNarrator` | `useTourSession`, `TourMap` (paper fog, hidden spots), `StopList`, `awaitingAnswer`, `hashAnswer`, `getCurrentFix` |
 
-Prices and features are from each product's published pages in November 2026.
+Measured in this repository (lines, including styles):
+
+| Part | Lines |
+|---|---|
+| The shared skeleton, `template/src` | 2,600 |
+| Ghost Walk app, `apps/ghost-walk/src` | 907, of which the tour data is 214 |
+| Spook Hunt app, `apps/scavenger-hunt/src` | 1,990 |
+| The starter a new app copies, `template/starter` | 90 |
+
+Start a third costume with one command:
+
+```bash
+npm run create-app -- river-walk --name "River Walk"
+```
 
 ## Built with Kiro
 | Kiro feature | In this repo |
@@ -48,7 +68,7 @@ Prices and features are from each product's published pages in November 2026.
 | Hooks | Run the unit suite on save, guard the Ghost Walk honesty rules when tour data changes, and keep the core engine pure. [`.kiro/hooks/`](.kiro/hooks/) |
 | Agent session | One recorded `kiro-cli` session with its exact prompt, time and credits. Unit tests went from 82 to 104. |
 
-[KIRO-LOG.md](KIRO-LOG.md) has the evidence for each row and an honest note on who wrote what. Changes since that session are in the [changelog](CHANGELOG.md).
+[KIRO-LOG.md](KIRO-LOG.md) has the evidence for each row, the exact session prompt, and a plain note on who wrote what.
 
 ## How it works
 ```mermaid
@@ -67,10 +87,33 @@ flowchart LR
 
 The engine is a set of pure functions (`stepFix` for a position fix, `unlock` for the list, `markSolved` for an answer), so every rule (two-fix dwell, exit at 1.3x the radius, free, in-order, `requires` and finale ordering) is unit-tested without a browser. The React layer only stores and renders. Spook Hunt compresses its whole hunt into the URL hash and stores answers only as salted hashes, so the share link never gives the answers away.
 
+## How it compares
+| | Haunt Kit | izi.TRAVEL | Actionbound | Goosechase | Google My Maps |
+|---|---|---|---|---|---|
+| Players install an app | No: a web page, installable for offline use | Mobile app; tours can also be browsed at izi.travel | Yes: [iOS or Android app](https://actionbound.com/faq) | No: [app or browser](https://goosechase.com/download) | No |
+| Content opens on arrival | Yes | Yes | Yes | Yes, as GPS check-in missions | No: a static map |
+| Every stop reachable without walking | Always: any stop opens from an accessible list, by design | Yes: tours can be browsed at izi.travel | Only where the author lets a [find-a-spot task be skipped](https://en.actionbound.com/help/article/find-spot) | No: a GPS mission needs a [check-in inside its radius](https://support.goosechase.com/en/articles/5803495-how-to-create-a-gps-mission) | Nothing is locked |
+| Player location leaves the phone | Never: every geofence check runs on the device, and there is no server | Hosted platform: see its privacy policy | Hosted platform: see its privacy policy | Hosted platform: see its privacy policy | No location is used |
+| Where the tour lives | In the link, or a static file you host | izi.TRAVEL's platform | Actionbound's platform | Goosechase's platform | Google Drive |
+| Cost | Free (MIT, static hosting) | Free for visitors, and its publisher CMS is [free for creators](https://izi.travel/en/create/professionals) | [Free for personal use](https://en.actionbound.com/pricing); paid EDU and PRO licenses | [Free for 3 people, then $99 to $749](https://support.goosechase.com/en/articles/4571290-how-much-does-goosechase-cost) per event | Free |
+| Source code | Open (MIT) | Closed | Closed | Closed | Closed |
+
+Prices and features are from each product's published pages in November 2026.
+
+## Beyond October
+The skeleton is not only for Halloween. Three uses that repeat all year:
+
+- **A teacher's weekly word hunt.** Tape a scrambled vocabulary word at each spot in a park or schoolyard; students unscramble it to get the next clue. The landing page links a playable three-spot "Friday Word Hunt", made with the same share function the editor uses.
+- **A library's monthly story walk.** A picture book split into pages along a path, one page per stop, as a data tour copied from the starter.
+- **Campus orientation week.** First-year students find the library, the bursar and the dining hall, with a question at each to prove they were there.
+
+Any of them can go on a wall: the landing page's **Print a poster** page prints one page per app with its QR code, its start point and tonight's sunset time, and a host can paste their own hunt link onto it.
+
 ## Where this goes
 - **Free to self-host, forever.** MIT license, static files, no keys. A library or historical society copies the starter with `npm run create-app`, writes its stops, and hosts the folder for free.
-- **A no-code builder next.** Spook Hunt's editor already makes a tour without code. The same editor for story walks (text, legend or history or fiction label, source link, finale) would let a librarian publish a walk as a link. An optional hosted builder could carry a flat yearly price for organizations.
-- **Seasonal costumes.** The same skeleton fits a campus orientation, a library StoryWalk, a museum trail or a holiday-lights tour. Each one is a data file and a stylesheet.
+- **An optional hosted builder at $49 a year per organization.** The same no-code editor Spook Hunt has, for story walks: story text, a legend, history or fiction label, a source link and a finale, published as a link. The kit stays free; the hosted builder pays for itself against a single $99 event.
+- **Who it is for.** At least 21,588 history organizations ([AASLH](https://aaslh.org/census/)) and about 9,000 public libraries with about 17,000 branches and bookmobiles ([IMLS Public Libraries Survey](https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls)): about 30,000 organizations. At $49 a year, one in fifty of them is about $30,000 a year, and every one of them is about $1.5 million. That is a ceiling, not a forecast.
+- **Why now.** A web page can do what a tour app once needed an install for: the Geolocation API works in browsers used by 97.6% of people worldwide, and service workers, which make a page work offline, in 97.4% ([caniuse data](https://github.com/Fyrd/caniuse), November 2026).
 
 ## What works
 <details>
@@ -182,7 +225,7 @@ npm run verify                        # all of the above
     - The leaderboard records the run.
     - A player on another phone sends a result link and the host adds it to the leaderboard.
     - A list unlock with a hint, and a damaged link.
-- **Hosted layout (Playwright)**: the landing page passes axe-core with both QR codes, both apps run from their subfolders, and one click starts each demo.
+- **Hosted layout (Playwright)**: the landing page passes axe-core with both QR codes, both apps run from their subfolders, one click starts each demo, the word hunt link opens a playable hunt, and the poster page prints two pages.
 
 </details>
 
@@ -198,7 +241,7 @@ template/                         @haunt-kit/template
   scripts/        create-app generator (npm run create-app)
 apps/ghost-walk/        Des Moines After Dark (tour data + themed UI)
 apps/scavenger-hunt/    Spook Hunt (editor, link codec, player, leaderboard)
-site/                   landing page that hosts both apps (npm run build:site)
+site/                   landing page that hosts both apps, and printable posters (npm run build:site)
 docs/media/             README images
 e2e/                    Playwright specs
 .kiro/                  steering, specs, hooks

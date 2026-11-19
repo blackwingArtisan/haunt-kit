@@ -4,6 +4,10 @@ Changes since the Kiro session recorded in [KIRO-LOG.md](KIRO-LOG.md). None of t
 
 ## Unreleased
 
+### README
+- The top of the README is a two-line hook (the tagline, then the per-event price it replaces), a clearly labeled fictional scenario under the hero GIF, and the 60-second judging path.
+- New sections: "One skeleton, two costumes" (what each app does with the same engine, with measured line counts), "How it compares" (with the izi.TRAVEL row corrected: its publisher CMS is free, and two new rows on reaching stops without walking and where player location goes), "Beyond October" and a priced "Where this goes" with sourced market counts.
+
 ### Landing page and posters
 - A Kiroween strip links the Kiro log and the source. Under the tagline, a stakes line compares Goosechase's top single-event price with Haunt Kit's $0, with a link to the published prices.
 - Spook Hunt's card has a third action, **Make a hunt in 30 seconds**, which opens the editor.
