@@ -21,14 +21,15 @@
     "dev:house": "npm run dev -w apps/haunted-house",
     "create-app": "node template/scripts/create-tour-app.mjs",
     "build": "npm run build -w apps/ghost-walk && npm run build -w apps/scavenger-hunt && npm run build -w apps/haunted-house",
-    "build:site": "vite build --config site/vite.config.ts && npm run build -w apps/ghost-walk -- --outDir ../../dist/ghost-walk --emptyOutDir && npm run build -w apps/scavenger-hunt -- --outDir ../../dist/spook-hunt --emptyOutDir",
+    "build:site": "vite build --config site/vite.config.ts && npm run build -w apps/ghost-walk -- --outDir ../../dist/ghost-walk --emptyOutDir && npm run build -w apps/scavenger-hunt -- --outDir ../../dist/spook-hunt --emptyOutDir && npm run build -w apps/haunted-house -- --outDir ../../dist/haunted-house --emptyOutDir",
     "preview:site": "vite preview --config site/vite.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "check": "npm run typecheck && npm test",
-    "verify": "npm run check && npm run test:e2e"
+    "verify": "npm run check && npm run test:e2e",
+    "build:static": "npm run build:site"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

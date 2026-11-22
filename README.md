@@ -17,13 +17,14 @@ Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in t
 npm ci
 npm run build:site && npm run preview:site   # http://localhost:3169
 ```
-The landing page shows both apps side by side, each with a QR code. Then:
+The landing page shows all three apps side by side, each with a QR code. Then:
 
 1. **Watch the 60-second walk.** The whole Ghost Walk route plays at 60x. Each story opens as the lantern arrives, the fog burns off, and the Terrace Hill finale plays. Direct link: `ghost-walk/?watch`.
 2. **Play the demo hunt.** One click opens Spook Hunt's three-spot demo exactly as a player receives it. Press **Practice run** and a simulated player walks to each spot and waits for your answer (the answers are "orange" and "bat"). Direct link: `spook-hunt/#/demo`.
 3. **Build your own.** In Spook Hunt, choose **Build a hunt**, drop a pin, write a clue, and press **Make the share link**. That link, or its QR code, is the whole hunt. A two-spot hunt takes 8 steps and 55 typed characters from a blank editor to its share link and QR code; a [Playwright test](e2e/scavenger-hunt.spec.ts) walks it at a human typing pace.
+4. **Walk into the haunted house.** **Scan the first poster** opens the Front Hall as if a guest had scanned its door; type the other rooms' codes, or press **Print room posters** for the six QR posters. Direct link: `haunted-house/#/room/BATS`.
 
-No GPS or walking needed for any of it. Every stop in both apps can also be opened from the list.
+No GPS or walking needed for any of it. Every stop in the two GPS apps can also be opened from the list.
 
 | | |
 |---|---|
@@ -186,7 +187,7 @@ npm run create-app -- river-walk --name "River Walk"
 
 See [`template/README.md`](template/README.md) for the options.
 
-The hosted layout (landing page at the root, the apps in `ghost-walk/` and `spook-hunt/`), built into `dist/`:
+The hosted layout (landing page at the root, the apps in `ghost-walk/`, `spook-hunt/` and `haunted-house/`), built into `dist/`:
 
 ```bash
 npm run build:site

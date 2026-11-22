@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Haunt Kit · One skeleton, two costumes</title>
+    <title>Haunt Kit · One skeleton, three costumes</title>
     <meta name="description" content="Haunt Kit is an open-source skeleton for GPS story walks. A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link." />
     <meta name="theme-color" content="#0c0e13" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Haunt Kit · One skeleton, two costumes" />
+    <meta property="og:title" content="Haunt Kit · One skeleton, three costumes" />
     <meta property="og:description" content="A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link." />
     <meta property="og:image" content="./og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -34,7 +34,7 @@
         <a class="lp-btn lp-btn--ember" href="./ghost-walk/?watch" data-testid="hero-watch">Watch the 60-second walk</a>
         <a class="lp-btn lp-btn--pumpkin" href="./spook-hunt/#/demo" data-testid="hero-play">Play the demo hunt</a>
       </div>
-      <p class="lp-sub" data-testid="hero-sub">Most GPS hunts need a server and an account. Here the hunt, its answers and the scoreboard all travel in links. Made first for the teacher's Friday hunt: no student accounts, no student data, nothing to install. One open-source skeleton, in two costumes.</p>
+      <p class="lp-sub" data-testid="hero-sub">Most GPS hunts need a server and an account. Here the hunt, its answers and the scoreboard all travel in links. Made first for the teacher's Friday hunt: no student accounts, no student data, nothing to install. One open-source skeleton, in three costumes.</p>
       <div class="lp-hero__map" id="hero-map" aria-hidden="true" data-testid="hero-map"></div>
     </header>
 
@@ -67,6 +67,21 @@
           <figcaption>Scan to open it on your phone.</figcaption>
         </figure>
       </article>
+
+      <article class="lp-card lp-card--house" aria-labelledby="house-h">
+        <p class="lp-card__kicker">An indoor party game</p>
+        <h2 id="house-h" class="lp-card__title">Haunted House <span>Party</span></h2>
+        <p>Six invented rooms, one QR poster on each door. Scanning a poster stands in for GPS, so the same engine runs indoors with no location at all. The Attic waits for the Library.</p>
+        <div class="lp-card__row">
+          <a class="lp-btn" href="./haunted-house/#/room/BATS" data-testid="enter-house">Scan the first poster</a>
+          <a class="lp-link" href="./haunted-house/#/posters" data-testid="house-posters">Print room posters</a>
+          <a class="lp-link" href="./haunted-house/" data-testid="open-house">Open the party</a>
+        </div>
+        <figure class="lp-qr">
+          <div class="lp-qr__code" data-qr="./haunted-house/" data-label="QR code for Haunted House Party"></div>
+          <figcaption>Scan to open it on your phone.</figcaption>
+        </figure>
+      </article>
     </main>
 
     <p class="lp-sources" data-testid="price-sources">
@@ -76,8 +91,8 @@
     </p>
 
     <section class="lp-bones" aria-labelledby="bones-h">
-      <h2 id="bones-h">One skeleton under both</h2>
-      <p class="lp-bones__intro">Both apps feed position fixes into the same pure engine and draw what it returns. Only the data and the costume change.</p>
+      <h2 id="bones-h">One skeleton under all three</h2>
+      <p class="lp-bones__intro">All three apps feed position fixes into the same pure engine and draw what it returns. Only the data and the costume change.</p>
       <figure class="lp-engine" data-testid="engine-diagram">
         <ol class="lp-engine__inputs" aria-label="Inputs">
           <li>Tour data, checked by a schema</li>
@@ -101,9 +116,9 @@
             <figcaption><strong>Scavenger hunt.</strong> A hidden spot's question, and the EMF meter warming on the way to the next.</figcaption>
           </figure>
         </div>
-        <figcaption class="lp-engine__caption">The same engine, two costumes.</figcaption>
+        <figcaption class="lp-engine__caption">The same engine, two of its three costumes.</figcaption>
       </figure>
-      <p class="lp-bones__intro" data-testid="costume-three">Next in the repository: the Haunted House Party, an indoor game where scanning a room's QR poster stands in for GPS, on the same engine. Costume #3, built by a Kiro agent.</p>
+      <p class="lp-bones__intro" data-testid="costume-three">The third costume, the Haunted House Party, swaps GPS for a QR poster on each room's door and runs on the same engine. A Kiro agent specced and built it.</p>
     </section>
 
     <section class="lp-beyond" aria-labelledby="beyond-h">
