@@ -4,6 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 const GHOST_PORT = Number(process.env.PW_GHOST_PORT ?? 3171);
 const HUNT_PORT = Number(process.env.PW_HUNT_PORT ?? 3173);
 const SITE_PORT = Number(process.env.PW_SITE_PORT ?? 3169);
+const HOUSE_PORT = Number(process.env.PW_HOUSE_PORT ?? 3179);
 
 export default defineConfig({
   testDir: 'e2e',
@@ -33,6 +34,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${HUNT_PORT}` },
     },
     {
+      name: 'haunted-house',
+      testMatch: /haunted-house(\.a11y)?\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${HOUSE_PORT}` },
+    },
+    {
       // The hosted layout: the landing page at the root, each app in its own folder.
       name: 'site',
       testMatch: /site\.spec\.ts/,
@@ -50,6 +56,12 @@ export default defineConfig({
     {
       command: `npm run build -w apps/scavenger-hunt && cd apps/scavenger-hunt && npx vite preview --port ${HUNT_PORT} --strictPort`,
       url: `http://localhost:${HUNT_PORT}`,
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+    {
+      command: `npm run build -w apps/haunted-house && cd apps/haunted-house && npx vite preview --port ${HOUSE_PORT} --strictPort`,
+      url: `http://localhost:${HOUSE_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,
     },

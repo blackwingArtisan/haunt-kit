@@ -139,7 +139,10 @@ describe('the sources', () => {
     for (const [file, text] of all) expect(text, file).not.toMatch(/sessionStorage|indexedDB|document\.cookie/);
   });
 
-  it('does not import qrcode yet; the posters arrive in Session B', () => {
-    for (const [file, text] of all) expect(text, file).not.toMatch(/from ['"]qrcode['"]/);
+  it('imports qrcode only in QrCode.tsx, which draws on the device (Req 6.3)', () => {
+    for (const [file, text] of all) {
+      if (file === 'QrCode.tsx') expect(text).toMatch(/from ['"]qrcode['"]/);
+      else expect(text, file).not.toMatch(/from ['"]qrcode['"]/);
+    }
   });
 });

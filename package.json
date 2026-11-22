@@ -18,8 +18,9 @@
   "scripts": {
     "dev:ghost": "npm run dev -w apps/ghost-walk",
     "dev:hunt": "npm run dev -w apps/scavenger-hunt",
+    "dev:house": "npm run dev -w apps/haunted-house",
     "create-app": "node template/scripts/create-tour-app.mjs",
-    "build": "npm run build -w apps/ghost-walk && npm run build -w apps/scavenger-hunt",
+    "build": "npm run build -w apps/ghost-walk && npm run build -w apps/scavenger-hunt && npm run build -w apps/haunted-house",
     "build:site": "vite build --config site/vite.config.ts && npm run build -w apps/ghost-walk -- --outDir ../../dist/ghost-walk --emptyOutDir && npm run build -w apps/scavenger-hunt -- --outDir ../../dist/spook-hunt --emptyOutDir",
     "preview:site": "vite preview --config site/vite.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",

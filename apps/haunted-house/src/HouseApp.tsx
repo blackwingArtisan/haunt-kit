@@ -149,6 +149,9 @@ export function HouseApp({ store: given }: HouseAppProps) {
 
         <footer className="hh-foot">
           <p className="hh-note">Your progress stays on this phone. The game uses no location, camera or microphone.</p>
+          <p className="hh-note">
+            Hosting? <a href="#/posters">Print room posters</a>
+          </p>
         </footer>
       </main>
 

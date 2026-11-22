@@ -84,6 +84,39 @@ body {
 }
 .hh-dialog::backdrop { background: rgba(10, 5, 16, 0.8); }
 
+a { color: var(--hh-candle); }
+.hh-message--warn { color: var(--hh-candle); }
+.hh-input--address { width: 100%; letter-spacing: 0; text-transform: none; font-size: 1rem; }
+.hh-posters-head { display: grid; gap: 8px; }
+
+/* Posters: dark ink on white paper, on screen and in print. */
+.hh-poster-list { display: grid; gap: 20px; }
+.hh-poster {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  background: #fff; color: #000; border-radius: 12px; padding: 20px 16px;
+}
+.hh-poster__name { margin: 0; font: 700 2rem / 1.1 var(--hk-font-display); color: #000; }
+.hh-poster__line { margin: 0; font-size: 1.2rem; font-style: italic; max-width: 30em; }
+.hh-poster__note { margin: 0; font-size: 1rem; }
+.hh-poster__address { margin: 0; font-size: 0.9rem; overflow-wrap: anywhere; max-width: 100%; }
+.hh-qr { width: min(80mm, 70vw); aspect-ratio: 1; background: #fff; }
+.hh-qr svg { display: block; width: 100%; height: 100%; }
+.hh-code { margin: 0; font: 700 clamp(44px, 14vw, 96px) / 1 var(--hk-font-body); letter-spacing: 0.12em; padding-left: 0.12em; color: #000; }
+
+@page { margin: 12mm; }
+@media print {
+  .hh-screen-only, .hh-skip { display: none !important; }
+  html, body { background: #fff !important; color: #000; min-height: 0; }
+  .hh-main { display: block; max-width: none; padding: 0; margin: 0; }
+  .hh-poster-list { display: block; }
+  .hh-poster {
+    break-after: page; page-break-after: always; break-inside: avoid; page-break-inside: avoid;
+    border-radius: 0; padding: 0; gap: 8mm;
+  }
+  .hh-poster:last-child { break-after: auto; page-break-after: auto; }
+  .hh-code { font-size: 72pt; }
+}
+
 .hk-list__items { min-width: 0; }
 .hk-list__name, .hk-list__meta { overflow-wrap: anywhere; }
 

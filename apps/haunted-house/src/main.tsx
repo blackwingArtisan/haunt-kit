@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client';
 import '@haunt-kit/template/styles.css';
 import './styles.css';
 import { registerServiceWorker } from '@haunt-kit/template/pwa';
-import { HouseApp } from './HouseApp';
+import { App } from './App';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <HouseApp />
+    <App />
   </StrictMode>,
 );
 
