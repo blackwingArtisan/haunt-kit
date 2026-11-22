@@ -6,28 +6,28 @@ The new workspace needs `npm install` to link it and to update `package-lock.jso
 
 ## Session A: adapter and app
 
-- [ ] 1. Generate the app and register it (Req 9.3, 9.8). Run `npm run create-app -- haunted-house --name "Haunted House Party" --dev-port 3178 --preview-port 3179`, then add `"apps/haunted-house"` to `workspaces` in the root `package.json`.
-- [ ] 2. Add `"qrcode": "1.5.4"` to `apps/haunted-house/package.json`, the exact version in `apps/scavenger-hunt/package.json` (Req 9.7). The developer runs `npm install` afterwards.
-- [ ] 3. Room-code rules in `template/src/adapters/qr-fix.ts`: `ROOM_CODE_ALPHABET`, `normalizeRoomCode` with the three refusal messages, `roomCodeFromHash`, `roomLink` (Req 1.1, 1.2, 1.4, 1.5, 2.1, 2.2).
-- [ ] 4. `createRoomIndex` and `QrFixError`: missing, malformed and duplicate codes; rooms closer than 1.3 times the larger radius; unknown code lookup (Req 1.3, 1.6, 4.5, 9.2).
-- [ ] 5. `planScan` and `QR_SMOOTHER_OPTIONS`: three fixes at the room position, 5 m accuracy, strictly increasing timestamps at least 1 s apart, `repeat` for open rooms, no fixes for refusals (Req 1.6, 1.7, 4.1, 4.2, 4.8).
-- [ ] 6. `QrFixAdapter` implementing `PositionSource`: `start`, `stop`, `submit`, queueing before start, last-timestamp memory (Req 4.1 to 4.3, 4.8, 9.1, 9.2).
-- [ ] 7. `listenForRoomLinks`: handle the current hash and later `hashchange`, then replace the hash with `#/` (Req 2.2, 2.3, 9.2).
-- [ ] 8. Export `qr-fix` from `template/src/adapters/index.ts` (Req 9.1).
-- [ ] 9. Unit tests in `template/test/qr-fix.test.ts` (Req 1, 2.1 to 2.3, 4, 9.5):
-  - [ ] 9.1 Code rules and link round trip: alphabet, case, spaces, dashes, each message (Req 1.1, 1.2, 1.4 to 1.6, 2.1, 2.2).
-  - [ ] 9.2 Room index problems, including two rooms 14 m apart (Req 1.3, 4.5).
-  - [ ] 9.3 Adapter through the real `FixSmoother` and `stepFix` on the house tour: one `enter` and one `unlock` per scan, a far-apart second scan lands in its room, a waiting room opens when its requirement is finished, a fourth fix changes nothing, and the default smoother options fail the far-apart case (Req 4.1 to 4.4, 4.6, 4.7).
-  - [ ] 9.4 Seeded random-sequence tests for properties 1, 2, 3 and 5 in design.md (Req 1.7, 4.2, 4.4, 4.5, 4.8).
-  - [ ] 9.5 `listenForRoomLinks` with a fake target (Req 2.2, 2.3).
-- [ ] 10. `apps/haunted-house/src/rooms.ts`: six invented rooms (Front Hall BATS, Parlor MUMS, Library EERY, Kitchen STEW, Attic WEBS requiring the Library, Cellar CRYP as finale) on the 40 m grid, all `fiction`, with clue, story and poster line (Req 1.1, 1.3, 4.5, 5.1, 7.2, 7.3).
-- [ ] 11. `apps/haunted-house/test/rooms.test.ts`: tour parses, all rooms `fiction`, codes valid and unique, spacing holds, poster lines present, `qrcode` version equals the one in `apps/scavenger-hunt` (Req 1.3, 4.5, 7.2, 7.3, 9.7).
+- [x] 1. Generate the app and register it (Req 9.3, 9.8). Run `npm run create-app -- haunted-house --name "Haunted House Party" --dev-port 3178 --preview-port 3179`, then add `"apps/haunted-house"` to `workspaces` in the root `package.json`.
+- [x] 2. Add `"qrcode": "1.5.4"` to `apps/haunted-house/package.json`, the exact version in `apps/scavenger-hunt/package.json` (Req 9.7). The developer runs `npm install` afterwards.
+- [x] 3. Room-code rules in `template/src/adapters/qr-fix.ts`: `ROOM_CODE_ALPHABET`, `normalizeRoomCode` with the three refusal messages, `roomCodeFromHash`, `roomLink` (Req 1.1, 1.2, 1.4, 1.5, 2.1, 2.2).
+- [x] 4. `createRoomIndex` and `QrFixError`: missing, malformed and duplicate codes; rooms closer than 1.3 times the larger radius; unknown code lookup (Req 1.3, 1.6, 4.5, 9.2).
+- [x] 5. `planScan` and `QR_SMOOTHER_OPTIONS`: three fixes at the room position, 5 m accuracy, strictly increasing timestamps at least 1 s apart, `repeat` for open rooms, no fixes for refusals (Req 1.6, 1.7, 4.1, 4.2, 4.8).
+- [x] 6. `QrFixAdapter` implementing `PositionSource`: `start`, `stop`, `submit`, queueing before start, last-timestamp memory (Req 4.1 to 4.3, 4.8, 9.1, 9.2).
+- [x] 7. `listenForRoomLinks`: handle the current hash and later `hashchange`, then replace the hash with `#/` (Req 2.2, 2.3, 9.2).
+- [x] 8. Export `qr-fix` from `template/src/adapters/index.ts` (Req 9.1).
+- [x] 9. Unit tests in `template/test/qr-fix.test.ts` (Req 1, 2.1 to 2.3, 4, 9.5):
+  - [x] 9.1 Code rules and link round trip: alphabet, case, spaces, dashes, each message (Req 1.1, 1.2, 1.4 to 1.6, 2.1, 2.2).
+  - [x] 9.2 Room index problems, including two rooms 14 m apart (Req 1.3, 4.5).
+  - [x] 9.3 Adapter through the real `FixSmoother` and `stepFix` on the house tour: one `enter` and one `unlock` per scan, a far-apart second scan lands in its room, a waiting room opens when its requirement is finished, a fourth fix changes nothing, and the default smoother options fail the far-apart case (Req 4.1 to 4.4, 4.6, 4.7).
+  - [x] 9.4 Seeded random-sequence tests for properties 1, 2, 3 and 5 in design.md (Req 1.7, 4.2, 4.4, 4.5, 4.8).
+  - [x] 9.5 `listenForRoomLinks` with a fake target (Req 2.2, 2.3).
+- [x] 10. `apps/haunted-house/src/rooms.ts`: six invented rooms (Front Hall BATS, Parlor MUMS, Library EERY, Kitchen STEW, Attic WEBS requiring the Library, Cellar CRYP as finale) on the 40 m grid, all `fiction`, with clue, story and poster line (Req 1.1, 1.3, 4.5, 5.1, 7.2, 7.3).
+- [x] 11. `apps/haunted-house/test/rooms.test.ts`: tour parses, all rooms `fiction`, codes valid and unique, spacing holds, poster lines present, `qrcode` version equals the one in `apps/scavenger-hunt` (Req 1.3, 4.5, 7.2, 7.3, 9.7).
 - [ ] 12. `HouseApp.tsx`: hash routes, `useTourSession` with `createGpsSource` returning the adapter, `QR_SMOOTHER_OPTIONS`, `isOpen` from a state ref, auto-start on mount, link handling, outcome messages including the waiting room's names (Req 2.2 to 2.5, 4.3, 4.6, 4.7, 7.4).
 - [ ] 13. `CodeEntry.tsx`: labelled field, button, Enter key, attributes, clearing, live region and `alert` for errors (Req 3.1 to 3.6, 8.5).
 - [ ] 14. Party view: `TourMap` without fog, `StopList` with "Visit from here", story dialog on unlock, count, `Finish.tsx` with rooms and elapsed time, saved progress, "Start over" with confirmation (Req 5.1 to 5.7).
-- [ ] 15. Honesty and privacy copy on the main screen, and no permission requests (Req 7.1, 7.4, 7.6).
-- [ ] 16. `styles.css` for screen: focus ring, contrast, 360 px layout, reduced motion (Req 8.1, 8.3, 8.4, 8.7).
-- [ ] 17. `npm run check` passes with every existing test unchanged (Req 4.9, 9.6).
+- [x] 15. Honesty and privacy copy on the main screen, and no permission requests (Req 7.1, 7.4, 7.6).
+- [x] 16. `styles.css` for screen: focus ring, contrast, 360 px layout, reduced motion (Req 8.1, 8.3, 8.4, 8.7).
+- [x] 17. `npm run check` passes with every existing test unchanged (Req 4.9, 9.6).
 
 ## Session B: posters, end-to-end tests and docs
 

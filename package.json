@@ -12,7 +12,8 @@
   "workspaces": [
     "template",
     "apps/ghost-walk",
-    "apps/scavenger-hunt"
+    "apps/scavenger-hunt",
+    "apps/haunted-house"
   ],
   "scripts": {
     "dev:ghost": "npm run dev -w apps/ghost-walk",
