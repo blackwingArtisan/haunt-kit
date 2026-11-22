@@ -47,7 +47,7 @@ body {
 }
 .hh-skip:focus { top: 12px; }
 
-.hh-main { max-width: 760px; margin: 0 auto; padding: 24px 16px 40px; display: grid; gap: 20px; }
+.hh-main { max-width: 760px; margin: 0 auto; padding: 24px 16px 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
 .hh-head { display: grid; gap: 4px; }
 .hh-title { margin: 0; font: 700 clamp(2rem, 9vw, 3.4rem) / 1.05 var(--hk-font-display); color: var(--hh-candle); letter-spacing: 0.01em; }
 .hh-lede { margin: 0; font-size: 1.15rem; }
