@@ -5,7 +5,7 @@
       "name": "Geofence engine purity guard",
       "description": "When the agent edits the skeleton's core logic, remind it that core stays pure and DOM-free and that rule changes need unit tests.",
       "trigger": "PostFileSave",
-      "matcher": "^template/src/core/.*\\.ts$",
+      "matcher": "(^|/)template/src/core/.*\\.ts$",
       "action": {
         "type": "agent",
         "prompt": "You just edited template/src/core. Keep it pure TypeScript: no DOM, no React, no timers, no storage, and never mutate an input state (return a new one plus events). Any change to unlock, ordering, dwell, hysteresis or smoothing rules needs a matching unit test in template/test and an update to .kiro/specs/haunt-kit-skeleton/requirements.md if behavior changed. Run `npm run check`."

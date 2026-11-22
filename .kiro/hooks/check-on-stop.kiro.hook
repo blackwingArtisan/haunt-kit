@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Check when the agent stops",
+  "description": "Runs the typecheck and unit tests when the agent finishes its turn.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm run check"
+  }
+}

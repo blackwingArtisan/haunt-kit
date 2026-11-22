@@ -1,0 +1,77 @@
+{
+  "name": "costume-builder",
+  "description": "Builds Haunt Kit costume #3, the Haunted House Party, from .kiro/specs/haunted-house. Writes only the files that spec names. Cannot install packages or push.",
+  "prompt": "You build costume #3 of Haunt Kit, the Haunted House Party, by following .kiro/specs/haunted-house (requirements.md, design.md, tasks.md) task by task. Follow the steering files. Edit only the paths your write permission allows; if a task needs another file, stop and say so in your report. Do not add, remove or upgrade npm dependencies and do not run npm install: the developer runs it and updates package-lock.json. Do not run git push. Do not edit README.md or KIRO-LOG.md. Keep template/src/core untouched so the GPS apps behave as before. Use invented sample data only. Run `npm run check` after each task and `npm run test:e2e` before you report Session B done. Tick a task in tasks.md only when code and a test implement it.",
+  "tools": ["read", "write", "shell", "@context7", "@playwright"],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_write",
+        "match": [
+          "apps/haunted-house/**",
+          "template/src/adapters/qr-fix.ts",
+          "template/src/adapters/index.ts",
+          "template/test/qr-fix*.test.ts",
+          "e2e/haunted-house*.spec.ts",
+          "playwright.config.ts",
+          "package.json",
+          ".kiro/specs/haunted-house/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": ["**"],
+        "exclude": [
+          "apps/haunted-house/**",
+          "template/src/adapters/qr-fix.ts",
+          "template/src/adapters/index.ts",
+          "template/test/qr-fix*.test.ts",
+          "e2e/haunted-house*.spec.ts",
+          "playwright.config.ts",
+          "package.json",
+          ".kiro/specs/haunted-house/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": ["npm run *", "npm test", "npm test *", "npx vitest *", "npx playwright test *", "npx tsc *"],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": ["npm install*", "npm i", "npm i *", "npm add *", "npm ci*", "npm update*", "npm uninstall*", "git push*"],
+        "effect": "deny"
+      }
+    ]
+  },
+  "resources": [
+    "file://.kiro/steering/product.md",
+    "file://.kiro/steering/structure.md",
+    "file://.kiro/steering/tech.md",
+    "file://.kiro/specs/haunted-house/requirements.md",
+    "file://.kiro/specs/haunted-house/design.md",
+    "file://.kiro/specs/haunted-house/tasks.md"
+  ],
+  "hooks": [
+    {
+      "name": "Run unit tests on source save",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)(template/(src|test|scripts|starter)|apps/[^/]+/(src|test))/.*\\.(ts|tsx|mjs)$",
+      "action": { "type": "command", "command": "npm test" },
+      "timeout": 120
+    },
+    {
+      "name": "Geofence engine purity guard",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)template/src/core/.*\\.ts$",
+      "action": {
+        "type": "agent",
+        "prompt": "You just edited template/src/core. This session must not change the engine. Revert the edit, keep core pure TypeScript, and run `npm run check`."
+      }
+    }
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Costume builder ready. Start with Session A in .kiro/specs/haunted-house/tasks.md."
+}

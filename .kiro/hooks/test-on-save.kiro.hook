@@ -1,0 +1,25 @@
+{
+  "enabled": true,
+  "name": "Run unit tests on source save",
+  "description": "Runs the Vitest suite whenever a TypeScript or script file is saved under template/ (src, test, scripts, starter) or an app's src/ or test/ folder.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "template/src/**/*.ts",
+      "template/src/**/*.tsx",
+      "template/test/**/*.ts",
+      "template/scripts/**/*.ts",
+      "template/scripts/**/*.mjs",
+      "template/starter/**/*.ts",
+      "template/starter/**/*.tsx",
+      "apps/*/src/**/*.ts",
+      "apps/*/src/**/*.tsx",
+      "apps/*/test/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm test"
+  }
+}
