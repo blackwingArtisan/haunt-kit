@@ -42,15 +42,15 @@ No GPS or walking needed for any of it. Every stop in both apps can also be open
 > **Scenario (fictional).** A volunteer at the invented Marlow County Historical Society copies the starter on a Tuesday evening and writes six stops about the courthouse square, each legend with its source. She builds the site, puts the folder on a free static host, and tapes one printed poster with its QR code to the courthouse door. Through October, walkers scan it and each story opens as they arrive, with the after-dark stops waking at sunset. The society pays $0.
 
 ## One skeleton, two costumes
-Both apps run on the same engine, `stepFix(tour, state, fix) → { state, events }`, and the same React pieces. They do different jobs:
+All three apps run on the same engine, `stepFix(tour, state, fix) → { state, events }`, and the same React pieces. They do different jobs. The third, built by a Kiro agent from its own spec, swaps GPS for QR posters:
 
-| | Des Moines After Dark | Spook Hunt |
-|---|---|---|
-| Who writes it | A volunteer or developer, as a typed data file (`tour.ts`) | A party host or teacher, in the browser editor, with no code |
-| Where the content lives | In the app build | In the share link's URL hash; answers only as salted hashes |
-| The loop | Walk to a stop and its sourced story opens; one stop wakes only after sunset | Walk to a hidden spot, answer its question, get the next clue; an EMF meter reads warmer or colder |
-| The ending | The Terrace Hill finale, after the other five stops | An escape time with penalties, a leaderboard and a result link for the host |
-| Skeleton parts used | `useTourSession`, `TourMap` (ink fog), `StopList`, `Compass`, `StopSources`, `useStopDialog`, `createNarrator` | `useTourSession`, `TourMap` (paper fog, hidden spots), `StopList`, `awaitingAnswer`, `hashAnswer`, `getCurrentFix` |
+| | Des Moines After Dark | Spook Hunt | Haunted House Party |
+|---|---|---|---|
+| Who writes it | A volunteer or developer, as a typed data file (`tour.ts`) | A party host or teacher, in the browser editor, with no code | A party host, who prints one QR poster per room (`rooms.ts` holds six invented rooms) |
+| Where the content lives | In the app build | In the share link's URL hash; answers only as salted hashes | In the app build; progress stays on the phone |
+| The loop | Walk to a stop and its sourced story opens; one stop wakes only after sunset | Walk to a hidden spot, answer its question, get the next clue; an EMF meter reads warmer or colder | Scan a room's poster (or type its code) and the scan becomes a position fix; the Attic waits for the Library |
+| The ending | The Terrace Hill finale, after the other five stops | An escape time with penalties, a leaderboard and a result link for the host | The Cellar finale and a finish card with the rooms and the time taken |
+| Skeleton parts used | `useTourSession`, `TourMap` (ink fog), `StopList`, `Compass`, `StopSources`, `useStopDialog`, `createNarrator` | `useTourSession`, `TourMap` (paper fog, hidden spots), `StopList`, `awaitingAnswer`, `hashAnswer`, `getCurrentFix` | `QrFixAdapter`, `useTourSession`, `TourMap`, `StopList` |
 
 Measured in this repository (lines, including styles):
 
@@ -73,8 +73,11 @@ npm run create-app -- river-walk --name "River Walk"
 | Steering | Product rules written before any code: no server and no keys, every stop reachable without walking, honest stories with sources, respect for real places. [`.kiro/steering/`](.kiro/steering/) |
 | Specs | One spec for the skeleton and one per app, with EARS requirements, a design and a task list. Kiro rewrote every criterion in EARS form and audited each task against its tests. [`.kiro/specs/`](.kiro/specs/) |
 | Spec task execution | Kiro built two tasks end to end: Spook Hunt's "Send my time to the host" result link and the `create-app` starter generator, each with unit tests. |
-| Hooks | Run the unit suite on save, guard the Ghost Walk honesty rules when tour data changes, and keep the core engine pure. [`.kiro/hooks/`](.kiro/hooks/) |
-| Agent session | One recorded `kiro-cli` session with its exact prompt, time and credits. Unit tests went from 82 to 104. |
+| Hooks | Run the unit suite on save, guard the Ghost Walk honesty rules when tour data changes, keep the core engine pure, and check on stop. Kiro fixed their matchers so they fire in `kiro-cli`; they ran 57 times on the record while it built costume #3. [`.kiro/hooks/`](.kiro/hooks/) |
+| Agent sessions | Four recorded `kiro-cli` sessions with their exact prompts, times, credits and hook runs. Unit tests went from 82 to 104 in the first, and from 137 to 253 (end-to-end 37 to 55) in the three that built costume #3. |
+| Kiro-built costume | Kiro specced and built costume #3, the Haunted House Party: scanning a room's QR poster becomes a position fix for the same engine. 3,267 lines with no developer edits to its code. [`.kiro/specs/haunted-house/`](.kiro/specs/haunted-house/) |
+| Custom agent | `costume-builder` builds only the paths costume #3 needs and cannot install packages or push; Kiro wrote it and ran as it. [`.kiro/agents/`](.kiro/agents/) |
+| MCP | Context7 and Playwright MCP, pinned in [`.kiro/settings/mcp.json`](.kiro/settings/mcp.json); Kiro used Context7 while building costume #3. |
 
 [KIRO-LOG.md](KIRO-LOG.md) has the evidence for each row, the exact session prompt, and a plain note on who wrote what.
 

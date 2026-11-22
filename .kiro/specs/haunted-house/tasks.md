@@ -40,6 +40,6 @@ The new workspace needs `npm install` to link it and to update `package-lock.jso
 - [x] 24. `e2e/haunted-house.spec.ts`, privacy and calm: every request after first load is same-origin with no query string or body; no permission prompt is requested; reduced motion leaves no running animation (Req 7.4, 7.5, 8.3).
 - [x] 25. `e2e/haunted-house.a11y.spec.ts`: axe on the main screen, after a refusal, with a story open, on the finish card and on the posters; keyboard-only run of the whole party; 360 px width with no horizontal scroll (Req 3.1, 3.2, 8.1, 8.2, 8.5, 8.7).
 - [x] 26. Root `package.json` scripts: `dev:house` and the app added to `build` (Req 9.8).
-- [ ] 27. Developer: README "One skeleton, two costumes" table (add a Haunted House Party column, with `QrFixAdapter`, `useTourSession`, `TourMap`, `StopList` under "Skeleton parts used") and the landing page line "costume #3, built by a Kiro agent" in `site/`. Both files are outside the build agent's write scope, so the developer edits them (Req 9.1).
-- [ ] 28. Developer: write `KIRO-LOG.md` entry for this build. The developer writes it; the agent does not touch that file.
+- [x] 27. Developer: README "One skeleton, two costumes" table (add a Haunted House Party column, with `QrFixAdapter`, `useTourSession`, `TourMap`, `StopList` under "Skeleton parts used") and the landing page line "costume #3, built by a Kiro agent" in `site/`. Both files are outside the build agent's write scope, so the developer edits them (Req 9.1).
+- [x] 28. Developer: write `KIRO-LOG.md` entry for this build. The developer writes it; the agent does not touch that file.
 - [x] 29. `npm run verify` passes (`npm run check` then `npm run test:e2e`), with every existing spec unchanged (Req 9.5, 9.6).

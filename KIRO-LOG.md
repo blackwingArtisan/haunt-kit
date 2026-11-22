@@ -10,14 +10,17 @@ How Kiro is used on Haunt Kit, with evidence for each feature and a plain record
 | Specs | One spec for the skeleton and one per app, each with requirements, a design and a task list. Kiro rewrote every acceptance criterion into EARS form, checked each task against the tests, reopened four tasks that had no test, and added the gap tasks. | [`.kiro/specs/`](.kiro/specs/); the spec table under "Kiro session 1" below |
 | Spec task execution | Kiro built two open tasks end to end, each with EARS criteria, a design note, sub-tasks, code and tests: Spook Hunt's "Send my time to the host" result link, and the skeleton's `create-app` generator. | Scavenger-hunt task 11, skeleton task 20; `result-codec.ts`, `result-board.ts`, `Result.tsx`, `create-app-files.ts`, their unit tests and one Playwright test |
 | Agent hooks | Three hooks: run the unit suite when source is saved, guard the Ghost Walk honesty rules when the tour data changes, and keep the core engine pure. Kiro checked them against its hook format and widened the test-on-save matcher. | [`.kiro/hooks/`](.kiro/hooks/) |
-| Agent chat | One recorded, non-interactive `kiro-cli` session with the exact prompt, the time taken and the credits used. | "Kiro session 1" below |
-| MCP servers | Next session: AWS Documentation MCP for the S3, CloudFront and Polly setup, and Playwright MCP to drive the 60-second demo. | Not used yet |
-| Custom agent | Next session: a `tour-author` agent scoped to tour data and the honesty steering. | Not used yet |
+| Agent chat | Four recorded, non-interactive `kiro-cli` sessions with the exact prompt, the time taken, the credits used and every hook run. | "Kiro session 1" and "Sessions 2 to 4" below |
+| MCP servers | `.kiro/settings/mcp.json`: Context7 4.5.0 and Playwright MCP 0.0.84, pinned, read tools auto-approved. In session 3 Kiro called Context7 to confirm that `history.replaceState()` does not fire `hashchange`, which the room-link listener relies on. | [`.kiro/settings/mcp.json`](.kiro/settings/mcp.json); session 3 transcript |
+| Custom agent | `costume-builder`: steering and the new spec as resources, writes limited to the paths the Haunted House Party needs, `npm install` and `git push` denied, the test-on-save and purity hooks attached. Kiro wrote it from kiro.dev's configuration reference, checked it with `kiro-cli agent validate`, and then ran as it for both build sessions. | [`.kiro/agents/costume-builder.json`](.kiro/agents/costume-builder.json); sessions 3 and 4 |
+| Kiro-built costume | Costume #3, the Haunted House Party, specced and built by Kiro: a `QrFixAdapter` turns a scanned room poster into fixes for the same geofence engine, plus the app, printable posters and 18 end-to-end tests. | [`.kiro/specs/haunted-house/`](.kiro/specs/haunted-house/), `apps/haunted-house/`, `template/src/adapters/qr-fix.ts` |
 
 ## Who wrote what
 - **Before Kiro:** the steering files and first drafts of the three specs, then the skeleton, both apps and their tests, written with another AI coding assistant (Claude Code) working from that steering and those specs. The commit history shows each change.
 - **Kiro, session 1:** the EARS rewrite of all three specs, the task audit, the result link and the starter generator with their tests, the hook fixes, and the steering updates. Details below.
-- **After session 1, not by Kiro:** a 60-second demo path in both apps, a polish pass, themed fog and finish payoffs, and the landing page that hosts both apps. These are listed in the [changelog](CHANGELOG.md). The next features on the roadmap are planned as Kiro spec tasks, so Kiro's share grows from here.
+- **After session 1, not by Kiro:** a 60-second demo path in both apps, a polish pass, themed fog and finish payoffs, and the landing page that hosts both apps. These are listed in the [changelog](CHANGELOG.md).
+- **Kiro, sessions 2 to 4:** the hook matcher fix and IDE-format hooks, the Haunted House Party spec, the `costume-builder` agent, and all of costume #3's code and tests: 3,267 added lines in 39 files across three commits, with no developer edits to Kiro's code.
+- **The developer, around sessions 2 to 4:** the prompts; `.kiro/settings/mcp.json`, saved unchanged from the contents Kiro printed after kiro-cli refused its write; `npm install` to add the new workspace to `package-lock.json`; and spec tasks 27 and 28 (the README costume table, the landing-page line and this log), which sit outside the agent's write scope.
 
 ## Order of work
 1. **Steering first.** `.kiro/steering/product.md`, `tech.md` and `structure.md` were written before any code.
@@ -30,6 +33,21 @@ How Kiro is used on Haunt Kit, with evidence for each feature and a plain record
    - `test-on-save.json`: runs `npm test` when a source or test file under `template/` or an app is saved.
    - `legend-source-guard.json`: when the Ghost Walk data changes, re-states the honesty rules and asks for the data-integrity test.
    - `engine-purity-guard.json`: when the core engine changes, reminds the agent that core stays pure, DOM-free and unit-tested.
+
+## Sessions 2 to 4: costume #3, the Haunted House Party (kiro-cli v3)
+
+An indoor party game with no GPS: the host prints one poster per room, and each scan of a poster's QR code, or a typed room code, becomes a position fix for that room, fed to the same `stepFix` engine the GPS walks use. Kiro wrote the spec and then built it. Every session ran headless with a 25-minute cap and `--trust-tools` listing only the tools named (never `--trust-all-tools`), on preview ports set through `PW_GHOST_PORT`, `PW_HUNT_PORT`, `PW_SITE_PORT` and the new `PW_HOUSE_PORT`. The developer committed only after typecheck, Vitest and Playwright passed from a fresh clone.
+
+| Session | What Kiro did | Minutes | Credits | Hooks on the record | MCP | Tests after |
+|---|---|---|---|---|---|---|
+| [2](docs/kiro-sessions/2026-11-22-session-2-haunted-house-spec.md) | Fixed the three hook matchers (`^template/` never matches the absolute path kiro-cli tests; now `(^|/)template/`), added IDE-format hooks and a hook test, wrote the spec (9 requirements, 68 EARS criteria, 7 correctness properties, 29 tasks) and the `costume-builder` agent | 6.5 | 10.32 | Unit tests on save 1 | none (read kiro.dev docs for the agent format) | 147 unit (137 before), 37 e2e |
+| [3](docs/kiro-sessions/2026-11-22-session-3-haunted-house-app.md) | Session A as `costume-builder`: `QrFixAdapter`, six invented rooms, the app, code entry, finish card, 101 unit tests | 9.5 | 18.20 | Unit tests on save 38 (workspace 19, agent 19) | Context7 resolve and query | 248 unit, 37 e2e |
+| [4](docs/kiro-sessions/2026-11-22-session-4-haunted-house-posters.md) | Session B as `costume-builder`: printable posters, the `haunted-house` Playwright project, 18 end-to-end tests with axe on five screens | 6.1 | 5.84 | Unit tests on save 18 (workspace 9, agent 9) | none | 253 unit, 55 e2e |
+
+- **Credits.** 34.36 in all, each figure kiro-cli's own end-of-session `session_usage` count. The shared account balance moved more over the same windows, because other Kiro work drew on it.
+- **How one scan unlocks a room.** `planScan` emits three fixes at the room's floor-plan position, 5 m accuracy, 1 s apart with strictly increasing timestamps, so the engine's dwell rule fires once; the app passes `QR_SMOOTHER_OPTIONS` so a jump between rooms is not rejected as an outlier. `template/src/core` and the two GPS apps are unchanged.
+- **Rule slips Kiro disclosed.** In session 2, a throwaway file in `/tmp` written with a shell redirect to test the agent validator, then deleted; in session 3, one read-only `git status` and `git diff --stat`.
+- **Still open.** The Haunted House Party is not yet on the hosted landing page's build (`build:site`); the landing page names it as costume #3. Spec open question 7 leaves that to the developer.
 
 ## Kiro session 1 (kiro-cli v3)
 
