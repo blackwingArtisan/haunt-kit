@@ -8,7 +8,7 @@ Most GPS hunts need a server and an account. Haunt Kit's hunt, answers and score
 
 Made first for the teacher's Friday hunt: no student accounts, no student data, nothing to install. A Goosechase classroom plan is [$99 per educator per year](https://www.goosechase.com/edu/pricing/) and a single event is [$99 to $749](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing); Haunt Kit is $0.
 
-Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in two costumes: a sourced ghost walk through downtown Des Moines and a Halloween scavenger hunt. Write the stops as data and they unlock as people arrive. Some stops only exist after dark.
+Kiroween 2026, Skeleton Crew. One open-source skeleton for GPS story walks, in three costumes: a sourced ghost walk through downtown Des Moines, a Halloween scavenger hunt and, built by a Kiro agent, an indoor haunted-house party. Write the stops as data and they unlock as people arrive. Some stops only exist after dark.
 
 ![A simulated walk through Des Moines After Dark: the fog lifts along the lantern's trail, the candles light one by one, and the finale plays](docs/media/hero-walk.gif)
 
@@ -42,7 +42,7 @@ No GPS or walking needed for any of it. Every stop in the two GPS apps can also 
 
 > **Scenario (fictional).** A volunteer at the invented Marlow County Historical Society copies the starter on a Tuesday evening and writes six stops about the courthouse square, each legend with its source. She builds the site, puts the folder on a free static host, and tapes one printed poster with its QR code to the courthouse door. Through October, walkers scan it and each story opens as they arrive, with the after-dark stops waking at sunset. The society pays $0.
 
-## One skeleton, two costumes
+## One skeleton, three costumes
 All three apps run on the same engine, `stepFix(tour, state, fix) → { state, events }`, and the same React pieces. They do different jobs. The third, built by a Kiro agent from its own spec, swaps GPS for QR posters:
 
 | | Des Moines After Dark | Spook Hunt | Haunted House Party |
@@ -57,12 +57,13 @@ Measured in this repository (lines, including styles):
 
 | Part | Lines |
 |---|---|
-| The shared skeleton, `template/src` | 2,600 |
-| Ghost Walk app, `apps/ghost-walk/src` | 907, of which the tour data is 214 |
-| Spook Hunt app, `apps/scavenger-hunt/src` | 1,990 |
+| The shared skeleton, `template/src` | 2,872 |
+| Ghost Walk app, `apps/ghost-walk/src` | 1,034, of which the tour data is 214 |
+| Spook Hunt app, `apps/scavenger-hunt/src` | 2,152 |
+| Haunted House Party app, `apps/haunted-house/src` | 769 |
 | The starter a new app copies, `template/starter` | 90 |
 
-Start a third costume with one command:
+Start a fourth costume with one command:
 
 ```bash
 npm run create-app -- river-walk --name "River Walk"
@@ -75,8 +76,8 @@ npm run create-app -- river-walk --name "River Walk"
 | Specs | One spec for the skeleton and one per app, with EARS requirements, a design and a task list. Kiro rewrote every criterion in EARS form and audited each task against its tests. [`.kiro/specs/`](.kiro/specs/) |
 | Spec task execution | Kiro built two tasks end to end: Spook Hunt's "Send my time to the host" result link and the `create-app` starter generator, each with unit tests. |
 | Hooks | Run the unit suite on save, guard the Ghost Walk honesty rules when tour data changes, keep the core engine pure, and check on stop. Kiro fixed their matchers so they fire in `kiro-cli`; they ran 57 times on the record while it built costume #3. [`.kiro/hooks/`](.kiro/hooks/) |
-| Agent sessions | Four recorded `kiro-cli` sessions with their exact prompts, times, credits and hook runs. Unit tests went from 82 to 104 in the first, and from 137 to 253 (end-to-end 37 to 55) in the three that built costume #3. |
-| Kiro-built costume | Kiro specced and built costume #3, the Haunted House Party: scanning a room's QR poster becomes a position fix for the same engine. 3,267 lines with no developer edits to its code. [`.kiro/specs/haunted-house/`](.kiro/specs/haunted-house/) |
+| Agent sessions | Four recorded `kiro-cli` sessions with their exact prompts, times, credits and hook runs. Unit tests went from 82 to 104 in the first, and from 137 to 253 (end-to-end 37 to 55) in the three that built costume #3. One hosted-site test added since brings the end-to-end suite to 56. |
+| Kiro-built costume | Kiro specced and built costume #3, the Haunted House Party: scanning a room's QR poster becomes a position fix for the same engine. 3,267 lines; the developer's only later change to its code is a one-line layout fix. [`.kiro/specs/haunted-house/`](.kiro/specs/haunted-house/) |
 | Custom agent | `costume-builder` builds only the paths costume #3 needs and cannot install packages or push; Kiro wrote it and ran as it. [`.kiro/agents/`](.kiro/agents/) |
 | MCP | Context7 and Playwright MCP, pinned in [`.kiro/settings/mcp.json`](.kiro/settings/mcp.json); Kiro used Context7 while building costume #3. |
 
@@ -92,7 +93,7 @@ The skeleton is not only for Halloween. Three uses that repeat all year:
 Any of them can go on a wall: the landing page's **Print a poster** page prints one page per app with its QR code, its start point and tonight's sunset time, and a host can paste their own hunt link onto it.
 
 ## Where this goes
-- **The kit stays free.** MIT license, static files, no keys, no server. Everything in this repository, including both apps and the generator, stays free to copy and self-host.
+- **The kit stays free.** MIT license, static files, no keys, no server. Everything in this repository, including all three apps and the generator, stays free to copy and self-host.
 - **Only what needs a server is paid.** A hosted story-walk builder (the Spook Hunt editor, for story walks, published to a static host), neural narration rendered for each stop, and live leaderboards shared across many phones. Each of these costs money to run, so each is part of an optional hosted plan.
 - **Priced under what schools already pay.** Goosechase's Educator Plus plan is [$99 per educator per year](https://www.goosechase.com/edu/pricing/). A hosted plan at $49 a year per school or organization is half of one teacher's seat and covers the whole building.
 - **Who it is for.** Teachers first, then at least 21,588 history organizations ([AASLH](https://aaslh.org/census/)) and about 9,000 public libraries with about 17,000 branches and bookmobiles ([IMLS Public Libraries Survey](https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls)).
@@ -134,7 +135,7 @@ Prices and features are from each product's published pages in November 2026. Wh
 
 ### What works
 <details>
-<summary>Everything the template and both apps do today</summary>
+<summary>Everything the template and the two GPS apps do today</summary>
 
 - **Template (`template/`)**
   - Tour format validated with zod, with readable errors: duplicate ids, unknown or circular `requires`, a missing source on a legend.
@@ -175,6 +176,7 @@ Requires Node 24 or newer.
 npm install
 npm run dev:ghost    # Des Moines After Dark on http://localhost:3170
 npm run dev:hunt     # Spook Hunt on http://localhost:3172
+npm run dev:house    # Haunted House Party on http://localhost:3178
 ```
 
 No walking needed: press **Simulate the walk** (or **Practice run** in a hunt). Add `?speed=200` to the Ghost Walk URL for a 200× replay.
@@ -200,15 +202,18 @@ Each app on its own, as the end-to-end tests run it:
 npm run build
 npm run preview -w apps/ghost-walk      # http://localhost:3171
 npm run preview -w apps/scavenger-hunt  # http://localhost:3173
+npm run preview -w apps/haunted-house   # http://localhost:3179
 ```
 
 ### How to test
 ```bash
 npm run check                         # TypeScript (strict) + Vitest unit tests
 npx playwright install chromium       # once
-npm run test:e2e                      # builds both apps and runs Playwright against the preview servers
+npm run test:e2e                      # builds the three apps and the hosted site, and runs Playwright against their preview servers
 npm run verify                        # all of the above
 ```
+
+The suite has 257 unit tests in 29 files and 56 end-to-end tests: 13 for the Ghost Walk, 5 for the Ghost Walk on a phone, 9 for Spook Hunt, 18 for the Haunted House Party and 11 for the hosted site. A unit test, [`template/test/doc-counts.test.ts`](template/test/doc-counts.test.ts), checks the end-to-end counts and the Kiro figures in this README and KIRO-LOG against `playwright test --list` and the session transcripts.
 
 The same `npm run verify` runs in GitHub Actions on every push to `main` and every pull request ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
@@ -245,7 +250,8 @@ The same `npm run verify` runs in GitHub Actions on every push to `main` and eve
     - The leaderboard records the run.
     - A player on another phone sends a result link and the host adds it to the leaderboard.
     - A list unlock with a hint, and a damaged link.
-- **Hosted layout (Playwright)**: the landing page passes axe-core with both QR codes, both apps run from their subfolders, one click starts each demo, the word hunt link opens a playable hunt, and the poster page prints two pages.
+  - Haunted House Party: room links and typed codes, refusals, the waiting Attic, a reload and Start over, six posters printed on A4 and Letter, same-origin requests only, no permission prompts, reduced motion, a keyboard-only party, a 360 px screen, and axe on five screens.
+- **Hosted layout (Playwright)**: the landing page passes axe-core with all three QR codes, all three apps run from their subfolders, the house party card opens the first room and the room posters, one click starts each demo, the word hunt link opens a playable hunt, and the poster page prints two pages.
 
 </details>
 
@@ -261,7 +267,8 @@ template/                         @haunt-kit/template
   scripts/        create-app generator (npm run create-app)
 apps/ghost-walk/        Des Moines After Dark (tour data + themed UI)
 apps/scavenger-hunt/    Spook Hunt (editor, link codec, player, leaderboard)
-site/                   landing page that hosts both apps, and printable posters (npm run build:site)
+apps/haunted-house/     Haunted House Party (rooms, code entry, QR room posters), built by Kiro
+site/                   landing page that hosts all three apps, and printable posters (npm run build:site)
 docs/media/             README images
 e2e/                    Playwright specs
 .kiro/                  steering, specs, hooks

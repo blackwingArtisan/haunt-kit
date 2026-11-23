@@ -6,11 +6,11 @@ Haunt Kit is MIT licensed (see [LICENSE](LICENSE)). It ships with, or draws on, 
 
 | Package | Used by | License | Copyright |
 | --- | --- | --- | --- |
-| react, react-dom, scheduler | both apps | MIT | Meta Platforms, Inc. and affiliates |
+| react, react-dom, scheduler | all three apps | MIT | Meta Platforms, Inc. and affiliates |
 | zod | template | MIT | Colin McDonnell |
-| qrcode | Spook Hunt (share QR) | MIT | Ryan Day |
-| dijkstrajs (via qrcode) | Spook Hunt | MIT | Wyatt Baldwin |
-| pngjs (via qrcode) | Spook Hunt | MIT | Luke Page and contributors |
+| qrcode | Spook Hunt (share QR), Haunted House Party (room posters) | MIT | Ryan Day |
+| dijkstrajs (via qrcode) | Spook Hunt, Haunted House Party | MIT | Wyatt Baldwin |
+| pngjs (via qrcode) | Spook Hunt, Haunted House Party | MIT | Luke Page and contributors |
 
 `qrcode` also pulls in a small set of MIT and ISC command-line helpers (yargs and its dependencies). They are used only by its CLI and are not part of the browser bundle.
 

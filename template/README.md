@@ -2,7 +2,7 @@
 
 The skeleton for GPS-triggered story walks. Write a tour as data; get stops that unlock when a walker arrives, a simulated walk for testing indoors, saved progress, a stylized offline map, an accessible list of every stop and an installable offline app.
 
-Both apps in this repository are built from it: [`apps/ghost-walk`](../apps/ghost-walk) and [`apps/scavenger-hunt`](../apps/scavenger-hunt).
+All three apps in this repository are built from it: [`apps/ghost-walk`](../apps/ghost-walk), [`apps/scavenger-hunt`](../apps/scavenger-hunt) and [`apps/haunted-house`](../apps/haunted-house).
 
 ## Start a new walk with the generator
 
