@@ -4,6 +4,8 @@
 
 **A haunted tour that fits in a QR code: no server, no keys, the ghost lives in the link.**
 
+**Live: [haunt-kit.pages.dev](https://haunt-kit.pages.dev/)**, with all three apps: the ghost walk, the scavenger hunt and the haunted-house party.
+
 Most GPS hunts need a server and an account. Haunt Kit's hunt, answers and scoreboard all travel in links.
 
 Made first for the teacher's Friday hunt: no student accounts, no student data, nothing to install. A Goosechase classroom plan is [$99 per educator per year](https://www.goosechase.com/edu/pricing/) and a single event is [$99 to $749](https://support.goosechase.com/en/articles/14222884-everything-you-need-to-know-about-our-single-event-pricing); Haunt Kit is $0.
